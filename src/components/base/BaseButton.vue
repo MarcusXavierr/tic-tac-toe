@@ -17,7 +17,7 @@ export default {
     buttonWidth: {
       type: Number,
       required: false,
-      default: 0
+      default: BtnWidth.md
     }
   },
   computed: {
