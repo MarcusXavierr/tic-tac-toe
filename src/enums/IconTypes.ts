@@ -1,0 +1,7 @@
+export enum IconType {
+  X,
+  O,
+  X_outline,
+  O_outline,
+  Restart
+}
