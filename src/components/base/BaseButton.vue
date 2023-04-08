@@ -48,10 +48,11 @@ button {
   font-size: 1.25rem;
   font-weight: 700;
   text-align: center;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   font-family: inherit;
   padding: 1rem;
   border: none;
+  letter-spacing: 1px;
   box-shadow: inset 0px var(--shadow-y-offset, -0.25rem) 0px var(--btn-color-shadow);
 
   &:hover {
@@ -87,5 +88,6 @@ button {
   width: 100%;
   padding-bottom: 1.5rem;
   --shadow-y-offset: -0.5rem;
+  border-radius: 1rem;
 }
 </style>
