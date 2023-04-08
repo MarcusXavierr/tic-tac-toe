@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { BtnColor, BtnWidth } from '@/enums/ButtonTypes'
+import { BtnColor } from '@/enums/ButtonTypes'
 
 export default {
   name: 'BaseButton',
@@ -14,10 +14,10 @@ export default {
       type: Number,
       required: true
     },
-    buttonWidth: {
-      type: Number,
+    isLarge: {
+      type: Boolean,
       required: false,
-      default: BtnWidth.md
+      default: false
     }
   },
   computed: {
@@ -32,7 +32,7 @@ export default {
       }
     },
     size() {
-      if (this.buttonWidth == BtnWidth.lg) {
+      if (this.isLarge) {
         return 'w-full'
       }
       return 'normal'

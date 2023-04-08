@@ -3,8 +3,3 @@ export enum BtnColor {
   yellow,
   gray
 }
-
-export enum BtnWidth {
-  md,
-  lg
-}
