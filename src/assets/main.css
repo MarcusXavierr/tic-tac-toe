@@ -7,6 +7,10 @@
   --blue-hover: #65E9E4;
   --yellow: #F2B137;
   --yellow-hover: #FFC860;
+
+  --yellow-shadow: #CC8B13;
+  --blue-shadow: #118C87;
+  --silver-shadow: #6B8997;
 }
 
 * {
