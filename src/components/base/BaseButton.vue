@@ -51,10 +51,17 @@ button {
   border-radius: 1rem;
   font-family: inherit;
   padding: 1rem;
+  border: none;
   box-shadow: inset 0px var(--shadow-y-offset, -0.25rem) 0px var(--btn-color-shadow);
 
   &:hover {
     background: var(--btn-color-hover);
+  }
+
+  &:active {
+    --offset: var(--shadow-y-offset, -0.25rem);
+    --shadow-y-offset: calc(var(--offset) / 2);
+    transform: translateY(calc(0.25rem / 4));
   }
 }
 
