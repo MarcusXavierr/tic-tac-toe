@@ -23,6 +23,7 @@ body {
   font-family: "Outfit", sans-serif;
   background-color: var(--dark-navy);
   color: var(--silver);
+  letter-spacing: 1px;
 }
 
 #app {
