@@ -1,10 +1,15 @@
 <template>
   <div class="container">
     <img src="@/assets/logo.svg" alt="" />
-    <PlayerSelector v-model:x-type-selected="xTypeSelected" v-model:o-type-selected="oTypeSelected"/>
+    <PlayerSelector
+      v-model:x-type-selected="xTypeSelected"
+      v-model:o-type-selected="oTypeSelected"
+    />
     <div class="buttons">
       <BaseButton :button-color="btnColors.yellow" :is-large="true">NEW GAME (VS CPU)</BaseButton>
-      <BaseButton :button-color="btnColors.blue" :is-large="true">NEW GAME (VS PLAYER)</BaseButton>
+      <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame"
+        >NEW GAME (VS PLAYER)</BaseButton
+      >
     </div>
   </div>
 </template>
@@ -13,6 +18,8 @@
 import BaseButton from '@/components/base/BaseButton.vue'
 import PlayerSelector from './PlayerSelector.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
+import { Players } from '@/enums/Players'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'HomePage',
@@ -25,6 +32,26 @@ export default {
       btnColors: BtnColor,
       xTypeSelected: false,
       oTypeSelected: true
+    }
+  },
+  methods: {
+    ...mapMutations(['activateGame']),
+    startGame() {
+      this.activateGame(this.players)
+    }
+  },
+  computed: {
+    players() {
+      if (this.oTypeSelected) {
+        return {
+          OPlayer: Players.playerOne,
+          XPlayer: Players.playerTwo
+        }
+      }
+      return {
+        OPlayer: Players.playerTwo,
+        XPlayer: Players.playerOne
+      }
     }
   }
 }
@@ -43,6 +70,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .player-type {
