@@ -5,5 +5,6 @@ import "@fontsource/outfit/500.css"
 import "@fontsource/outfit/700.css"
 
 import './assets/main.css'
+import { store } from './store/index'
 
-createApp(App).mount('#app')
+createApp(App).use(store).mount('#app')
