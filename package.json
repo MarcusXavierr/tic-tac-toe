@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@fontsource/outfit": "^4.5.11",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
