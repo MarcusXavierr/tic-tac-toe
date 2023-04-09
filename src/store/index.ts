@@ -12,7 +12,7 @@ export const store = createStore<State>({
       XPlayer: null,
       OPlayer: null,
       playHistory: [],
-      gameResults: []
+      gameResults: [],
     }
   },
   mutations: {
