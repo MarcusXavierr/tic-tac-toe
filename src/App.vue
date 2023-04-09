@@ -1,47 +1,46 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="container">
+    <div v-if="isGameActive">
+      <BaseButton :button-color="btnOptions.colors.yellow" :is-large="true">MAMACO</BaseButton><br>
+      <BaseButton :button-color="btnOptions.colors.blue" />
+      <BaseButton :button-color="btnOptions.colors.gray" :is-large="true"/>
+      <BaseIcon :icon-type="iconOptions.X_outline"/>
+      <BaseButton :button-color="btnOptions.colors.gray">
+        <BaseIcon :icon-type="iconOptions.Restart"/>
+      </BaseButton><br>
+      <BaseButton :button-color="btnOptions.colors.yellow">SECONDARY BUTTON 1</BaseButton>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <HomePage v-else/>
+  </div>
 </template>
 
+<script lang="ts">
+import BaseButton from './components/base/BaseButton.vue'
+import BaseIcon from './components/base/BaseIcon.vue'
+import HomePage from './views/Home/index.vue'
+
+import { BtnColor } from './enums/ButtonTypes'
+import { IconType } from './enums/IconTypes'
+
+import { mapState } from 'vuex'
+export default {
+  components: { BaseButton, BaseIcon, HomePage },
+  computed: {
+    ...mapState(['isGameActive']),
+    btnOptions() {
+      return {
+        colors: BtnColor,
+      }
+    },
+    iconOptions() {
+      return IconType
+    }
+  }
+}
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.container {
+  width: 28.75rem;
 }
 </style>

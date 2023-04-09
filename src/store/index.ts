@@ -1,8 +1,12 @@
 import { createStore } from 'vuex'
 
-export const store = createStore({
+interface State {
+  foo: string
+}
+export const store = createStore<State>({
   state() {
     return {
+      foo: 'fighters',
       isGameActive: false,
       XPlayer: null,
       OPlayer: null,
