@@ -3,3 +3,7 @@ export enum Players {
   playerTwo = 2
 }
 
+export enum PlayerTypes {
+  OPlayer,
+  XPlayer
+}
