@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <img src="@/assets/logo.svg" alt="" />
-    <PlayerSelector/>
+    <PlayerSelector v-model:x-type-selected="xTypeSelected" v-model:o-type-selected="oTypeSelected"/>
     <div class="buttons">
       <BaseButton :button-color="btnColors.yellow" :is-large="true">NEW GAME (VS CPU)</BaseButton>
       <BaseButton :button-color="btnColors.blue" :is-large="true">NEW GAME (VS PLAYER)</BaseButton>
@@ -22,7 +22,9 @@ export default {
   },
   data() {
     return {
-      btnColors: BtnColor
+      btnColors: BtnColor,
+      xTypeSelected: false,
+      oTypeSelected: true
     }
   }
 }

@@ -21,20 +21,25 @@ import oNormal from '@/assets/gray-icons/icon-o.svg'
 
 export default {
   name: 'PlayerSelector',
-  data() {
-    return {
-      xTypeSelected: false,
-      oTypeSelected: true
+  props: {
+    xTypeSelected: {
+      type: Boolean,
+      required: true
+    },
+    oTypeSelected: {
+      type: Boolean,
+      required: true
     }
   },
+  emits: ['update:xTypeSelected', 'update:oTypeSelected'],
   methods: {
     selectX() {
-      this.xTypeSelected = true
-      this.oTypeSelected = false
+      this.$emit('update:xTypeSelected', true)
+      this.$emit('update:oTypeSelected', false)
     },
     selectO() {
-      this.oTypeSelected = true
-      this.xTypeSelected = false
+      this.$emit('update:oTypeSelected', true)
+      this.$emit('update:xTypeSelected', false)
     }
   },
   computed: {
