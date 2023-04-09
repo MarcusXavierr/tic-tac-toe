@@ -1,5 +1,10 @@
 import { createStore } from 'vuex'
 
+interface activateData {
+  XPlayer: number,
+  OPlayer: number
+}
+
 export const store = createStore<State>({
   state() {
     return {
@@ -10,5 +15,11 @@ export const store = createStore<State>({
       gameResults: []
     }
   },
-  mutations: {}
+  mutations: {
+    activateGame(state, data: activateData) {
+      state.OPlayer = data.OPlayer,
+      state.XPlayer = data.XPlayer
+      state.isGameActive = true
+    }
+  }
 })
