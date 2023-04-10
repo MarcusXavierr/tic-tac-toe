@@ -2,12 +2,16 @@
   <nav class="navbar">
     <img src="../../assets/logo.svg" alt="" />
     <div class="turn">
-      <img src="../../assets/gray-icons/icon-x.svg" alt="icon representing actual turn" width="16">
+      <img
+        src="../../assets/gray-icons/icon-x.svg"
+        alt="icon representing actual turn"
+        width="16"
+      />
       TURN
     </div>
-    <BaseButton :button-color="buttonOptions.gray"
-      ><BaseIcon :icon-type="iconOptions.Restart"
-    /></BaseButton>
+    <BaseButton :button-color="buttonOptions.gray" :is-small="true">
+      <BaseIcon :icon-type="iconOptions.Restart" />
+    </BaseButton>
   </nav>
 </template>
 
@@ -48,7 +52,7 @@ export default {
   justify-content: center;
   background: var(--semi-dark-navy);
   padding: 0.5rem 1rem 0.75rem 1rem;
-  box-shadow: inset 0px -4px 0px #10212A;
+  box-shadow: inset 0px -4px 0px #10212a;
   border-radius: 0.25rem;
 }
 </style>
