@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import { PlayerTypes } from '../enums/Players'
 
 interface activateData {
   XPlayer: number,
@@ -19,6 +20,7 @@ export const store = createStore<State>({
     activateGame(state, data: activateData) {
       state.OPlayer = data.OPlayer,
       state.XPlayer = data.XPlayer
+      state.currentPlayerType = PlayerTypes.XPlayer
       state.isGameActive = true
     }
   }
