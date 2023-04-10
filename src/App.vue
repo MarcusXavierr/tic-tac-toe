@@ -1,17 +1,15 @@
 <template>
   <div class="container">
-    <div v-if="!isGameActive">
-      <BaseCell/>
+    <GamePage v-if="isGameActive" />
+    <div class="home" v-else>
+      <HomePage />
     </div>
-    <HomePage v-else />
   </div>
 </template>
 
 <script lang="ts">
-import BaseButton from './components/base/BaseButton.vue'
-import BaseIcon from './components/base/BaseIcon.vue'
-import BaseCell from './components/base/BaseCell.vue'
 import HomePage from './views/Home/index.vue'
+import GamePage from './views/Game/index.vue'
 
 import { BtnColor } from './enums/ButtonTypes'
 import { IconType } from './enums/IconTypes'
@@ -19,10 +17,8 @@ import { IconType } from './enums/IconTypes'
 import { mapState } from 'vuex'
 export default {
   components: {
-    BaseButton,
-    BaseIcon,
     HomePage,
-    BaseCell
+    GamePage
   },
   computed: {
     ...mapState(['isGameActive']),
@@ -41,5 +37,12 @@ export default {
 <style scoped>
 .container {
   width: 28.75rem;
+}
+.home {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
