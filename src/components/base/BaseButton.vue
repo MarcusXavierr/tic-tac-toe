@@ -86,7 +86,8 @@ button {
 
 .small {
   padding: 0.75rem;
-  padding-bottom: 1rem;
+  padding-top: 0.625rem;
+  padding-bottom: 0.875rem;
   border-radius: 0.35rem;
 }
 
