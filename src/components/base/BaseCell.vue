@@ -1,7 +1,8 @@
 <template>
   <div class="cell" @mouseenter="hover = true" @mouseleave="hover = false">
     <KeepAlive>
-      <BaseIcon v-if="hover" :icon-type="hoverIcon" />
+      <BaseIcon v-if="selectedIcon != null" :icon-type="selectedIcon"/>
+      <BaseIcon v-else-if="hover" :icon-type="hoverIcon" />
     </KeepAlive>
   </div>
 </template>
@@ -19,6 +20,13 @@ export default {
   data() {
     return {
       hover: false
+    }
+  },
+  props: {
+    selectedIcon: {
+      type: Number,
+      required: false,
+      default: null
     }
   },
   computed: {
