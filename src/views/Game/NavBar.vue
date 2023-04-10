@@ -1,9 +1,9 @@
 <template>
   <nav class="navbar">
-    <img src="../../assets/logo.svg" alt="" />
+    <img src="@/assets/logo.svg" alt="" />
     <div class="turn">
       <img
-        src="../../assets/gray-icons/icon-x.svg"
+        src="@/assets/gray-icons/icon-x.svg"
         alt="icon representing actual turn"
         width="16"
       />
