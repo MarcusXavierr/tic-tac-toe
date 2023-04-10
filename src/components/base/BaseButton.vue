@@ -19,7 +19,12 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    }
+    },
+    isSmall: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   computed: {
     ...mapState(['cringe', 'foo']),
@@ -38,6 +43,11 @@ export default {
       if (this.isLarge) {
         return 'w-full'
       }
+
+      if (this.isSmall) {
+        return 'small'
+      }
+
       return 'normal'
     },
 
@@ -55,9 +65,13 @@ button {
   border-radius: 0.75rem;
   font-family: inherit;
   padding: 1rem;
+  padding-bottom: 1.25rem;
   border: none;
   letter-spacing: 1px;
   box-shadow: inset 0px var(--shadow-y-offset, -0.25rem) 0px var(--btn-color-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: var(--btn-color-hover);
@@ -68,6 +82,12 @@ button {
     --shadow-y-offset: calc(var(--offset) / 2);
     transform: translateY(calc(0.25rem / 4));
   }
+}
+
+.small {
+  padding: 0.75rem;
+  padding-bottom: 1rem;
+  border-radius: 0.35rem;
 }
 
 .yellow {
