@@ -12,7 +12,7 @@ interface State {
   isGameActive: boolean,
   XPlayer: number | null,
   OPlayer: number | null,
-  currentPlayer?: number,
+  currentPlayerType?: number,
   playHistory: moveRecord[],
   gameResults: gameResult[]
 }
