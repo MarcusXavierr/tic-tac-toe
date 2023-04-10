@@ -18,10 +18,6 @@ export default {
       required: true
     }
   },
-  mounted() {
-    console.log(this.iconType)
-    console.log(this.iconSource)
-  },
   computed: {
     iconSource() {
       switch (this.iconType) {
