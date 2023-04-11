@@ -72,6 +72,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
   &:hover {
     background: var(--btn-color-hover);
