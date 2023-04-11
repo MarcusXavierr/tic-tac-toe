@@ -1,10 +1,8 @@
 <template>
-  <Transition name="modal" >
-    <div v-if="show" class="modal-mask" @click="$emit('close')">
-      <div class="modal-container" @click.stop>
-        <slot>
-          Modal Not implemented
-        </slot>
+  <Transition name="modal">
+    <div v-if="show" class="modal-mask">
+      <div class="modal-container">
+        <slot> Modal Not implemented </slot>
       </div>
     </div>
   </Transition>
@@ -22,7 +20,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .modal-mask {
   position: fixed;
   z-index: 9998;
