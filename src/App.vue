@@ -38,11 +38,21 @@ export default {
 .container {
   width: 28.75rem;
 }
+
 .home {
   height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+@media (min-width: 772px) {
+  .container {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    height: 100vh;
+  }
 }
 </style>
