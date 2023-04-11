@@ -68,9 +68,11 @@ export default {
 
 <style scoped>
 .cells {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 1rem;
-  justify-content: space-between;
+  justify-items: center;
+  align-items: center;
 }
 </style>
