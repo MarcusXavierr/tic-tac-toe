@@ -11,9 +11,8 @@
 
 <script lang="ts">
 import BaseCell from '@/components/base/BaseCell.vue'
-import { IconType } from '@/enums/IconTypes'
-import { PlayerTypes } from '@/enums/Players'
 import { mapState, mapMutations } from 'vuex'
+import { getIconTypeFromPlayerTurn } from '../../services/IconService'
 
 interface cell {
   id: number
@@ -47,14 +46,14 @@ export default {
       if (cell.playerChoice != null) {
         return
       }
-      const data = { position: cellId, piece: this.currentPlayerType == PlayerTypes.XPlayer ? IconType.X : IconType.O}
+      const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType)}
       this.addPlayToHistory(data)
     }
   },
   computed: {
     ...mapState(['playHistory', 'currentPlayerType']),
     cells() {
-      return this.cellData.map((cell: any) => {
+      return this.cellData.map((cell: any): any => {
         const item = this.playHistory.find((x: any) => x.position == cell.id)
         if (!item) {
           return cell
