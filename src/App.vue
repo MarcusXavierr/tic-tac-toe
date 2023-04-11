@@ -36,7 +36,7 @@ export default {
 
 <style scoped>
 .container {
-  width: 28.75rem;
+  max-width: 28.75rem;
 }
 
 .home {
@@ -45,14 +45,16 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem;
 }
 
 @media (min-width: 772px) {
   .container {
     display: flex;
-    margin: auto;
     justify-content: center;
+    margin: auto;
     height: 100vh;
+    width: 28.75rem;
   }
 }
 </style>
