@@ -8,7 +8,6 @@
 </template>
 
 <script lang="ts">
-//See optimization to prevent mounting a component multiple times
 import { mapState } from 'vuex'
 import BaseIcon from '../base/BaseIcon.vue'
 import { PlayerTypes } from '@/enums/Players'
