@@ -36,6 +36,9 @@ export default {
 .modal-container {
   width: 100vw;
   margin: auto;
+  display: flex;
+  justify-content: center;
+  text-align: center;
   background-color: var(--semi-dark-navy);
   transition: all 0.3s ease;
 }
