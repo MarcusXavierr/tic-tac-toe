@@ -25,4 +25,10 @@ export default {
   flex-direction: column;
   gap: 4rem;
 }
+
+@media (min-width: 772px) {
+  .container {
+    padding: 0;
+  }
+}
 </style>
