@@ -50,8 +50,10 @@ export default {
   box-shadow: inset 0 -0.5rem 0 #10212a;
   padding-bottom: 0.5rem;
   border-radius: 0.75rem;
-  height: 96px;
-  width: 96px;
+  min-height: 96px;
+  min-width: 96px;
+  aspect-ratio: 1/1;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -59,8 +61,6 @@ export default {
 
 @media (min-width: 767px) {
   .cell {
-    width: 140px;
-    height: 140px;
     border-radius: 1rem;
   }
 }

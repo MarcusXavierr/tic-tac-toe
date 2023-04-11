@@ -74,5 +74,7 @@ export default {
   gap: 1rem;
   justify-items: center;
   align-items: center;
+  grid-auto-columns: auto;
+  grid-auto-rows: auto;
 }
 </style>
