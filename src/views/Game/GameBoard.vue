@@ -44,20 +44,17 @@ export default {
     ...mapMutations(['addPlayToHistory']),
     checkCell(cellId: number) {
       const cell = this.cells.find((cell: cell) => cell.id == cellId) as cell
-      console.log(cell)
       if (cell.playerChoice != null) {
-        console.log('pedeu mane')
         return
       }
       const data = { position: cellId, piece: this.currentPlayerType == PlayerTypes.XPlayer ? IconType.X : IconType.O}
-      console.log(data)
       this.addPlayToHistory(data)
     }
   },
   computed: {
     ...mapState(['playHistory', 'currentPlayerType']),
     cells() {
-      return this.cellData.map((cell: cell) => {
+      return this.cellData.map((cell: any) => {
         const item = this.playHistory.find((x: any) => x.position == cell.id)
         if (!item) {
           return cell
