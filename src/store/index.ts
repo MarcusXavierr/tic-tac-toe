@@ -26,6 +26,10 @@ export const store = createStore<State>({
     addPlayToHistory(state, data: moveRecord ) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
+    },
+    restartGame(state) {
+      state.playHistory = []
+      state.currentPlayerType = PlayerTypes.XPlayer
     }
   }
 })
