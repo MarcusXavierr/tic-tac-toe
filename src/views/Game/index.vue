@@ -1,22 +1,28 @@
 <template>
   <div class="container">
     <NavBar />
-    <BaseCell />
+    <GameBoard/>
   </div>
 </template>
 
 <script lang="ts">
-import BaseCell from '../../components/base/BaseCell.vue'
 import NavBar from './NavBar.vue'
+import GameBoard from './GameBoard.vue'
 
 export default {
   name: 'GamePage',
-  components: { BaseCell, NavBar }
+  components: {
+    NavBar,
+    GameBoard
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .container {
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
 }
 </style>
