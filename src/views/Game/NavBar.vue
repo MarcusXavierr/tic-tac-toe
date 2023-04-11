@@ -3,7 +3,7 @@
     <img src="@/assets/logo.svg" alt="" />
     <div class="turn">
       <img
-        src="@/assets/gray-icons/icon-x.svg"
+        :src="iconPath"
         alt="icon representing actual turn"
         width="16"
       />
@@ -16,10 +16,15 @@
 </template>
 
 <script lang="ts">
+import XIcon from '@/assets/gray-icons/icon-x.svg'
+import OIcon from '@/assets/gray-icons/icon-o.svg'
+
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseIcon from '@/components/base/BaseIcon.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
 import { IconType } from '@/enums/IconTypes'
+import { mapState } from 'vuex'
+import { PlayerTypes } from '@/enums/Players'
 
 export default {
   name: 'NavBar',
@@ -28,11 +33,18 @@ export default {
     BaseIcon
   },
   computed: {
+    ...mapState(['currentPlayerType']),
     buttonOptions() {
       return BtnColor
     },
     iconOptions() {
       return IconType
+    },
+    iconPath() {
+      if (this.currentPlayerType == PlayerTypes.OPlayer) {
+        return OIcon
+      }
+      return XIcon
     }
   }
 }
