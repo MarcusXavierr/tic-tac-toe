@@ -1,4 +1,3 @@
-import { IconType } from '@/enums/IconTypes'
 import { createStore } from 'vuex'
 import { PlayerTypes } from '../enums/Players'
 
@@ -25,10 +24,16 @@ export const store = createStore<State>({
       state.isGameActive = true
     },
     addPlayToHistory(state, data: moveRecord ) {
-      console.log(data)
       state.playHistory = state.playHistory.concat(data)
-      state.currentPlayerType = state.currentPlayerType == PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
-      console.log(data)
+      state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
     }
   }
 })
+
+function swapPlayerTypes(currentPlayerType?: number) {
+  if (currentPlayerType == PlayerTypes.XPlayer) {
+    return PlayerTypes.OPlayer
+  }
+
+  return PlayerTypes.XPlayer
+}
