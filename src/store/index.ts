@@ -31,6 +31,14 @@ export const store = createStore<State>({
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer
     }
+  },
+  getters: {
+    getPlayer: (state) => (player: PlayerTypes) => {
+      if (player == PlayerTypes.OPlayer) {
+        return state.OPlayer
+      }
+      return state.XPlayer
+    }
   }
 })
 
