@@ -9,8 +9,6 @@ const getIconTypeFromPlayerTurn = (playerTurn: number): number => {
   return IconType.O
 }
 
-
-
 export {
   getIconTypeFromPlayerTurn
 }
