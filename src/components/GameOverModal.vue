@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show="show" @click="$emit('close')">
+  <BaseModal :show="show">
     <div class="container">
       <div class="messages">
         <!-- TIE -->
@@ -22,8 +22,8 @@
         </div>
       </div>
       <div class="btn-group">
-        <BaseButton :button-color="colors.gray">QUIT</BaseButton>
-        <BaseButton :button-color="colors.yellow">NEXT ROUND</BaseButton>
+        <BaseButton :button-color="colors.gray" @click="$emit('quit')">QUIT</BaseButton>
+        <BaseButton :button-color="colors.yellow" @click="$emit('next')">NEXT ROUND</BaseButton>
       </div>
     </div>
   </BaseModal>
@@ -39,7 +39,7 @@ import { IconType } from '@/enums/IconTypes'
 
 export default {
   name: 'GameOverModal',
-  emits: ['close'],
+  emits: ['quit', 'next'],
   components: {
     BaseModal,
     BaseButton,
