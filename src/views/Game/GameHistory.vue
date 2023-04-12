@@ -35,7 +35,6 @@ export default {
       const initialState = { x: 0, o: 0, tie: 0 }
 
       return this.gameResults.reduce((acc: any, item: any) => {
-        console.log('aaaaaaaaaa', item, acc)
         if (item.winner == PlayerTypes.XPlayer) {
           return { ...acc, x: acc.x + 1 }
         }
