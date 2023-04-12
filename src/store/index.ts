@@ -1,3 +1,4 @@
+import { determineWinner } from '@/services/GameService'
 import { createStore } from 'vuex'
 import { PlayerTypes } from '../enums/Players'
 
@@ -30,6 +31,20 @@ export const store = createStore<State>({
     restartGame(state) {
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer
+    },
+    quitGame(state) {
+      state.isGameActive = false
+      const winner = determineWinner(state.playHistory)
+      state.gameResults = state.gameResults.concat({winner})
+
+      store.commit('restartGame')
+    },
+    nextRound(state) {
+      const winner = determineWinner(state.playHistory)
+      state.gameResults = state.gameResults.concat({winner})
+
+      store.commit('restartGame')
+
     }
   },
   getters: {
