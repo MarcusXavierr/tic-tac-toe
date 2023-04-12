@@ -34,8 +34,7 @@ export const store = createStore<State>({
     },
     quitGame(state) {
       state.isGameActive = false
-      const winner = determineWinner(state.playHistory)
-      state.gameResults = state.gameResults.concat({winner})
+      state.gameResults = []
 
       store.commit('restartGame')
     },
