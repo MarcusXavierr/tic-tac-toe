@@ -6,7 +6,8 @@
       :show="showModal"
       :winner="winner"
       :player-winner="player"
-      @close="showModal = false"
+      @quit="quit()"
+      @next="next()"
     />
   </div>
 </template>
@@ -14,7 +15,7 @@
 <script lang="ts">
 import NavBar from './NavBar.vue'
 import GameBoard from './GameBoard.vue'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import { determineWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
@@ -28,7 +29,7 @@ export default {
   },
   data() {
     return {
-      showModal: true,
+      showModal: false,
       winner: -1,
       player: -1
     }
@@ -56,10 +57,19 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['quitGame', 'nextRound']),
     show(winner: PlayerTypes | null) {
       this.winner = winner as PlayerTypes
       this.player = this.getPlayer(this.winner)
       this.showModal = true
+    },
+    quit() {
+      this.showModal = false
+      this.quitGame()
+    },
+    next() {
+      this.nextRound()
+      this.showModal = false
     }
   }
 }
