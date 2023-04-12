@@ -4,7 +4,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es6",
-    "module": "commonjs",
     "esModuleInterop": true,
     "types": ["jest"],
     "paths": {
