@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :show="show">
+  <BaseModal :show="show" @click="$emit('close')">
     <div class="container">
       <h3>RESTART GAME?</h3>
       <div class="btn-group">
