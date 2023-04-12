@@ -3,6 +3,10 @@
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "types": ["jest"],
     "paths": {
       "@/*": ["./src/*"]
     }
