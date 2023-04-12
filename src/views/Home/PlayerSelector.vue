@@ -59,7 +59,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .selector {
   background-color: var(--semi-dark-navy);
   width: 100%;

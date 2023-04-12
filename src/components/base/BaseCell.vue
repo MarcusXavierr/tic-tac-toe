@@ -43,7 +43,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .cell {
   background: var(--semi-dark-navy);
   box-shadow: inset 0 -0.5rem 0 #10212a;
