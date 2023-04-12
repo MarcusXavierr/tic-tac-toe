@@ -5,7 +5,7 @@ interface moveRecord {
 }
 
 interface gameResult {
-  winner: number | null
+  winner: PlayerTypes | null
 }
 
 interface State {
