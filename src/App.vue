@@ -18,7 +18,7 @@ import iconOOutline from './assets/icon-o-outline.svg'
 import iconX from './assets/icon-x.svg'
 import iconXOutline from './assets/icon-x-outline.svg'
 import iconOGray from './assets/gray-icons/icon-o.svg'
-import iconXGrayOutline from './assets/gray-icons/icon-o.svg'
+import iconXGrayOutline from './assets/gray-icons/icon-x-outline.svg'
 
 import { mapState } from 'vuex'
 export default {
