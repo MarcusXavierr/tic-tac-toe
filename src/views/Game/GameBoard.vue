@@ -3,6 +3,7 @@
     <BaseCell
       v-for="cell in cells"
       :key="cell.id"
+      ref="cell"
       :selected-icon="cell.playerChoice"
       @click="checkCell(cell.id)"
     />

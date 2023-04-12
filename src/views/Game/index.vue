@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <NavBar />
-    <GameBoard />
+    <GameBoard ref="board" />
     <GameOverModal
       :show="showModal"
       :winner="winner"
@@ -59,6 +59,10 @@ export default {
   methods: {
     ...mapMutations(['quitGame', 'nextRound']),
     show(winner: PlayerTypes | null) {
+      const board = this.$refs.board as any
+      const cells = board.$refs.cell
+      this.$nextTick(() => cells.forEach((cell: any) => cell.$el.dispatchEvent(new Event('mouseleave'))))
+
       this.winner = winner as PlayerTypes
       this.player = this.getPlayer(this.winner)
       this.showModal = true
