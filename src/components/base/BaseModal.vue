@@ -1,7 +1,7 @@
 <template>
   <Transition name="modal">
     <div v-if="show" class="modal-mask">
-      <div class="modal-container">
+      <div class="modal-container" @click.stop>
         <slot> Modal Not implemented </slot>
       </div>
     </div>
