@@ -1,3 +1,4 @@
+import { IconType } from '../enums/IconTypes'
 import { PlayerTypes } from '../enums/Players'
 import { cleanHistory, rangeWithLeap } from './utils/cleanHistory'
 
@@ -6,18 +7,18 @@ export function determineWinner(playHistory: moveRecord[]): PlayerTypes | null {
     return null
   }
 
-  if (findRow(PlayerTypes.XPlayer, playHistory)) {
+  if (findRow(IconType.X, playHistory)) {
     return PlayerTypes.XPlayer
   }
 
-  if (findRow(PlayerTypes.OPlayer, playHistory)) {
+  if (findRow(IconType.O, playHistory)) {
     return PlayerTypes.OPlayer
   }
 
   return null
 }
 
-function findRow(piece: PlayerTypes, playHistory: moveRecord[]): boolean {
+function findRow(piece: IconType, playHistory: moveRecord[]): boolean {
   const history = cleanHistory(piece, playHistory)
 
   return (
