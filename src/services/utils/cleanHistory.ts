@@ -1,6 +1,6 @@
-import type { PlayerTypes } from '../../enums/Players';
+import type { IconType } from '@/enums/IconTypes';
 
-export function cleanHistory(piece: PlayerTypes, playHistory: moveRecord[]): moveRecord[] {
+export function cleanHistory(piece: IconType, playHistory: moveRecord[]): moveRecord[] {
     const sortedHistory = playHistory.sort(sortByPosition);
     return sortedHistory.filter((item) => item.piece === piece);
 }
