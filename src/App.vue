@@ -51,6 +51,7 @@ export default {
 <style scoped>
 .container {
   max-width: 28.75rem;
+  margin: auto;
 }
 
 .home {
