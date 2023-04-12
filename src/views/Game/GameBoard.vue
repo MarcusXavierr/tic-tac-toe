@@ -8,10 +8,12 @@
       @click="checkCell(cell.id)"
     />
   </div>
+  <GameHistory />
 </template>
 
 <script lang="ts">
 import BaseCell from '@/components/base/BaseCell.vue'
+import GameHistory from './GameHistory.vue'
 import { mapState, mapMutations } from 'vuex'
 import { getIconTypeFromPlayerTurn } from '../../services/IconService'
 
@@ -23,7 +25,8 @@ interface cell {
 export default {
   name: 'GameBoard',
   components: {
-    BaseCell
+    BaseCell,
+    GameHistory
   },
   data() {
     return {
