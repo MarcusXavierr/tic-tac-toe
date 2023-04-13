@@ -4,8 +4,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es6",
-    "esModuleInterop": true,
-    "types": ["jest"],
     "paths": {
       "@/*": ["./src/*"]
     }
