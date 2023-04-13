@@ -4,7 +4,7 @@
       v-for="cell in cells"
       :key="cell.id"
       ref="cell"
-      :selected-icon="cell.playerChoice"
+      :selected-icon="cell.piece"
       @click="checkCell(cell.id)"
     />
   </div>
@@ -16,11 +16,7 @@ import BaseCell from '@/components/base/BaseCell.vue'
 import GameHistory from './GameHistory.vue'
 import { mapState, mapMutations } from 'vuex'
 import { getIconTypeFromPlayerTurn } from '../../services/IconService'
-
-interface cell {
-  id: number
-  playerChoice: number
-}
+import { generateBoard, type move } from '@/services/BoardService'
 
 export default {
   name: 'GameBoard',
@@ -28,44 +24,23 @@ export default {
     BaseCell,
     GameHistory
   },
-  data() {
-    return {
-      board: [
-        { id: 1, playerChoice: null },
-        { id: 2, playerChoice: null },
-        { id: 3, playerChoice: null },
-        { id: 4, playerChoice: null },
-        { id: 5, playerChoice: null },
-        { id: 6, playerChoice: null },
-        { id: 7, playerChoice: null },
-        { id: 8, playerChoice: null },
-        { id: 9, playerChoice: null }
-      ]
-    }
-  },
   methods: {
     ...mapMutations(['addPlayToHistory']),
     checkCell(cellId: number) {
-      const cell = this.cells.find((cell: cell) => cell.id == cellId) as cell
-      if (cell.playerChoice != null) {
+      const cell = this.cells.find((cell) => cell.id == cellId)
+      if (cell?.piece != null) {
         return
       }
-      const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType)}
+
+      const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType) }
       this.addPlayToHistory(data)
     }
   },
   computed: {
     ...mapState(['playHistory', 'currentPlayerType']),
-    cells() {
-      return this.board.map((cell: any): any => {
-        const item = this.playHistory.find((x: any) => x.position == cell.id)
-        if (!item) {
-          return cell
-        }
-
-        return { ...cell, playerChoice: item.piece }
-      })
-    }
+    cells(): move[] {
+      return generateBoard(this.playHistory)
+    },
   }
 }
 </script>
