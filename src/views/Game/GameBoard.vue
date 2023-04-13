@@ -27,6 +27,9 @@ export default {
   methods: {
     ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory']),
     checkCell(cellId: number) {
+      if (this.isWaitingToPlay) {
+        return
+      }
       const cell = this.cells.find((cell) => cell.id == cellId)
       if (cell?.piece != null) {
         return
@@ -42,7 +45,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI']),
+    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI', 'isWaitingToPlay']),
     cells(): move[] {
       return generateBoard(this.playHistory)
     },

@@ -2,7 +2,7 @@
   <div class="cell" @mouseenter="hover = true" @mouseleave="hover = false">
     <KeepAlive>
       <BaseIcon v-if="selectedIcon != null" :icon-type="selectedIcon"/>
-      <BaseIcon v-else-if="hover" :icon-type="hoverIcon" />
+      <BaseIcon v-else-if="hover && !isWaitingToPlay" :icon-type="hoverIcon" />
     </KeepAlive>
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentPlayerType']),
+    ...mapState(['currentPlayerType', 'isWaitingToPlay']),
     hoverIcon() {
       if (this.currentPlayerType == PlayerTypes.OPlayer) {
         return IconType.O_outline
