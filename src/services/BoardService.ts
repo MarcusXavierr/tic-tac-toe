@@ -34,7 +34,7 @@ export function generateBoard(playHistory: moveRecord[]): board {
   })
 }
 
-type move = {
+export type move = {
   id: number,
   piece: IconType | null
 }
