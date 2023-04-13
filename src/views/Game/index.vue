@@ -19,6 +19,8 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { determineWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
+import { createRandomMovement } from '@/services/BoardService'
+import { getIconTypeFromPlayerTurn } from '@/services/IconService'
 
 export default {
   name: 'GamePage',
@@ -35,7 +37,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory']),
+    ...mapState(['playHistory', 'isWaitingToPlay', 'currentPlayerType']),
     ...mapGetters(['getPlayer'])
   },
   watch: {
@@ -54,14 +56,29 @@ export default {
         default:
           this.show(-1)
       }
+    },
+    isWaitingToPlay() {
+      const winner = determineWinner(this.playHistory)
+      const shouldMakeAIMove = this.isWaitingToPlay && this.playHistory.length < 9 && winner == null
+
+      if (shouldMakeAIMove) {
+        const move = createRandomMovement(
+          this.playHistory,
+          getIconTypeFromPlayerTurn(this.currentPlayerType)
+        )
+
+        setTimeout(() => this.addPlayToHistory(move), 300)
+      }
     }
   },
   methods: {
-    ...mapMutations(['quitGame', 'nextRound']),
+    ...mapMutations(['quitGame', 'nextRound', 'addPlayToHistory']),
     show(winner: PlayerTypes | null) {
       const board = this.$refs.board as any
       const cells = board.$refs.cell
-      this.$nextTick(() => cells.forEach((cell: any) => cell.$el.dispatchEvent(new Event('mouseleave'))))
+      this.$nextTick(() =>
+        cells.forEach((cell: any) => cell.$el.dispatchEvent(new Event('mouseleave')))
+      )
 
       this.winner = winner as PlayerTypes
       this.player = this.getPlayer(this.winner)
