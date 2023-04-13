@@ -30,7 +30,7 @@ export default {
   },
   data() {
     return {
-      cellData: [
+      board: [
         { id: 1, playerChoice: null },
         { id: 2, playerChoice: null },
         { id: 3, playerChoice: null },
@@ -57,7 +57,7 @@ export default {
   computed: {
     ...mapState(['playHistory', 'currentPlayerType']),
     cells() {
-      return this.cellData.map((cell: any): any => {
+      return this.board.map((cell: any): any => {
         const item = this.playHistory.find((x: any) => x.position == cell.id)
         if (!item) {
           return cell
