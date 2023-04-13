@@ -12,6 +12,7 @@ import { mapState } from 'vuex'
 import BaseIcon from '../base/BaseIcon.vue'
 import { PlayerTypes } from '@/enums/Players'
 import { IconType } from '@/enums/IconTypes'
+import type { PropType } from 'vue'
 
 export default {
   name: 'BaseCell',
@@ -23,7 +24,7 @@ export default {
   },
   props: {
     selectedIcon: {
-      type: Number,
+      type: Number as PropType<IconType | null>,
       required: false,
       default: null
     }
