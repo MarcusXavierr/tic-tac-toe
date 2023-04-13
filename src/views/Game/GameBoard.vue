@@ -25,7 +25,7 @@ export default {
     GameHistory
   },
   methods: {
-    ...mapMutations(['addPlayToHistory']),
+    ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory']),
     checkCell(cellId: number) {
       const cell = this.cells.find((cell) => cell.id == cellId)
       if (cell?.piece != null) {
@@ -33,11 +33,16 @@ export default {
       }
 
       const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType) }
+      if (this.oponentIsAI) {
+        this.addAsyncPlayToHistory(data)
+        return
+      }
+
       this.addPlayToHistory(data)
     }
   },
   computed: {
-    ...mapState(['playHistory', 'currentPlayerType']),
+    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI']),
     cells(): move[] {
       return generateBoard(this.playHistory)
     },
