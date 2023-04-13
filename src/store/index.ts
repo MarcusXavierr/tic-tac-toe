@@ -36,9 +36,10 @@ export const store = createStore<State>({
     addPlayToHistory(state, data: moveRecord ) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
+      state.isWaitingToPlay = false
     },
 
-    addAIPlayToHistory(state, data: moveRecord) {
+    addAsyncPlayToHistory(state, data: moveRecord) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
       state.isWaitingToPlay = true
@@ -51,6 +52,7 @@ export const store = createStore<State>({
     restartGame(state) {
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer
+      state.isWaitingToPlay = false
     },
     quitGame(state) {
       state.isGameActive = false
