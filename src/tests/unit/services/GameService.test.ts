@@ -1,6 +1,7 @@
 import { IconType } from '../../../enums/IconTypes'
 import { PlayerTypes } from '../../../enums/Players'
 import { determineWinner } from '../../../services/GameService'
+import { describe, it, expect } from 'vitest'
 
 describe('Find out the winner on horizontal', () => {
   const cases = [
