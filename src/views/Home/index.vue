@@ -6,10 +6,12 @@
       v-model:o-type-selected="oTypeSelected"
     />
     <div class="buttons">
-      <BaseButton :button-color="btnColors.yellow" :is-large="true">NEW GAME (VS CPU)</BaseButton>
-      <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame"
-        >NEW GAME (VS PLAYER)</BaseButton
-      >
+      <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame">
+        NEW GAME (VS CPU)
+      </BaseButton>
+      <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame">
+        NEW GAME (VS PLAYER)
+      </BaseButton>
     </div>
   </div>
 </template>
@@ -35,9 +37,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['activateGame']),
+    ...mapMutations(['activateGame', 'activateAIGame']),
     startGame() {
       this.activateGame(this.players)
+    },
+    startIAGame() {
+      this.activateAIGame(this.players)
     }
   },
   computed: {
