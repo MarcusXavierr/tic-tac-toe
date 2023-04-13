@@ -10,6 +10,8 @@ interface activateData {
 export const store = createStore<State>({
   state() {
     return {
+      oponentIsAI: false,
+      isWaitingToPlay: false,
       isGameActive: false,
       XPlayer: null,
       OPlayer: null,
@@ -24,10 +26,28 @@ export const store = createStore<State>({
       state.currentPlayerType = PlayerTypes.XPlayer
       state.isGameActive = true
     },
+    activateAIGame(state, data: activateData) {
+      state.OPlayer = data.OPlayer,
+      state.XPlayer = data.XPlayer
+      state.currentPlayerType = PlayerTypes.XPlayer
+      state.oponentIsAI = true
+      state.isGameActive = true
+    },
     addPlayToHistory(state, data: moveRecord ) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
     },
+
+    addAIPlayToHistory(state, data: moveRecord) {
+      state.playHistory = state.playHistory.concat(data)
+      state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
+      state.isWaitingToPlay = true
+    },
+
+    allowUserToPlay(state) {
+      state.isWaitingToPlay = false
+    },
+
     restartGame(state) {
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer

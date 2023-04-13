@@ -9,6 +9,8 @@ interface gameResult {
 }
 
 interface State {
+  isWaitingToPlay: boolean,
+  oponentIsAI: boolean,
   isGameActive: boolean,
   XPlayer: number | null,
   OPlayer: number | null,
