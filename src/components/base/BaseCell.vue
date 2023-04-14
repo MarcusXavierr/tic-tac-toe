@@ -34,9 +34,6 @@ export default {
       default: false
     }
   },
-  mounted() {
-    console.log(this.belongsToWinnerPath, this.selectedIcon)
-  },
   computed: {
     ...mapState(['currentPlayerType', 'isWaitingToPlay']),
     hoverIcon() {
