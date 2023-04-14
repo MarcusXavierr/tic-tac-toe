@@ -74,7 +74,7 @@ button {
   justify-content: center;
   cursor: pointer;
 
-  &:hover {
+  &:hover:not(&:disabled){
     background: var(--btn-color-hover);
   }
 
@@ -88,6 +88,7 @@ button {
     --btn-color: var(--silver);
     --btn-color-hover: var(--silver-hover);
     --btn-color-shadow: var(--silver-shadow);
+    cursor: not-allowed;
   }
 
 }
