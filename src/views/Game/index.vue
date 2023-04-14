@@ -19,7 +19,7 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { determineWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
-import { createRandomMovement } from '@/services/BoardService'
+import { createBestMovement } from '@/services/BoardService'
 import { getIconTypeFromPlayerTurn } from '@/services/IconService'
 
 export default {
@@ -64,12 +64,12 @@ export default {
           this.isWaitingToPlay && this.playHistory.length < 9 && winner == null
 
         if (shouldMakeAIMove) {
-          const move = createRandomMovement(
+          const move = createBestMovement(
             this.playHistory,
             getIconTypeFromPlayerTurn(this.currentPlayerType)
           )
 
-          setTimeout(() => this.addPlayToHistory(move), 300)
+          setTimeout(() => this.addPlayToHistory(move), 0)
         }
       },
       immediate: true
