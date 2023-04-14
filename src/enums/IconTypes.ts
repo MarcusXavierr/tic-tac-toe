@@ -3,5 +3,7 @@ export enum IconType {
   O,
   X_outline,
   O_outline,
+  X_dark,
+  O_dark,
   Restart
 }
