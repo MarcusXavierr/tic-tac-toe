@@ -7,10 +7,15 @@ export function createRandomMovement(playHistory: moveRecord[], piece: IconType)
   const moves = possibleMoves(playHistory)
   const randomIndex = Math.floor(Math.random() * moves.length)
   const item = moves[randomIndex]
-  return { position: item.id, piece: piece }
+  return { position: item.id, piece }
 }
 
 export function createBestMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
+  //return random move if is the first play of AI
+  if (playHistory.length < 2) {
+    return createRandomMovement(playHistory, piece)
+  }
+
   let bestScore = -Infinity
   let bestMove: move
   const moves = possibleMoves(playHistory)
