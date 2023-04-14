@@ -12,7 +12,7 @@ export function createRandomMovement(playHistory: moveRecord[], piece: IconType)
 
 export function createBestMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
   //return random move if is the first play of AI
-  if (playHistory.length < 2) {
+  if (playHistory.length < 1) {
     return createRandomMovement(playHistory, piece)
   }
 
