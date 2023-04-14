@@ -22,7 +22,7 @@ export function createBestMovement(playHistory: moveRecord[], piece: IconType): 
 
   moves.forEach((move) => {
     const board = playHistory.concat({ position: move.id, piece })
-    const score = minimax(board, 0, false, swapIconType(piece))
+    const score = minimax(board, 0, false, swapIconType(piece), -Infinity, Infinity)
     if (score > bestScore) {
       bestScore = score
       bestMove = move
@@ -59,7 +59,8 @@ export function generateBoard(playHistory: moveRecord[]): board {
   })
 }
 
-function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piece: IconType) {
+
+function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piece: IconType, alpha: number, beta: number) {
   const result = determineWinner(board)
   if (result != null || board.length >= 9) {
     switch (result) {
@@ -75,23 +76,32 @@ function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piec
   if (isMaximizing) {
     let bestScore = -Infinity
     const moves = possibleMoves(board)
-    moves.forEach((move) => {
+    for (let i = 0; i < moves.length; i++) {
+      const move = moves[i]
       const tmpBoard = board.concat({ position: move.id, piece })
-      const score = minimax(tmpBoard, depth + 1, false, swapIconType(piece))
+      const score = minimax(tmpBoard, depth + 1, false, swapIconType(piece), alpha, beta)
       bestScore = Math.max(score, bestScore)
-    })
+      alpha = Math.max(alpha, bestScore)
+      if (beta <= alpha) {
+        break
+      }
+    }
     return bestScore
   }
 
   let bestScore = Infinity
   const moves = possibleMoves(board)
-  moves.forEach((move) => {
+  for (let i = 0; i < moves.length; i++) {
+    const move = moves[i]
     const tmpBoard = board.concat({ position: move.id, piece })
-    const score = minimax(tmpBoard, depth + 1, true, swapIconType(piece))
+    const score = minimax(tmpBoard, depth + 1, true, swapIconType(piece), alpha, beta)
     bestScore = Math.min(score, bestScore)
-  })
+    beta = Math.min(beta, bestScore)
+    if (beta <= alpha) {
+      break
+    }
+  }
   return bestScore
-
 }
 export type move = {
   id: number
