@@ -61,15 +61,16 @@ export default {
       handler() {
         const winner = determineWinner(this.playHistory)
         const shouldMakeAIMove =
-          this.isWaitingToPlay && this.playHistory.length < 9 && winner == null
+          this.isWaitingToPlay && (this.playHistory.length < 9 && winner == null)
 
         if (shouldMakeAIMove) {
-          const move = createBestMovement(
-            this.playHistory,
-            getIconTypeFromPlayerTurn(this.currentPlayerType)
-          )
-
-          setTimeout(() => this.addPlayToHistory(move), 0)
+          setTimeout(() => {
+            const move = createBestMovement(
+              this.playHistory,
+              getIconTypeFromPlayerTurn(this.currentPlayerType)
+            )
+            this.addPlayToHistory(move)
+          }, 0)
         }
       },
       immediate: true
