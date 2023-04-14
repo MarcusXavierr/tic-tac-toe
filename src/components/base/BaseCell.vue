@@ -58,6 +58,7 @@ export default {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (min-width: 767px) {
