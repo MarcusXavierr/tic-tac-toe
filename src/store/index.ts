@@ -1,3 +1,4 @@
+import { IconType } from '@/enums/IconTypes'
 import { determineWinner } from '@/services/GameService'
 import { createStore } from 'vuex'
 import { Players, PlayerTypes } from '../enums/Players'
@@ -48,6 +49,7 @@ export const store = createStore<State>({
     restartGame(state) {
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer
+      state.isWaitingToPlay = !state.isWaitingToPlay
       state.isWaitingToPlay = state.oponentIsAI && state.XPlayer == Players.playerTwo
     },
     quitGame(state) {
@@ -67,7 +69,12 @@ export const store = createStore<State>({
     },
     finishWaiting(state) {
       state.isWaitingToPlay = false
+    },
+
+    addWinnerPathToHistory(state, history) {
+      state.playHistory = history
     }
+
   },
   getters: {
     getPlayer: (state) => (player: PlayerTypes) => {
