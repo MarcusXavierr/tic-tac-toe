@@ -1,6 +1,5 @@
 import type { IconType } from '@/enums/IconTypes'
-import { PlayerTypes } from '@/enums/Players'
-import { determineWinner } from './GameService'
+import { minimax } from './utils/ai'
 import { swapIconType } from './utils/player'
 
 export function createRandomMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
@@ -12,9 +11,9 @@ export function createRandomMovement(playHistory: moveRecord[], piece: IconType)
 
 export function createBestMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
   //return random move if is the first play of AI
-  if (playHistory.length < 1) {
-    return createRandomMovement(playHistory, piece)
-  }
+  // if (playHistory.length < 1) {
+  //   return createRandomMovement(playHistory, piece)
+  // }
 
   let bestScore = -Infinity
   let bestMove: move
@@ -55,56 +54,13 @@ export function generateBoard(playHistory: moveRecord[]): board {
       return cell
     }
 
-    return { ...cell, piece: item.piece }
+    return { ...cell, piece: item.piece, belongsToWinnerPath: item.belongsToWinnerPath}
   })
 }
 
-
-function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piece: IconType, alpha: number, beta: number) {
-  const result = determineWinner(board)
-  if (result != null || board.length >= 9) {
-    switch (result) {
-      case null:
-        return 0
-      case PlayerTypes.XPlayer:
-        return -1
-      case PlayerTypes.OPlayer:
-        return 1
-    }
-  }
-
-  if (isMaximizing) {
-    let bestScore = -Infinity
-    const moves = possibleMoves(board)
-    for (let i = 0; i < moves.length; i++) {
-      const move = moves[i]
-      const tmpBoard = board.concat({ position: move.id, piece })
-      const score = minimax(tmpBoard, depth + 1, false, swapIconType(piece), alpha, beta)
-      bestScore = Math.max(score, bestScore)
-      alpha = Math.max(alpha, bestScore)
-      if (beta <= alpha) {
-        break
-      }
-    }
-    return bestScore
-  }
-
-  let bestScore = Infinity
-  const moves = possibleMoves(board)
-  for (let i = 0; i < moves.length; i++) {
-    const move = moves[i]
-    const tmpBoard = board.concat({ position: move.id, piece })
-    const score = minimax(tmpBoard, depth + 1, true, swapIconType(piece), alpha, beta)
-    bestScore = Math.min(score, bestScore)
-    beta = Math.min(beta, bestScore)
-    if (beta <= alpha) {
-      break
-    }
-  }
-  return bestScore
-}
 export type move = {
   id: number
   piece: IconType | null
+  belongsToWinnerPath?: boolean
 }
 type board = move[]
