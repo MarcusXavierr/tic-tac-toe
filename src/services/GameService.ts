@@ -18,6 +18,35 @@ export function determineWinner(playHistory: moveRecord[]): PlayerTypes | null {
   return null
 }
 
+export function findWinnerPath(piece: IconType, playHistory: moveRecord[]): number[] {
+  const sortedHistory = cleanHistory(piece, playHistory)
+
+  const diagonal = findDiagonalPatter(sortedHistory)
+  if (diagonal.length > 0) {
+    return diagonal
+  }
+  const vertical = findVerticalPattern(sortedHistory)
+  if (vertical.length > 0) {
+    return vertical
+  }
+
+  const horizontal = findHorizontalPattern(sortedHistory)
+  if (horizontal.length > 0) {
+    return horizontal
+  }
+  return []
+}
+
+export function markWinnerPath(playHistory: moveRecord[], path: number[]): moveRecord[] {
+  return playHistory.map(item => {
+    return { ...item, belongsToWinnerPath:  path.some(x => x == item.position)}
+  })
+}
+
+export function mapWinner(piece:IconType, playHistory: moveRecord[]): moveRecord[] {
+  return markWinnerPath(playHistory, findWinnerPath(piece, playHistory))
+}
+
 function findRow(piece: IconType, playHistory: moveRecord[]): boolean {
   const history = cleanHistory(piece, playHistory)
 
