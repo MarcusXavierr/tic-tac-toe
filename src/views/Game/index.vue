@@ -86,10 +86,10 @@ export default {
       'makePlayersWait',
       'addWinnerPathToHistory'
     ]),
-    show(winner: PlayerTypes | null, delay: number) {
+    show(winner: number, delay: number) {
       this.makePlayersWait()
-      if (winner != null) {
-        this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
+      if (winner != -1) {
+          this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
       }
 
       setTimeout(() => {
