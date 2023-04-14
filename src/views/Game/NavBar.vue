@@ -49,7 +49,6 @@ export default {
       const cells = boardRef.$refs.cell
       this.$nextTick(() => {
         cells.forEach((cell: any) => cell.$el.dispatchEvent(new Event('mouseleave')))
-        console.log('evento disparado')
       })
 
       this.restartGame()
