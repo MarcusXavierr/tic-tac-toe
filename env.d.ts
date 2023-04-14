@@ -1,7 +1,8 @@
 /// <reference types="vite/client" />
 interface moveRecord {
   position: number,
-  piece: number
+  piece: number,
+  belongsToWinnerPath?: boolean
 }
 
 interface gameResult {
