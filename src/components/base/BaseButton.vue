@@ -78,11 +78,18 @@ button {
     background: var(--btn-color-hover);
   }
 
-  &:active {
+  &:active:not(&:disabled){
     --offset: var(--shadow-y-offset, -0.25rem);
     --shadow-y-offset: calc(var(--offset) / 2);
     transform: translateY(calc(0.25rem / 4));
   }
+
+  &:disabled {
+    --btn-color: var(--silver);
+    --btn-color-hover: var(--silver-hover);
+    --btn-color-shadow: var(--silver-shadow);
+  }
+
 }
 
 .small {
