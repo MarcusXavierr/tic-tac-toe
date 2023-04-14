@@ -77,8 +77,21 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['quitGame', 'nextRound', 'addPlayToHistory']),
+    ...mapMutations([
+      'quitGame',
+      'nextRound',
+      'addPlayToHistory',
+      'finishWaiting',
+      'makePlayersWait'
+    ]),
     show(winner: PlayerTypes | null) {
+      this.makePlayersWait()
+      setTimeout(() => {
+        this.showItem(winner)
+        this.finishWaiting()
+      }, 500)
+    },
+    showItem(winner: PlayerTypes | null) {
       const board = this.$refs.board as any
       const cells = board.$refs.cell
       this.$nextTick(() =>

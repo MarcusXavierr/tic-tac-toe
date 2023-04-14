@@ -61,7 +61,12 @@ export const store = createStore<State>({
       state.gameResults = state.gameResults.concat({winner})
 
       store.commit('restartGame')
-
+    },
+    makePlayersWait(state) {
+      state.isWaitingToPlay = true
+    },
+    finishWaiting(state) {
+      state.isWaitingToPlay = false
     }
   },
   getters: {
