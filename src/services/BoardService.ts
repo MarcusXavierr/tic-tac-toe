@@ -1,14 +1,34 @@
-import type { IconType } from '../enums/IconTypes'
+import type { IconType } from '@/enums/IconTypes'
+import { PlayerTypes } from '@/enums/Players'
+import { determineWinner } from './GameService'
+import { swapIconType } from './utils/player'
 
 export function createRandomMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
   const moves = possibleMoves(playHistory)
-  const randomIndex = Math.floor(Math.random() * moves.length);
+  const randomIndex = Math.floor(Math.random() * moves.length)
   const item = moves[randomIndex]
   return { position: item.id, piece: piece }
 }
 
+export function createBestMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
+  let bestScore = -Infinity
+  let bestMove: move
+  const moves = possibleMoves(playHistory)
+
+  moves.forEach((move) => {
+    const board = playHistory.concat({ position: move.id, piece })
+    const score = minimax(board, 0, false, swapIconType(piece))
+    if (score > bestScore) {
+      bestScore = score
+      bestMove = move
+    }
+  })
+
+  return { position: bestMove!.id, piece }
+}
+
 export function possibleMoves(playHistory: moveRecord[]): board {
-  return generateBoard(playHistory).filter( item => item.piece == null )
+  return generateBoard(playHistory).filter((item) => item.piece == null)
 }
 
 export function generateBoard(playHistory: moveRecord[]): board {
@@ -34,8 +54,42 @@ export function generateBoard(playHistory: moveRecord[]): board {
   })
 }
 
+function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piece: IconType) {
+  const result = determineWinner(board)
+  if (result != null || board.length >= 9) {
+    switch (result) {
+      case null:
+        return 0
+      case PlayerTypes.XPlayer:
+        return -1
+      case PlayerTypes.OPlayer:
+        return 1
+    }
+  }
+
+  if (isMaximizing) {
+    let bestScore = -Infinity
+    const moves = possibleMoves(board)
+    moves.forEach((move) => {
+      const tmpBoard = board.concat({ position: move.id, piece })
+      const score = minimax(tmpBoard, depth + 1, false, swapIconType(piece))
+      bestScore = Math.max(score, bestScore)
+    })
+    return bestScore
+  }
+
+  let bestScore = Infinity
+  const moves = possibleMoves(board)
+  moves.forEach((move) => {
+    const tmpBoard = board.concat({ position: move.id, piece })
+    const score = minimax(tmpBoard, depth + 1, true, swapIconType(piece))
+    bestScore = Math.min(score, bestScore)
+  })
+  return bestScore
+
+}
 export type move = {
-  id: number,
+  id: number
   piece: IconType | null
 }
 type board = move[]
