@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <img src="@/assets/logo.svg" alt="" />
+    <img src="@/assets/logo.svg" alt="" @click="quitGame()"/>
     <div class="turn">
       <img :src="iconPath" alt="icon representing actual turn" width="16" />
       TURN
@@ -21,7 +21,7 @@ import BaseIcon from '@/components/base/BaseIcon.vue'
 
 import { BtnColor } from '@/enums/ButtonTypes'
 import { IconType } from '@/enums/IconTypes'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { PlayerTypes } from '@/enums/Players'
 import RetryGameModal from '@/components/RetryGameModal.vue'
 
@@ -38,6 +38,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['quitGame']),
     show() {
       this.showModal = true
     }
