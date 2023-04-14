@@ -60,8 +60,8 @@ export default {
     isWaitingToPlay: {
       handler() {
         const winner = determineWinner(this.playHistory)
-        const shouldMakeAIMove =
-          this.isWaitingToPlay && (this.playHistory.length < 9 && winner == null)
+        const gameIsOver = winner != null || this.playHistory.length == 9
+        const shouldMakeAIMove = this.isWaitingToPlay && !gameIsOver
 
         if (shouldMakeAIMove) {
           setTimeout(() => {
@@ -70,7 +70,7 @@ export default {
               getIconTypeFromPlayerTurn(this.currentPlayerType)
             )
             this.addPlayToHistory(move)
-          }, 0)
+          }, 175)
         }
       },
       immediate: true

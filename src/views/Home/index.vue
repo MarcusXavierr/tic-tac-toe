@@ -7,7 +7,7 @@
     />
     <div class="buttons">
       <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame" :disabled="oTypeSelected">
-        NEW GAME (VS CPU)
+        {{ oTypeSelected? 'SOON' :'NEW GAME (VS CPU)' }}
       </BaseButton>
       <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame">
         NEW GAME (VS PLAYER)
