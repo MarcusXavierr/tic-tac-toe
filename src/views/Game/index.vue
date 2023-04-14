@@ -16,7 +16,7 @@
 import NavBar from './NavBar.vue'
 import GameBoard from './GameBoard.vue'
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import { determineWinner } from '@/services/GameService'
+import { determineWinner, mapWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
 import { createBestMovement } from '@/services/BoardService'
@@ -82,10 +82,15 @@ export default {
       'nextRound',
       'addPlayToHistory',
       'finishWaiting',
-      'makePlayersWait'
+      'makePlayersWait',
+      'addWinnerPathToHistory'
     ]),
     show(winner: PlayerTypes | null, delay: number) {
       this.makePlayersWait()
+      if (winner != null) {
+        this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
+      }
+
       setTimeout(() => {
         this.showItem(winner)
         this.finishWaiting()
