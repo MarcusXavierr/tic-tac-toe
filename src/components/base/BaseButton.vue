@@ -6,7 +6,6 @@
 
 <script lang="ts">
 import { BtnColor } from '@/enums/ButtonTypes'
-import { mapState } from 'vuex'
 
 export default {
   name: 'BaseButton',
@@ -27,8 +26,6 @@ export default {
     },
   },
   computed: {
-    ...mapState(['cringe', 'foo']),
-
     color() {
       switch (this.buttonColor) {
         case BtnColor.blue:
