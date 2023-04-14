@@ -57,18 +57,22 @@ export default {
           this.show(-1)
       }
     },
-    isWaitingToPlay() {
-      const winner = determineWinner(this.playHistory)
-      const shouldMakeAIMove = this.isWaitingToPlay && this.playHistory.length < 9 && winner == null
+    isWaitingToPlay: {
+      handler() {
+        const winner = determineWinner(this.playHistory)
+        const shouldMakeAIMove =
+          this.isWaitingToPlay && this.playHistory.length < 9 && winner == null
 
-      if (shouldMakeAIMove) {
-        const move = createRandomMovement(
-          this.playHistory,
-          getIconTypeFromPlayerTurn(this.currentPlayerType)
-        )
+        if (shouldMakeAIMove) {
+          const move = createRandomMovement(
+            this.playHistory,
+            getIconTypeFromPlayerTurn(this.currentPlayerType)
+          )
 
-        setTimeout(() => this.addPlayToHistory(move), 300)
-      }
+          setTimeout(() => this.addPlayToHistory(move), 300)
+        }
+      },
+      immediate: true
     }
   },
   methods: {
