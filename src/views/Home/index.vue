@@ -37,12 +37,12 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['activateGame', 'activateAIGame']),
+    ...mapMutations(['activateGame']),
     startGame() {
-      this.activateGame(this.players)
+      this.activateGame({...this.players, oponentIsAI: false})
     },
     startIAGame() {
-      this.activateAIGame(this.players)
+      this.activateGame({...this.players, oponentIsAI: true})
     }
   },
   computed: {

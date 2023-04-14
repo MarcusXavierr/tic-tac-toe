@@ -1,10 +1,11 @@
 import { determineWinner } from '@/services/GameService'
 import { createStore } from 'vuex'
-import { PlayerTypes } from '../enums/Players'
+import { Players, PlayerTypes } from '../enums/Players'
 
 interface activateData {
-  XPlayer: number,
-  OPlayer: number
+  XPlayer: Players,
+  OPlayer: Players,
+  oponentIsAI: boolean
 }
 
 export const store = createStore<State>({
@@ -24,13 +25,8 @@ export const store = createStore<State>({
       state.OPlayer = data.OPlayer,
       state.XPlayer = data.XPlayer
       state.currentPlayerType = PlayerTypes.XPlayer
-      state.isGameActive = true
-    },
-    activateAIGame(state, data: activateData) {
-      state.OPlayer = data.OPlayer,
-      state.XPlayer = data.XPlayer
-      state.currentPlayerType = PlayerTypes.XPlayer
-      state.oponentIsAI = true
+      state.oponentIsAI = data.oponentIsAI
+      state.isWaitingToPlay = data.oponentIsAI && data.XPlayer == Players.playerTwo
       state.isGameActive = true
     },
     addPlayToHistory(state, data: moveRecord ) {
@@ -52,7 +48,7 @@ export const store = createStore<State>({
     restartGame(state) {
       state.playHistory = []
       state.currentPlayerType = PlayerTypes.XPlayer
-      state.isWaitingToPlay = false
+      state.isWaitingToPlay = state.oponentIsAI && state.XPlayer == Players.playerTwo
     },
     quitGame(state) {
       state.isGameActive = false
