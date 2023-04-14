@@ -30,12 +30,12 @@ describe('generate board', () => {
     const result = generateBoard(history)
     expect(result).toStrictEqual([
         { id: 1, piece: null },
-        { id: 2, piece: IconType.O },
+        { id: 2, piece: IconType.O, belongsToWinnerPath: undefined },
         { id: 3, piece: null },
-        { id: 4, piece: IconType.X },
-        { id: 5, piece: IconType.X },
+        { id: 4, piece: IconType.X, belongsToWinnerPath: undefined },
+        { id: 5, piece: IconType.X, belongsToWinnerPath: undefined},
         { id: 6, piece: null },
-        { id: 7, piece: IconType.X },
+        { id: 7, piece: IconType.X, belongsToWinnerPath: undefined },
         { id: 8, piece: null },
         { id: 9, piece: null }
     ])
