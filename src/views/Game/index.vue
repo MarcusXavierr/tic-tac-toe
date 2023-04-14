@@ -48,13 +48,13 @@ export default {
       }
       switch (winner) {
         case PlayerTypes.OPlayer:
-          this.show(PlayerTypes.OPlayer)
+          this.show(PlayerTypes.OPlayer, 500)
           break
         case PlayerTypes.XPlayer:
-          this.show(PlayerTypes.XPlayer)
+          this.show(PlayerTypes.XPlayer, 500)
           break
         default:
-          this.show(-1)
+          this.show(-1, 200)
       }
     },
     isWaitingToPlay: {
@@ -84,12 +84,12 @@ export default {
       'finishWaiting',
       'makePlayersWait'
     ]),
-    show(winner: PlayerTypes | null) {
+    show(winner: PlayerTypes | null, delay: number) {
       this.makePlayersWait()
       setTimeout(() => {
         this.showItem(winner)
         this.finishWaiting()
-      }, 500)
+      }, delay)
     },
     showItem(winner: PlayerTypes | null) {
       const board = this.$refs.board as any
