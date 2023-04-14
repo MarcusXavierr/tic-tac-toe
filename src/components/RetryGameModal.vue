@@ -4,7 +4,7 @@
       <h3>RESTART GAME?</h3>
       <div class="btn-group">
         <BaseButton :button-color="colors.gray" @click="$emit('close')">NO, CANCEL</BaseButton>
-        <BaseButton :button-color="colors.yellow" @click="restart()">YES, RESTART</BaseButton>
+        <BaseButton :button-color="colors.yellow" @click="$emit('restart')">YES, RESTART</BaseButton>
       </div>
     </div>
   </BaseModal>
@@ -17,17 +17,12 @@ import BaseButton from './base/BaseButton.vue'
 import BaseModal from './base/BaseModal.vue'
 export default {
   name: 'RetryGameModal',
-  emits: ['close'],
+  emits: ['close', 'restart'],
   components: {
     BaseModal,
     BaseButton
   },
   methods: {
-    ...mapMutations(['restartGame']),
-    restart() {
-      this.restartGame()
-      this.$emit('close')
-    }
   },
   computed: {
     colors() {

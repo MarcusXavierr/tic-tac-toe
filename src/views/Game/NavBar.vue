@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <img src="@/assets/logo.svg" alt="" @click="quitGame()"/>
+    <img src="@/assets/logo.svg" alt="" @click="quitGame()" />
     <div class="turn">
       <img :src="iconPath" alt="icon representing actual turn" width="16" />
       TURN
@@ -8,7 +8,11 @@
     <BaseButton :button-color="buttonOptions.gray" :is-small="true" @click="show()">
       <BaseIcon :icon-type="iconOptions.Restart" />
     </BaseButton>
-    <RetryGameModal :show="showModal" @close="showModal = false"></RetryGameModal>
+    <RetryGameModal
+      :show="showModal"
+      @close="showModal = false"
+      @restart="restart()"
+    ></RetryGameModal>
   </nav>
 </template>
 
@@ -31,14 +35,26 @@ export default {
     BaseButton,
     BaseIcon,
     RetryGameModal
-},
+  },
   data() {
     return {
       showModal: false
     }
   },
   methods: {
-    ...mapMutations(['quitGame']),
+    ...mapMutations(['quitGame', 'restartGame']),
+    restart() {
+      const boardRef = this.$parent!.$refs.board as any
+
+      const cells = boardRef.$refs.cell
+      this.$nextTick(() => {
+        cells.forEach((cell: any) => cell.$el.dispatchEvent(new Event('mouseleave')))
+        console.log('evento disparado')
+      })
+
+      this.restartGame()
+      this.showModal = false
+    },
     show() {
       this.showModal = true
     }
