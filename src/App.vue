@@ -17,8 +17,8 @@ import iconO from './assets/icon-o.svg'
 import iconOOutline from './assets/icon-o-outline.svg'
 import iconX from './assets/icon-x.svg'
 import iconXOutline from './assets/icon-x-outline.svg'
-import iconOGray from './assets/gray-icons/icon-o.svg'
-import iconXGrayOutline from './assets/gray-icons/icon-x-outline.svg'
+import iconOGrayOutline from './assets/gray-icons/icon-o-outline.svg'
+import iconXGray from './assets/gray-icons/icon-x.svg'
 
 import { mapState } from 'vuex'
 export default {
@@ -38,7 +38,7 @@ export default {
     }
   },
   created() {
-    const images = [iconO, iconX, iconOOutline, iconOGray, iconXOutline, iconXGrayOutline]
+    const images = [iconO, iconX, iconOOutline, iconXGray, iconXOutline, iconOGrayOutline]
 
     images.forEach((path) => {
       const img = new Image()

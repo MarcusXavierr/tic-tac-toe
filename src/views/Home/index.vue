@@ -32,8 +32,8 @@ export default {
   data() {
     return {
       btnColors: BtnColor,
-      xTypeSelected: false,
-      oTypeSelected: true
+      xTypeSelected: true,
+      oTypeSelected: false
     }
   },
   methods: {
