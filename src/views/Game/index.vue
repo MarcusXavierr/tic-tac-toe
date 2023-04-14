@@ -43,9 +43,10 @@ export default {
   watch: {
     playHistory() {
       const winner = determineWinner(this.playHistory)
-      if (winner == null && this.playHistory.length < 9) {
+      if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory) ) {
         return
       }
+
       switch (winner) {
         case PlayerTypes.OPlayer:
           this.show(PlayerTypes.OPlayer, 500)
@@ -95,6 +96,9 @@ export default {
         this.showItem(winner)
         this.finishWaiting()
       }, delay)
+    },
+    hasWinnerPath(history: any): boolean {
+      return history.some((item: any) => item.belongsToWinnerPath)
     },
     showItem(winner: PlayerTypes | null) {
       const board = this.$refs.board as any
