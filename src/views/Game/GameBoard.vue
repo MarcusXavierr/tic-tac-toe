@@ -5,6 +5,7 @@
       :key="cell.id"
       ref="cell"
       :selected-icon="cell.piece"
+      :belongs-to-winner-path="cell.belongsToWinnerPath"
       @click="checkCell(cell.id)"
     />
   </div>
