@@ -6,8 +6,8 @@
       v-model:o-type-selected="oTypeSelected"
     />
     <div class="buttons">
-      <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame" :disabled="oTypeSelected">
-        {{ oTypeSelected? 'SOON' :'NEW GAME (VS CPU)' }}
+      <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame">
+        NEW GAME (VS CPU)
       </BaseButton>
       <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame">
         NEW GAME (VS PLAYER)
@@ -39,10 +39,10 @@ export default {
   methods: {
     ...mapMutations(['activateGame']),
     startGame() {
-      this.activateGame({...this.players, oponentIsAI: false})
+      this.activateGame({ ...this.players, oponentIsAI: false })
     },
     startIAGame() {
-      this.activateGame({...this.players, oponentIsAI: true})
+      this.activateGame({ ...this.players, oponentIsAI: true })
     }
   },
   computed: {
