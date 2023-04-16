@@ -1,20 +1,32 @@
-import type { IconType } from "@/enums/IconTypes"
-import { PlayerTypes } from "@/enums/Players"
-import { possibleMoves } from "../BoardService"
-import { determineWinner } from "../GameService"
-import { swapIconType } from "./player"
+import type { IconType } from '@/enums/IconTypes'
+import { possibleMoves } from '../BoardService'
+import { determineWinner } from '../GameService'
+import { getIconTypeFromPlayerTurn } from '../IconService'
+import { swapIconType } from './player'
 
-export function minimax(board: moveRecord[], depth: number, isMaximizing: boolean, piece: IconType, alpha: number, beta: number) {
+export function minimax(
+  board: moveRecord[],
+  depth: number,
+  isMaximizing: boolean,
+  piece: IconType,
+  alpha: number,
+  beta: number
+) {
   const result = determineWinner(board)
   if (result != null || board.length >= 9) {
-    switch (result) {
-      case null:
-        return 0
-      case PlayerTypes.XPlayer:
-        return -1
-      case PlayerTypes.OPlayer:
-        return 1
+    if (result == null) {
+      return 0
     }
+
+    const icon = getIconTypeFromPlayerTurn(result)
+    const iconEqualsPiece = icon === piece
+
+    // if isMaximizing and iconEqualsPiece are the same value, the maximizer won
+    if (isMaximizing === iconEqualsPiece) {
+      return 1
+    }
+
+    return -1
   }
 
   if (isMaximizing) {
