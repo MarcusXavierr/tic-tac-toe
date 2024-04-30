@@ -1,4 +1,3 @@
-import { IconType } from '@/enums/IconTypes'
 import { determineWinner } from '@/services/GameService'
 import { createStore } from 'vuex'
 import { Players, PlayerTypes } from '../enums/Players'
@@ -30,13 +29,13 @@ export const store = createStore<State>({
       state.isWaitingToPlay = data.oponentIsAI && data.XPlayer == Players.playerTwo
       state.isGameActive = true
     },
-    addPlayToHistory(state, data: moveRecord ) {
+    addPlayToHistory(state, data: MoveRecord ) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
       state.isWaitingToPlay = false
     },
 
-    addAsyncPlayToHistory(state, data: moveRecord) {
+    addAsyncPlayToHistory(state, data: MoveRecord) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
       state.isWaitingToPlay = true

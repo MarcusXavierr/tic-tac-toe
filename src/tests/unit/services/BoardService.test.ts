@@ -25,7 +25,7 @@ describe('generate board', () => {
       { position: 4, piece: IconType.X },
       { position: 5, piece: IconType.X },
       { position: 7, piece: IconType.X },
-    ] as moveRecord[]
+    ] as MoveRecord[]
 
     const result = generateBoard(history)
     expect(result).toStrictEqual([
@@ -49,7 +49,7 @@ describe('pick only possible moves', () => {
       { position: 4, piece: IconType.X },
       { position: 5, piece: IconType.X },
       { position: 7, piece: IconType.X },
-    ] as moveRecord[]
+    ] as MoveRecord[]
 
     const result = possibleMoves(history)
 
@@ -74,7 +74,7 @@ describe('create random valid movement', () => {
       { position: 6, piece: IconType.O },
       { position: 7, piece: IconType.O },
       { position: 9, piece: IconType.O },
-    ] as moveRecord[]
+    ] as MoveRecord[]
 
     const result = createRandomMovement(history, IconType.X)
     expect(result).toStrictEqual({ position: 8, piece: IconType.X })

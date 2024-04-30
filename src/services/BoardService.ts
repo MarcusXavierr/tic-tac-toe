@@ -2,14 +2,14 @@ import type { IconType } from '@/enums/IconTypes'
 import { minimax } from './utils/ai'
 import { swapIconType } from './utils/player'
 
-export function createRandomMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
+export function createRandomMovement(playHistory: MoveRecord[], piece: IconType): MoveRecord {
   const moves = possibleMoves(playHistory)
   const randomIndex = Math.floor(Math.random() * moves.length)
   const item = moves[randomIndex]
   return { position: item.id, piece }
 }
 
-export function createBestMovement(playHistory: moveRecord[], piece: IconType): moveRecord {
+export function createBestMovement(playHistory: MoveRecord[], piece: IconType): MoveRecord {
   //return random move if is the first play of AI
   // if (playHistory.length < 1) {
   //   return createRandomMovement(playHistory, piece)
@@ -31,11 +31,11 @@ export function createBestMovement(playHistory: moveRecord[], piece: IconType): 
   return { position: bestMove!.id, piece }
 }
 
-export function possibleMoves(playHistory: moveRecord[]): board {
+export function possibleMoves(playHistory: MoveRecord[]): board {
   return generateBoard(playHistory).filter((item) => item.piece == null)
 }
 
-export function generateBoard(playHistory: moveRecord[]): board {
+export function generateBoard(playHistory: MoveRecord[]): board {
   const emptyBoard = [
     { id: 1, piece: null },
     { id: 2, piece: null },

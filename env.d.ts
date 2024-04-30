@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
-interface moveRecord {
+interface MoveRecord {
   position: number,
   piece: number,
   belongsToWinnerPath?: boolean
 }
 
-interface gameResult {
+interface GameResult {
   winner: PlayerTypes | null
 }
 
@@ -16,6 +16,6 @@ interface State {
   XPlayer: number | null,
   OPlayer: number | null,
   currentPlayerType?: number,
-  playHistory: moveRecord[],
-  gameResults: gameResult[]
+  playHistory: MoveRecord[],
+  gameResults: GameResult[]
 }

@@ -1,8 +1,8 @@
 import { IconType } from '../enums/IconTypes'
 import { PlayerTypes } from '../enums/Players'
-import { cleanHistory, rangeWithLeap, sortByPosition } from './utils/cleanHistory'
+import { cleanHistory, rangeWithLeap } from './utils/cleanHistory'
 
-export function determineWinner(playHistory: moveRecord[]): PlayerTypes | null {
+export function determineWinner(playHistory: MoveRecord[]): PlayerTypes | null {
   if (playHistory.length === 0) {
     return null
   }
@@ -18,7 +18,7 @@ export function determineWinner(playHistory: moveRecord[]): PlayerTypes | null {
   return null
 }
 
-export function findWinnerPath(piece: IconType, playHistory: moveRecord[]): number[] {
+export function findWinnerPath(piece: IconType, playHistory: MoveRecord[]): number[] {
   const sortedHistory = cleanHistory(piece, playHistory)
 
   const diagonal = findDiagonalPatter(sortedHistory)
@@ -37,17 +37,17 @@ export function findWinnerPath(piece: IconType, playHistory: moveRecord[]): numb
   return []
 }
 
-export function markWinnerPath(playHistory: moveRecord[], path: number[]): moveRecord[] {
+export function markWinnerPath(playHistory: MoveRecord[], path: number[]): MoveRecord[] {
   return playHistory.map(item => {
     return { ...item, belongsToWinnerPath:  path.some(x => x == item.position)}
   })
 }
 
-export function mapWinner(piece:IconType, playHistory: moveRecord[]): moveRecord[] {
+export function mapWinner(piece:IconType, playHistory: MoveRecord[]): MoveRecord[] {
   return markWinnerPath(playHistory, findWinnerPath(piece, playHistory))
 }
 
-function findRow(piece: IconType, playHistory: moveRecord[]): boolean {
+function findRow(piece: IconType, playHistory: MoveRecord[]): boolean {
   const history = cleanHistory(piece, playHistory)
 
   return (
@@ -57,7 +57,7 @@ function findRow(piece: IconType, playHistory: moveRecord[]): boolean {
   )
 }
 
-function findHorizontalPattern(history: moveRecord[]): number[] {
+function findHorizontalPattern(history: MoveRecord[]): number[] {
   const cases = rangeWithLeap(1, 9, 3)
 
   return cases.reduce<number[]>((acc, i) => {
@@ -74,7 +74,7 @@ function findHorizontalPattern(history: moveRecord[]): number[] {
   }, [])
 }
 
-function findVerticalPattern(history: moveRecord[]): number[] {
+function findVerticalPattern(history: MoveRecord[]): number[] {
   const cases = rangeWithLeap(1, 3, 1)
 
   return cases.reduce<number[]>((acc, i) => {
@@ -91,7 +91,7 @@ function findVerticalPattern(history: moveRecord[]): number[] {
   }, [])
 }
 
-function findDiagonalPatter(history: moveRecord[]): number[] {
+function findDiagonalPatter(history: MoveRecord[]): number[] {
   const mainAxis =
     history.some((move) => move.position === 1) &&
     history.some((move) => move.position === 5) &&

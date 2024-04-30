@@ -5,7 +5,7 @@ import { getIconTypeFromPlayerTurn } from '../IconService'
 import { swapIconType } from './player'
 
 export function minimax(
-  board: moveRecord[],
+  board: MoveRecord[],
   depth: number,
   isMaximizing: boolean,
   piece: IconType,

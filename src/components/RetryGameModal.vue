@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import { BtnColor } from '@/enums/ButtonTypes'
-import { mapMutations } from 'vuex'
 import BaseButton from './base/BaseButton.vue'
 import BaseModal from './base/BaseModal.vue'
 export default {
