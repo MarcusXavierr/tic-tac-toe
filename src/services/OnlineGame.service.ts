@@ -10,7 +10,7 @@ export class OnlineGameService {
 
   public constructor() {
     this.userId = uuidv4();
-    this.ws = new WebsocketService();
+    this.ws = new WebsocketService(this.userId);
   }
 
   get waitingOnRoom(): boolean {

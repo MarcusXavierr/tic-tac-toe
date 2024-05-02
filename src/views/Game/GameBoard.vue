@@ -18,6 +18,8 @@ import GameHistory from './GameHistory.vue'
 import { mapState, mapMutations } from 'vuex'
 import { getIconTypeFromPlayerTurn } from '../../services/IconService'
 import { generateBoard, type move } from '@/services/BoardService'
+import type { Client } from 'webstomp-client'
+import type { Room } from '@/services/OnlineGame.service'
 
 export default {
   name: 'GameBoard',
@@ -42,11 +44,30 @@ export default {
         return
       }
 
+      if (this.isOnlineGame) {
+        // TODO: refactor to make this a method
+        this.addAsyncPlayToHistory(data)
+        const ws = this.websocketClient as Client
+        const room = this.room as Room
+        // TODO: Remove this magic string
+        ws.send(`/app/rooms/${room.roomId}`, JSON.stringify({...data, userId: this.userId}))
+        return
+      }
+
       this.addPlayToHistory(data)
     }
   },
   computed: {
-    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI', 'isWaitingToPlay']),
+    ...mapState([
+        'playHistory',
+		'currentPlayerType',
+		'oponentIsAI',
+		'isWaitingToPlay',
+		'isOnlineGame',
+		'websocketClient',
+		'room',
+		'userId'
+    ]),
     cells(): move[] {
       return generateBoard(this.playHistory)
     },

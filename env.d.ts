@@ -13,12 +13,13 @@ interface State {
   isWaitingToPlay: boolean,
   oponentIsAI: boolean,
   isOnlineGame: boolean,
-  websocketClient?: Client,
-  room?: Room,
   isGameActive: boolean,
   XPlayer: number | null,
   OPlayer: number | null,
   currentPlayerType?: number,
   playHistory: MoveRecord[],
-  gameResults: GameResult[]
+  gameResults: GameResult[],
+  websocketClient?: Client,
+  room?: Room,
+  userId?: string
 }
