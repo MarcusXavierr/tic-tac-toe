@@ -22,9 +22,9 @@ export class WebsocketService {
     this.userId = userId;
   }
 
-  public handleCreatorConnection(room: Room, players: players) {
+  public handleCreatorConnection(room: Room) {
     store.state.room = room;
-    this.client.connect({}, this.getCreateRoomCallback(room, players), (error) => {
+    this.client.connect({}, this.getCreateRoomCallback(room), (error) => {
       store.commit('setRoomWaitingState', false)
       console.error(error);
     });
@@ -38,7 +38,7 @@ export class WebsocketService {
     });
   }
 
-  public getCreateRoomCallback(room: Room, players: players): (frame?: any) => any {
+  public getCreateRoomCallback(room: Room): (frame?: any) => any {
     const _this = this
     return () => {
       // Subscribe to the room
@@ -50,7 +50,6 @@ export class WebsocketService {
           return
         }
 
-        console.log('recebi a jogada: e vou aplicar ela', body);
         store.commit('addPlayToHistory', body);
       })
 
@@ -58,10 +57,7 @@ export class WebsocketService {
       // and start the game
       // TODO: refactor to put this room-joined in a constant too
       _this.client.subscribe(`${_this.messageBrokerBase}/room-joined/${room.roomId}`, () => {
-        console.error('Entraram na minha SALINHA!!!');
-        store.commit('activateOnlineGame', {
-          ...players,
-        })
+        store.commit('activateOnlineGame', getPlayersType(room))
 
         // Waits for the first move from the other player if the current player's piece is O
         if (room.creatorPiece === PlayerTypes.OPlayer) {
@@ -92,28 +88,25 @@ export class WebsocketService {
       // TODO: refactor to put this room-joined in a constant too
       _this.client.send(`${_this.messageListenerBase}/room-joined/${room.roomId}`, JSON.stringify({ roomId: room.roomId }));
 
+      const players = getPlayersType(room)
+      store.commit('activateOnlineGame', players)
+
       if (room.creatorPiece === PlayerTypes.XPlayer) {
-        store.commit('activateOnlineGame', {
-          XPlayer: Players.playerOne,
-          OPlayer: Players.playerTwo,
-        })
-
-        // Waits for the first move from the other player if the current player's piece is O
         store.commit('makePlayersWait')
-
-        return
       }
-
-      store.commit('activateOnlineGame', {
-        XPlayer: Players.playerTwo,
-        OPlayer: Players.playerOne,
-      })
     }
   }
 }
 
-// TODO: refactor this type with a better name and export it on the right place
-type players = {
-    OPlayer: Players;
-    XPlayer: Players;
+function getPlayersType(room: Room): { OPlayer: Players; XPlayer: Players } {
+  if (room.creatorPiece === PlayerTypes.OPlayer) {
+    return {
+      OPlayer: Players.playerOne,
+      XPlayer: Players.playerTwo,
+    }
+  }
+  return {
+    XPlayer: Players.playerOne,
+    OPlayer: Players.playerTwo,
+  }
 }

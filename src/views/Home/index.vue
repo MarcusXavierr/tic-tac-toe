@@ -62,7 +62,7 @@ export default {
     },
     createRoom() {
       this.showMultiplayerGameModal = false
-      this.service.createRoom(this.playerPiece, this.players)
+      this.service.createRoom(this.playerPiece)
     },
     joinRoom(roomId: string) {
       this.showMultiplayerGameModal = false

@@ -1,4 +1,4 @@
-import type { Players, PlayerTypes } from "@/enums/Players";
+import type { PlayerTypes } from "@/enums/Players";
 import { store } from "@/store";
 import { v4 as uuidv4 } from 'uuid';
 import { WebsocketService } from "./Websocket.service";
@@ -17,13 +17,13 @@ export class OnlineGameService {
     return this._roomId;
   }
 
-  createRoom(playerPiece: PlayerTypes, players: players) {
+  createRoom(playerPiece: PlayerTypes) {
     store.commit('setRoomWaitingState', true);
     this.generateRoom(playerPiece)
       .then(room => {
         console.log('Room created', room);
         this._roomId = room.roomId;
-        this.ws.handleCreatorConnection(room, players);
+        this.ws.handleCreatorConnection(room);
       })
       .catch(err => {
         console.error(err);
@@ -83,9 +83,4 @@ export type Room = {
   roomId: string;
   creatorId: string;
   creatorPiece: number; // 0 for O or 1 for X
-}
-
-type players = {
-    OPlayer: Players;
-    XPlayer: Players;
 }
