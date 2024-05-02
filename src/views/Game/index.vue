@@ -37,7 +37,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory', 'isWaitingToPlay', 'currentPlayerType']),
+    ...mapState(['playHistory', 'isWaitingToPlay', 'currentPlayerType', 'isOnlineGame']),
     ...mapGetters(['getPlayer'])
   },
   watch: {
@@ -60,6 +60,11 @@ export default {
     },
     isWaitingToPlay: {
       handler() {
+        // If it's an online game, we don't want to make the AI play
+        if (this.isOnlineGame) {
+          return
+        }
+
         const winner = determineWinner(this.playHistory)
         const gameIsOver = winner != null || this.playHistory.length == 9
         const shouldMakeAIMove = this.isWaitingToPlay && !gameIsOver

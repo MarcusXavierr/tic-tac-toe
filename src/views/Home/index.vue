@@ -10,9 +10,17 @@
         NEW GAME (VS CPU)
       </BaseButton>
       <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame">
-        NEW GAME (VS PLAYER)
+        NEW GAME (ONLINE)
       </BaseButton>
     </div>
+    <OnlineRoomModal
+      :show="showModal"
+      :selected="playerPiece"
+      @close="showModal = false"
+      @create="createRoom"
+      @join="joinRoom"
+    />
+    <WaitingRoomModal :show="service.waitingOnRoom" :room-id="service.roomId" />
   </div>
 </template>
 
@@ -20,29 +28,45 @@
 import BaseButton from '@/components/base/BaseButton.vue'
 import PlayerSelector from './PlayerSelector.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
-import { Players } from '@/enums/Players'
+import { Players, PlayerTypes } from '@/enums/Players'
 import { mapMutations } from 'vuex'
+import OnlineRoomModal from '@/components/OnlineRoomModal.vue'
+import { OnlineGameService } from '@/services/OnlineGame.service'
+import WaitingRoomModal from '@/components/WaitingRoomModal.vue'
 
 export default {
   name: 'HomePage',
   components: {
     BaseButton,
-    PlayerSelector
-  },
+    PlayerSelector,
+    OnlineRoomModal,
+    WaitingRoomModal
+},
   data() {
     return {
       btnColors: BtnColor,
       xTypeSelected: true,
-      oTypeSelected: false
+      oTypeSelected: false,
+      showModal: false,
+      service: new OnlineGameService()
     }
   },
   methods: {
     ...mapMutations(['activateGame']),
     startGame() {
-      this.activateGame({ ...this.players, oponentIsAI: false })
+      // this.activateGame({ ...this.players, oponentIsAI: false })
+      this.showModal = true
     },
     startIAGame() {
       this.activateGame({ ...this.players, oponentIsAI: true })
+    },
+    createRoom() {
+      this.showModal = false
+      this.service.createRoom(this.playerPiece, this.players)
+    },
+    joinRoom(roomId: string) {
+      this.showModal = false
+      this.service.joinRoom(roomId)
     }
   },
   computed: {
@@ -57,6 +81,9 @@ export default {
         OPlayer: Players.playerTwo,
         XPlayer: Players.playerOne
       }
+    },
+    playerPiece() {
+      return this.xTypeSelected ? PlayerTypes.XPlayer : PlayerTypes.OPlayer
     }
   }
 }
