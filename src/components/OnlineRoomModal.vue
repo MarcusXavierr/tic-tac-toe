@@ -46,7 +46,7 @@ export default {
   props: {
     show: Boolean,
     selected: {
-      type: Object,
+      type: Number,
       required: true
     }
   },

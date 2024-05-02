@@ -10,11 +10,11 @@ export class WebsocketService {
   private readonly brokerUrl = 'ws://localhost:8080/ws/join';
   private readonly messageBrokerBase = '/message-broker';
   private readonly messageListenerBase = '/app'
-  private _connected: boolean = false;
-  private _waitingUserToJoin: boolean = false;
   private readonly userId: string;
 
   constructor(userId: string) {
+    // BUG: Sometimes the client can't connect to the websocket server. Need investigate why
+    // and don't let the user start a multiplayer game until they have a websocket connection running
     this.socket = new WebSocket(this.brokerUrl);
     this.client = over(this.socket);
     store.state.websocketClient = this.client;
@@ -22,35 +22,25 @@ export class WebsocketService {
     this.userId = userId;
   }
 
-  public roomCreatorConnect(room: Room, players: players) {
+  public handleCreatorConnection(room: Room, players: players) {
     store.state.room = room;
     this.client.connect({}, this.getCreateRoomCallback(room, players), (error) => {
-      this._waitingUserToJoin = false;
+      store.commit('setRoomWaitingState', false)
       console.error(error);
     });
   }
 
-  public joinerConnect(room: Room) {
+  public handleJoinerConnection(room: Room) {
     store.state.room = room;
     this.client.connect({}, this.getJoinRoomCallback(room), (error) => {
-      this._waitingUserToJoin = false;
+      store.commit('setRoomWaitingState', false)
       console.error(error);
     });
-  }
-
-  get connected(): boolean {
-    return this._connected;
-  }
-
-  get waitingUserToJoin(): boolean {
-    return this._waitingUserToJoin;
   }
 
   public getCreateRoomCallback(room: Room, players: players): (frame?: any) => any {
-    this._waitingUserToJoin = true;
     const _this = this
     return () => {
-      _this._connected = true;
       // Subscribe to the room
       // TODO: refactor to put this rooms in a constant too
       _this.client.subscribe(`${_this.messageBrokerBase}/rooms/${room.roomId}`, (message) => {
@@ -79,7 +69,7 @@ export class WebsocketService {
         }
 
         // Now I can finally remove the waiting and let the user play
-        _this._waitingUserToJoin = false;
+        store.commit('setRoomWaitingState', false)
       })
     }
   }
@@ -87,7 +77,6 @@ export class WebsocketService {
   public getJoinRoomCallback(room: Room): (frame?: any) => any {
     const _this = this
     return () => {
-      _this._connected = true;
       // TODO: refactor to put this rooms in a constant too
       _this.client.subscribe(`${_this.messageBrokerBase}/rooms/${room.roomId}`, (message) => {
         // If the current player is the creator of the room, skip the message handling because was the one who sent it
@@ -128,5 +117,3 @@ type players = {
     OPlayer: Players;
     XPlayer: Players;
 }
-
-type MoveWithUserId = MoveRecord & { userId: string };
