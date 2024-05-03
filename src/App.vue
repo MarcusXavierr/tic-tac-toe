@@ -1,8 +1,10 @@
 <template>
   <div class="container">
-    <GamePage v-if="isGameActive" />
-    <div class="home" v-else>
-      <HomePage />
+    <GamePage v-show="isGameActive" />
+    <div class="home" v-show="!isGameActive">
+      <KeepAlive>
+        <HomePage />
+      </KeepAlive>
     </div>
   </div>
 </template>
