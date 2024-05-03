@@ -6,23 +6,17 @@ import { WebsocketService } from "./Websocket.service";
 export class MultiplayerGameService {
   public readonly userId: string;
   private readonly ws: WebsocketService;
-  private _roomId: string = '123123123';
 
   public constructor() {
     this.userId = uuidv4();
     this.ws = new WebsocketService(this.userId);
   }
 
-  get roomId(): string {
-    return this._roomId;
-  }
-
   createRoom(playerPiece: PlayerTypes) {
     store.commit('setRoomWaitingState', true);
     this.generateRoom(playerPiece)
       .then(room => {
-        console.log('Room created', room);
-        this._roomId = room.roomId;
+        store.commit('setRoom', room);
         this.ws.handleCreatorConnection(room);
       })
       .catch(err => {
@@ -34,8 +28,7 @@ export class MultiplayerGameService {
   joinRoom(roomId: string) {
     this.getRoom(roomId)
       .then(room => {
-        console.log('Room joined', room);
-        this._roomId = room.roomId;
+        store.commit('setRoom', room);
         this.ws.handleJoinerConnection(room);
       })
       .catch(err => {
