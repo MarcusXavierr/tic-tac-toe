@@ -1,39 +1,59 @@
 import type { PlayerTypes } from "@/enums/Players";
 import { store } from "@/store";
 import { v4 as uuidv4 } from 'uuid';
+import type { Client } from "webstomp-client";
 import { WebsocketService } from "./Websocket.service";
 
 export class MultiplayerGameService {
   public readonly userId: string;
   private readonly ws: WebsocketService;
+  private readonly httpRoomsEndpoint: string = import.meta.env.VITE_HTTP_ROOMS_ENDPOINT;
 
   public constructor() {
     this.userId = uuidv4();
     this.ws = new WebsocketService(this.userId);
   }
 
-  createRoom(playerPiece: PlayerTypes) {
+  async createRoom(playerPiece: PlayerTypes) {
     store.commit('setRoomWaitingState', true);
-    this.generateRoom(playerPiece)
-      .then(room => {
-        store.commit('setRoom', room);
-        this.ws.handleCreatorConnection(room);
-      })
-      .catch(err => {
-        console.error(err);
-        store.commit('setRoomWaitingState', false);
-      });
+    this.detachFromOlderConnections()
+    try {
+      const room = await this.generateRoom(playerPiece)
+      store.commit('setRoom', room);
+      this.ws.handleCreatorConnection(room);
+
+    } catch (error) {
+      console.error(error);
+      store.commit('setRoomWaitingState', false);
+    }
   }
 
-  joinRoom(roomId: string) {
-    this.getRoom(roomId)
-      .then(room => {
-        store.commit('setRoom', room);
-        this.ws.handleJoinerConnection(room);
-      })
-      .catch(err => {
-        console.error(err);
-      });
+  async joinRoom(roomId: string) {
+    this.detachFromOlderConnections()
+    try {
+      const room = await this.getRoom(roomId)
+      store.commit('setRoom', room);
+      this.ws.handleJoinerConnection(room);
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  private detachFromOlderConnections() {
+    // unsubscribe from the room's websocket
+    const client = store.state.websocketClient as Client | undefined;
+    const room = store.state.room as Room | undefined;
+    if (client && room) {
+      client.unsubscribe(`${this.ws.gameRoomPath}/${room.roomId}`);
+
+      if (room.creatorId === this.userId) {
+        client.unsubscribe(`${this.ws.roomWaitingPath}/${room.roomId}`);
+      }
+    }
+
+    // Delete the room from the server
+    fetch(`${this.httpRoomsEndpoint}/${room?.roomId}`, {method: 'DELETE'}).catch(console.error)
   }
 
   private async generateRoom(playerPiece: PlayerTypes) {
@@ -43,8 +63,7 @@ export class MultiplayerGameService {
       creatorPiece: playerPiece.valueOf()
     }
 
-    // TODO: colocar isso num .env
-    const response = await fetch('http://localhost:8080/api/rooms', {
+    const response = await fetch(this.httpRoomsEndpoint, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -62,8 +81,7 @@ export class MultiplayerGameService {
 
 
   private async getRoom(roomId: string) {
-    // TODO: colocar isso num .env
-    const response = await fetch(`http://localhost:8080/api/rooms/${roomId}`)
+    const response = await fetch(`${this.httpRoomsEndpoint}/${roomId}`)
     if (!response.ok) {
       throw new Error('Failed to get room');
     }
