@@ -75,5 +75,5 @@ export class MultiplayerGameService {
 export type Room = {
   roomId: string;
   creatorId: string;
-  creatorPiece: number; // 0 for O or 1 for X
+  creatorPiece: PlayerTypes;
 }
