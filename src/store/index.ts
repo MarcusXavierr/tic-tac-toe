@@ -1,5 +1,6 @@
 import { determineWinner } from '@/services/GameService'
 import type { Room } from '@/services/MultiplayerGame.service'
+import { quitRoom } from '@/services/utils/websocket.utils'
 import { createStore } from 'vuex'
 import type { Client } from 'webstomp-client'
 import { Players, PlayerTypes } from '../enums/Players'
@@ -68,7 +69,11 @@ export const store = createStore<State>({
     quitGame(state) {
       state.isGameActive = false
       state.gameResults = []
-
+      // TODO: refactor this to be more modular e less coupled to the app state management
+      if (state.isOnlineGame) {
+        // TODO: Also destroy websocket connections here?
+        quitRoom(state.websocketClient, state.room, state.userId!)
+      }
       store.commit('restartGame')
     },
     // BUG: On multiplayer, when the player two goest to next round, they can play, even if it's not their turn
