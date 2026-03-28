@@ -19,8 +19,7 @@ export const store = createStore<State>({
       OPlayer: null,
       playHistory: [],
       gameResults: [],
-      isOnlineGame: false,
-      isWaitingForOponentJoin: false
+      isOnlineGame: false
     }
   },
   mutations: {
@@ -86,13 +85,8 @@ export const store = createStore<State>({
     addWinnerPathToHistory(state, history) {
       state.playHistory = history
     },
-
     setWebsocketClient(state, client: Client) {
       state.websocketClient = client
-    },
-
-    setRoomWaitingState(state, isWaiting: boolean) {
-      state.isWaitingForOponentJoin = isWaiting
     }
   },
   getters: {

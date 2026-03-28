@@ -14,13 +14,13 @@
       </BaseButton>
     </div>
     <OnlineRoomModal
-      :show="showMultiplayerGameModal"
+      :show="showModal"
       :selected="playerPiece"
-      @close="showMultiplayerGameModal = false"
+      @close="showModal = false"
       @create="createRoom"
       @join="joinRoom"
     />
-    <WaitingRoomModal :show="isWaitingForOponentJoin && !showMultiplayerGameModal" :room-id="service.roomId" />
+    <WaitingRoomModal :show="service.waitingOnRoom" :room-id="service.roomId" />
   </div>
 </template>
 
@@ -29,7 +29,7 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import PlayerSelector from './PlayerSelector.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
 import { Players, PlayerTypes } from '@/enums/Players'
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 import OnlineRoomModal from '@/components/OnlineRoomModal.vue'
 import { OnlineGameService } from '@/services/OnlineGame.service'
 import WaitingRoomModal from '@/components/WaitingRoomModal.vue'
@@ -47,7 +47,7 @@ export default {
       btnColors: BtnColor,
       xTypeSelected: true,
       oTypeSelected: false,
-      showMultiplayerGameModal: false,
+      showModal: false,
       service: new OnlineGameService()
     }
   },
@@ -55,22 +55,21 @@ export default {
     ...mapMutations(['activateGame']),
     startGame() {
       // this.activateGame({ ...this.players, oponentIsAI: false })
-      this.showMultiplayerGameModal = true
+      this.showModal = true
     },
     startIAGame() {
       this.activateGame({ ...this.players, oponentIsAI: true })
     },
     createRoom() {
-      this.showMultiplayerGameModal = false
+      this.showModal = false
       this.service.createRoom(this.playerPiece, this.players)
     },
     joinRoom(roomId: string) {
-      this.showMultiplayerGameModal = false
+      this.showModal = false
       this.service.joinRoom(roomId)
     }
   },
   computed: {
-    ...mapState(['isWaitingForOponentJoin']),
     players() {
       if (this.oTypeSelected) {
         return {

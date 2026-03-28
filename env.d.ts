@@ -21,6 +21,5 @@ interface State {
   gameResults: GameResult[],
   websocketClient?: Client,
   room?: Room,
-  userId?: string,
-  isWaitingForOponentJoin: boolean,
+  userId?: string
 }

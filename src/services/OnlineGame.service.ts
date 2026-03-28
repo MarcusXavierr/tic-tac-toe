@@ -1,11 +1,11 @@
 import type { Players, PlayerTypes } from "@/enums/Players";
-import { store } from "@/store";
 import { v4 as uuidv4 } from 'uuid';
 import { WebsocketService } from "./Websocket.service";
 
 export class OnlineGameService {
   public readonly userId: string;
   private readonly ws: WebsocketService;
+  private _waitingOnRoom: boolean = false;
   private _roomId: string = '123123123';
 
   public constructor() {
@@ -13,21 +13,33 @@ export class OnlineGameService {
     this.ws = new WebsocketService(this.userId);
   }
 
+  get waitingOnRoom(): boolean {
+    // If the user is waiting on a room
+    // return when the ws.isWaitingUserToJoin is resolved
+    // this only applies to users creating a room
+    // TODO: Write logic to wipe out all data, besides userId
+    if (this._waitingOnRoom) {
+      return this.ws.waitingUserToJoin;
+    }
+
+    return false; // Change to false, just debugging
+  }
+
   get roomId(): string {
     return this._roomId;
   }
 
   createRoom(playerPiece: PlayerTypes, players: players) {
-    store.commit('setRoomWaitingState', true);
+    this._waitingOnRoom = true;
     this.generateRoom(playerPiece)
       .then(room => {
         console.log('Room created', room);
         this._roomId = room.roomId;
-        this.ws.handleCreatorConnection(room, players);
+        this.ws.roomCreatorConnect(room, players);
       })
       .catch(err => {
         console.error(err);
-        store.commit('setRoomWaitingState', false);
+        this._waitingOnRoom = false;
       });
   }
 
@@ -36,7 +48,7 @@ export class OnlineGameService {
       .then(room => {
         console.log('Room joined', room);
         this._roomId = room.roomId;
-        this.ws.handleJoinerConnection(room);
+        this.ws.joinerConnect(room);
       })
       .catch(err => {
         console.error(err);
@@ -50,7 +62,6 @@ export class OnlineGameService {
       creatorPiece: playerPiece.valueOf()
     }
 
-    // TODO: colocar isso num .env
     const response = await fetch('http://localhost:8080/api/rooms', {
       method: 'POST',
       headers: {
@@ -69,7 +80,6 @@ export class OnlineGameService {
 
 
   private async getRoom(roomId: string) {
-    // TODO: colocar isso num .env
     const response = await fetch(`http://localhost:8080/api/rooms/${roomId}`)
     if (!response.ok) {
       throw new Error('Failed to get room');
