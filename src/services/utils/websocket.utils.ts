@@ -10,10 +10,10 @@ export function parseMovementMessage(message: Message): MoveRecord & {userId: st
       userId: z.string(),
       position: z.number(),
       piece: z.nativeEnum(PlayerTypes),
-      belongsToWinnerPath: z.boolean().optional().nullable(),
+      belongsToWinnerPath: z.boolean().optional(),
     });
 
-    return parser.parse(body) as MoveRecord & {userId: string};
+    return parser.parse(body);
   } catch (e) {
     console.error(e);
     throw new Error("Failed to parse websocket message!");
