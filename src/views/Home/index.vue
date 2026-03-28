@@ -9,40 +9,62 @@
       <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame">
         NEW GAME (VS CPU)
       </BaseButton>
-      <BaseButton :button-color="btnColors.blue" :is-large="true" @click="startGame">
+      <BaseButton :button-color="btnColors.blue" :is-large="true" @click="openMultiplayerModal">
         NEW GAME (VS PLAYER)
       </BaseButton>
     </div>
+
+    <MultiplayerModal
+      :show="showMultiplayerModal"
+      @create="handleMultiplayerCreate"
+      @join="handleMultiplayerJoin"
+      @cancel="closeMultiplayerModal"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import BaseButton from '@/components/base/BaseButton.vue'
 import PlayerSelector from './PlayerSelector.vue'
+import MultiplayerModal from '@/components/MultiplayerModal.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
 import { Players } from '@/enums/Players'
+import { PlayerTypes } from '@/enums/Players'
 import { mapMutations } from 'vuex'
 
 export default {
   name: 'HomePage',
   components: {
     BaseButton,
-    PlayerSelector
+    PlayerSelector,
+    MultiplayerModal
   },
   data() {
     return {
       btnColors: BtnColor,
       xTypeSelected: true,
-      oTypeSelected: false
+      oTypeSelected: false,
+      showMultiplayerModal: false
     }
   },
   methods: {
     ...mapMutations(['activateGame']),
-    startGame() {
-      this.activateGame({ ...this.players, oponentIsAI: false })
-    },
     startIAGame() {
       this.activateGame({ ...this.players, oponentIsAI: true })
+    },
+    openMultiplayerModal() {
+      this.showMultiplayerModal = true
+    },
+    closeMultiplayerModal() {
+      this.showMultiplayerModal = false
+    },
+    handleMultiplayerCreate(roomName: string, playerName: string, playerType: PlayerTypes) {
+      // Phase 2: call MultiplayerService.createRoom(roomName) then joinRoom(roomName, playerName)
+      console.log('create', { roomName, playerName, playerType })
+    },
+    handleMultiplayerJoin(roomName: string, playerName: string) {
+      // Phase 2: call MultiplayerService.joinRoom(roomName, playerName)
+      console.log('join', { roomName, playerName })
     }
   },
   computed: {
@@ -76,11 +98,5 @@ export default {
   flex-direction: column;
   gap: 1rem;
   width: 100%;
-}
-
-.player-type {
-  img {
-    color: blue;
-  }
 }
 </style>
