@@ -40,8 +40,7 @@ export default {
       showModal: false,
       winner: -1,
       player: -1,
-      _isResettingRound: false,
-      _showModalTimeout: null as number | null
+      _isResettingRound: false
     }
   },
   computed: {
@@ -103,13 +102,7 @@ export default {
     },
     playAgainReceived() {
       if (this.playAgainReceived && this.playAgainSent) {
-        if (this._showModalTimeout !== null) {
-          clearTimeout(this._showModalTimeout)
-          this._showModalTimeout = null
-        }
         this._isResettingRound = true
-        this.winner = -1
-        this.player = -1
         this.nextRound()
         this.showModal = false
       }
@@ -146,10 +139,10 @@ export default {
         this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
       }
 
-      this._showModalTimeout = setTimeout(() => {
+      setTimeout(() => {
         this.showItem(winner)
         this.finishWaiting()
-      }, delay) as unknown as number
+      }, delay)
     },
     hasWinnerPath(history: any): boolean {
       return history.some((item: any) => item.belongsToWinnerPath)
