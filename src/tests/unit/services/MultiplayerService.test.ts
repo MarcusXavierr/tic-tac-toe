@@ -118,6 +118,15 @@ describe('MultiplayerService.joinRoom', () => {
     })
   })
 
+  it('calls onMessage callback with parsed play_again message', () => {
+    const onMessage = vi.fn()
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', onMessage, vi.fn())
+    const ws = MockWebSocket.instances[0]
+    ws.simulateMessage({ type: 'play_again' })
+    expect(onMessage).toHaveBeenCalledWith({ type: 'play_again' })
+  })
+
   it('calls onClose callback when WebSocket closes', () => {
     const onClose = vi.fn()
     const service = new MultiplayerService()
@@ -169,6 +178,23 @@ describe('MultiplayerService.disconnect', () => {
     service.disconnect()
     // onClose should NOT fire on intentional disconnect
     expect(onClose).not.toHaveBeenCalled()
+  })
+})
+
+// ── sendPlayAgain ─────────────────────────────────────────────────────────────
+describe('MultiplayerService.sendPlayAgain', () => {
+  it('sends a JSON play_again message through the open WebSocket', () => {
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', vi.fn(), vi.fn())
+    service.sendPlayAgain()
+    const ws = MockWebSocket.instances[0]
+    expect(ws.sentMessages).toHaveLength(1)
+    expect(JSON.parse(ws.sentMessages[0])).toEqual({ type: 'play_again' })
+  })
+
+  it('does nothing when no WebSocket is open', () => {
+    const service = new MultiplayerService()
+    expect(() => service.sendPlayAgain()).not.toThrow()
   })
 })
 

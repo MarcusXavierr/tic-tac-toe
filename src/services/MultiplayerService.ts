@@ -2,6 +2,7 @@ export type ServerMessage =
   | { type: 'player_joined'; name: string; player_type: 'x' | 'o'; order: number }
   | { type: 'player_disconnected' }
   | { type: 'move'; cell: number }
+  | { type: 'play_again' }
 
 function toWsUrl(httpBase: string): string {
   return httpBase.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://')
@@ -45,6 +46,11 @@ export class MultiplayerService {
   sendMove(cell: number): void {
     if (!this.ws) return
     this.ws.send(JSON.stringify({ type: 'move', cell }))
+  }
+
+  sendPlayAgain(): void {
+    if (!this.ws) return
+    this.ws.send(JSON.stringify({ type: 'play_again' }))
   }
 
   disconnect(): void {
