@@ -8,15 +8,14 @@ import { parseMovementMessage } from "./utils/websocket.utils";
 export class WebsocketService {
   private socket: WebSocket;
   private client: Client;
-
-  private readonly stompEndpoint = import.meta.env.VITE_WS_CONNECT_HOST
-  private readonly broker = import.meta.env.VITE_WS_MESSAGE_BROKER_BASE
-  private readonly listener = import.meta.env.VITE_WS_MESSAGE_LISTENER_BASE
-
-  public readonly gameRoomPath = `${this.broker}/rooms`;
-  public readonly roomWaitingPath = `${this.broker}/room-joined`;
+  // TODO: Colocar variaveis de ambiente no .env
+  private readonly stompEndpoint = 'ws://localhost:8080/ws/join';
+  private readonly broker = '/message-broker';
+  private readonly listener = '/app'
+  // TODO: mount this paths on constructor to ensure the this part is not null
+  private readonly gameRoomPath = `${this.broker}/rooms`;
+  private readonly roomWaitingPath = `${this.broker}/room-joined`;
   private readonly roomJoinedPath = `${this.listener}/room-joined`;
-
   private readonly userId: string;
 
   constructor(userId: string) {
