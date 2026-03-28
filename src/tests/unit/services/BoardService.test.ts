@@ -1,5 +1,5 @@
 import { IconType } from "@/enums/IconTypes"
-import { createRandomMovement, generateBoard, possibleMoves } from "@/services/BoardService"
+import { createBestMovement, createRandomMovement, generateBoard, possibleMoves } from "@/services/BoardService"
 import { describe, it, expect } from 'vitest'
 
 describe('generate board', () => {
@@ -80,4 +80,55 @@ describe('create random valid movement', () => {
     expect(result).toStrictEqual({ position: 8, piece: IconType.X })
   })
 })
+describe('generateBoard with winner path', () => {
+  it('preserves belongsToWinnerPath flag from history', () => {
+    const history: MoveRecord[] = [
+      { position: 1, piece: IconType.X, belongsToWinnerPath: true },
+      { position: 2, piece: IconType.X, belongsToWinnerPath: true },
+      { position: 3, piece: IconType.X, belongsToWinnerPath: true },
+    ]
+    const board = generateBoard(history)
+    expect(board[0].belongsToWinnerPath).toBe(true)
+    expect(board[1].belongsToWinnerPath).toBe(true)
+    expect(board[2].belongsToWinnerPath).toBe(true)
+  })
+})
+
+describe('possibleMoves with full board', () => {
+  it('returns empty array when board is full', () => {
+    const history: MoveRecord[] = [1,2,3,4,5,6,7,8,9].map(p => ({
+      position: p,
+      piece: IconType.X
+    }))
+    expect(possibleMoves(history)).toStrictEqual([])
+  })
+})
+
+describe('createBestMovement', () => {
+  it('takes the winning move when available', () => {
+    // X has 1,2 — best move is 3 to win horizontally
+    const history: MoveRecord[] = [
+      { position: 1, piece: IconType.X },
+      { position: 2, piece: IconType.X },
+      { position: 4, piece: IconType.O },
+      { position: 5, piece: IconType.O },
+    ]
+    const result = createBestMovement(history, IconType.X)
+    expect(result.position).toBe(3)
+    expect(result.piece).toBe(IconType.X)
+  })
+
+  it('blocks opponent win', () => {
+    // O has 1,2 (needs 3 to win row). X has 5 (no winning threat).
+    // Blocking at 3 scores 0 (draw); any other move lets O play 3 for -1.
+    const history: MoveRecord[] = [
+      { position: 1, piece: IconType.O },
+      { position: 2, piece: IconType.O },
+      { position: 5, piece: IconType.X },
+    ]
+    const result = createBestMovement(history, IconType.X)
+    expect(result.position).toBe(3)
+  })
+})
+
 export {}
