@@ -152,4 +152,92 @@ describe('addWinnerPathToHistory', () => {
   })
 })
 
+describe('activateGame with isMultiplayer flag', () => {
+  it('sets isMultiplayer to true when flag is passed', () => {
+    store.commit('activateGame', {
+      XPlayer: Players.playerOne,
+      OPlayer: Players.playerTwo,
+      oponentIsAI: false,
+      isMultiplayer: true
+    })
+    expect(store.state.isMultiplayer).toBe(true)
+  })
+
+  it('defaults isMultiplayer to false when flag is absent', () => {
+    store.commit('activateGame', {
+      XPlayer: Players.playerOne,
+      OPlayer: Players.playerTwo,
+      oponentIsAI: false
+    })
+    expect(store.state.isMultiplayer).toBe(false)
+  })
+})
+
+describe('setMultiplayerState', () => {
+  it('sets all multiplayer fields from payload', () => {
+    store.commit('setMultiplayerState', {
+      myPlayerType: PlayerTypes.XPlayer,
+      opponentName: 'Alice',
+      roomName: 'room-42',
+      isWaitingForOpponent: false,
+      isConnected: true
+    })
+    expect(store.state.myPlayerType).toBe(PlayerTypes.XPlayer)
+    expect(store.state.opponentName).toBe('Alice')
+    expect(store.state.roomName).toBe('room-42')
+    expect(store.state.isWaitingForOpponent).toBe(false)
+    expect(store.state.isConnected).toBe(true)
+  })
+
+  it('sets isWaitingForOpponent to true while waiting', () => {
+    store.commit('setMultiplayerState', {
+      myPlayerType: null,
+      opponentName: '',
+      roomName: 'lobby-1',
+      isWaitingForOpponent: true,
+      isConnected: true
+    })
+    expect(store.state.isWaitingForOpponent).toBe(true)
+  })
+})
+
+describe('clearMultiplayerState', () => {
+  it('resets all multiplayer fields to defaults', () => {
+    store.commit('setMultiplayerState', {
+      myPlayerType: PlayerTypes.OPlayer,
+      opponentName: 'Bob',
+      roomName: 'room-99',
+      isWaitingForOpponent: false,
+      isConnected: true
+    })
+    store.commit('clearMultiplayerState')
+    expect(store.state.isMultiplayer).toBe(false)
+    expect(store.state.myPlayerType).toBeNull()
+    expect(store.state.opponentName).toBe('')
+    expect(store.state.roomName).toBe('')
+    expect(store.state.isWaitingForOpponent).toBe(false)
+    expect(store.state.isConnected).toBe(false)
+    expect(store.state.opponentDisconnected).toBe(false)
+  })
+})
+
+describe('opponentDisconnected flag', () => {
+  it('setMultiplayerState can set opponentDisconnected', () => {
+    store.commit('setMultiplayerState', {
+      myPlayerType: null,
+      opponentName: '',
+      roomName: '',
+      isWaitingForOpponent: false,
+      isConnected: false,
+      opponentDisconnected: true
+    })
+    expect(store.state.opponentDisconnected).toBe(true)
+  })
+
+  it('clearMultiplayerState resets opponentDisconnected to false', () => {
+    store.commit('clearMultiplayerState')
+    expect(store.state.opponentDisconnected).toBe(false)
+  })
+})
+
 export {}
