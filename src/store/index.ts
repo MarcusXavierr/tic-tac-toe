@@ -38,8 +38,7 @@ export const store = createStore<State>({
       opponentDisconnected: false,
       playAgainSent: false,
       playAgainReceived: false,
-      remoteHoverCell: null,
-      remoteHoverFading: false
+      remoteHoverCell: null
     }
   },
   mutations: {
@@ -110,18 +109,12 @@ export const store = createStore<State>({
       state.playAgainSent = false
       state.playAgainReceived = false
       state.remoteHoverCell = null
-      state.remoteHoverFading = false
     },
     setRemoteHover(state, cell: number) {
       state.remoteHoverCell = cell
-      state.remoteHoverFading = false
-    },
-    startRemoteHoverFade(state) {
-      state.remoteHoverFading = true
     },
     clearRemoteHover(state) {
       state.remoteHoverCell = null
-      state.remoteHoverFading = false
     },
     sendPlayAgain(state) {
       if (state.playAgainSent) return // double-click guard

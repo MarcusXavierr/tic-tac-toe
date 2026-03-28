@@ -51,7 +51,6 @@ export default {
       _pendingPlayerName: '' as string,
       _pendingRoomName: '' as string,
       _hoverTimeout: null as ReturnType<typeof setTimeout> | null,
-      _hoverFadeTimeout: null as ReturnType<typeof setTimeout> | null,
     }
   },
   methods: {
@@ -173,19 +172,11 @@ export default {
     },
 
     _handleOpponentHover(cell: number) {
-      if (this._hoverFadeTimeout) clearTimeout(this._hoverFadeTimeout)
       if (this._hoverTimeout) clearTimeout(this._hoverTimeout)
 
       this.$store.commit('setRemoteHover', cell)
 
       const duration = Number(import.meta.env.VITE_REMOTE_HOVER_DURATION ?? 800)
-      const fadeEnabled = import.meta.env.VITE_REMOTE_HOVER_FADE !== 'false'
-
-      if (fadeEnabled && duration > 300) {
-        this._hoverFadeTimeout = setTimeout(() => {
-          this.$store.commit('startRemoteHoverFade')
-        }, duration - 300)
-      }
 
       this._hoverTimeout = setTimeout(() => {
         this.$store.commit('clearRemoteHover')

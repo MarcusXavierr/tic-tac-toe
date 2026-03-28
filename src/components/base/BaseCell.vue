@@ -7,7 +7,6 @@
         v-else-if="isRemoteHovered"
         :icon-type="remoteHoverIcon"
         class="remote-hover-icon"
-        :class="{ fading: isRemoteHoverFading }"
       />
     </KeepAlive>
   </div>
@@ -40,11 +39,6 @@ export default {
       default: false
     },
     isRemoteHovered: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    isRemoteHoverFading: {
       type: Boolean,
       required: false,
       default: false
@@ -128,10 +122,4 @@ export default {
   }
 }
 
-.remote-hover-icon {
-  transition: opacity 0.3s ease;
-  &.fading {
-    opacity: 0;
-  }
-}
 </style>

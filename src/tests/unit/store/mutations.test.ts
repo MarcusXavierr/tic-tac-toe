@@ -243,11 +243,6 @@ describe('clearMultiplayerState', () => {
     expect(store.state.remoteHoverCell).toBeNull()
   })
 
-  it('resets remoteHoverFading to false', () => {
-    store.commit('startRemoteHoverFade')
-    store.commit('clearMultiplayerState')
-    expect(store.state.remoteHoverFading).toBe(false)
-  })
 })
 
 describe('opponentDisconnected flag', () => {
@@ -379,18 +374,6 @@ describe('setRemoteHover', () => {
     expect(store.state.remoteHoverCell).toBe(4)
   })
 
-  it('resets remoteHoverFading to false', () => {
-    store.commit('startRemoteHoverFade')
-    store.commit('setRemoteHover', 2)
-    expect(store.state.remoteHoverFading).toBe(false)
-  })
-})
-
-describe('startRemoteHoverFade', () => {
-  it('sets remoteHoverFading to true', () => {
-    store.commit('startRemoteHoverFade')
-    expect(store.state.remoteHoverFading).toBe(true)
-  })
 })
 
 describe('clearRemoteHover', () => {
@@ -398,12 +381,6 @@ describe('clearRemoteHover', () => {
     store.commit('setRemoteHover', 7)
     store.commit('clearRemoteHover')
     expect(store.state.remoteHoverCell).toBeNull()
-  })
-
-  it('sets remoteHoverFading to false', () => {
-    store.commit('startRemoteHoverFade')
-    store.commit('clearRemoteHover')
-    expect(store.state.remoteHoverFading).toBe(false)
   })
 })
 

@@ -82,27 +82,6 @@ describe('BaseCell — remote hover rendering', () => {
     expect(wrapper.find('[data-icon]').exists()).toBe(false)
   })
 
-  it('applies fading class to remote hover icon when isRemoteHoverFading=true', async () => {
-    const store = makeStore({ myPlayerType: PlayerTypes.XPlayer })
-    const { default: BaseCell } = await import('@/components/base/BaseCell.vue')
-    const wrapper = mount(BaseCell, {
-      props: { selectedIcon: null, isRemoteHovered: true, isRemoteHoverFading: true },
-      global: { plugins: [store], stubs }
-    })
-    const icon = wrapper.find('[data-icon]')
-    expect(icon.classes()).toContain('fading')
-  })
-
-  it('does not apply fading class when isRemoteHoverFading=false', async () => {
-    const store = makeStore({ myPlayerType: PlayerTypes.XPlayer })
-    const { default: BaseCell } = await import('@/components/base/BaseCell.vue')
-    const wrapper = mount(BaseCell, {
-      props: { selectedIcon: null, isRemoteHovered: true, isRemoteHoverFading: false },
-      global: { plugins: [store], stubs }
-    })
-    const icon = wrapper.find('[data-icon]')
-    expect(icon.classes()).not.toContain('fading')
-  })
 })
 
 export {}
