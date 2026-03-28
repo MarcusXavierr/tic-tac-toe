@@ -1,9 +1,8 @@
 import { determineWinner } from '@/services/GameService'
 import { createStore } from 'vuex'
-import type { Client } from 'webstomp-client'
 import { Players, PlayerTypes } from '../enums/Players'
 
-interface ActivateOptions {
+interface activateData {
   XPlayer: Players,
   OPlayer: Players,
   oponentIsAI: boolean
@@ -19,11 +18,10 @@ export const store = createStore<State>({
       OPlayer: null,
       playHistory: [],
       gameResults: [],
-      isOnlineGame: false
     }
   },
   mutations: {
-    activateGame(state, data: ActivateOptions) {
+    activateGame(state, data: activateData) {
       state.OPlayer = data.OPlayer,
       state.XPlayer = data.XPlayer
       state.currentPlayerType = PlayerTypes.XPlayer
@@ -31,17 +29,7 @@ export const store = createStore<State>({
       state.isWaitingToPlay = data.oponentIsAI && data.XPlayer == Players.playerTwo
       state.isGameActive = true
     },
-
-    activateOnlineGame(state, data: ActivateOptions) {
-      state.OPlayer = data.OPlayer,
-      state.XPlayer = data.XPlayer
-      state.currentPlayerType = PlayerTypes.XPlayer
-      state.oponentIsAI = false
-      state.isGameActive = true
-      state.isOnlineGame = true
-    },
-
-    addPlayToHistory(state, data: MoveRecord) {
+    addPlayToHistory(state, data: MoveRecord ) {
       state.playHistory = state.playHistory.concat(data)
       state.currentPlayerType = swapPlayerTypes(state.currentPlayerType)
       state.isWaitingToPlay = false
@@ -84,10 +72,8 @@ export const store = createStore<State>({
 
     addWinnerPathToHistory(state, history) {
       state.playHistory = history
-    },
-    setWebsocketClient(state, client: Client) {
-      state.websocketClient = client
     }
+
   },
   getters: {
     getPlayer: (state) => (player: PlayerTypes) => {

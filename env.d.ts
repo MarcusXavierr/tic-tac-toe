@@ -12,9 +12,6 @@ interface GameResult {
 interface State {
   isWaitingToPlay: boolean,
   oponentIsAI: boolean,
-  isOnlineGame: boolean,
-  websocketClient?: Client,
-  room?: Room,
   isGameActive: boolean,
   XPlayer: number | null,
   OPlayer: number | null,
