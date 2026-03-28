@@ -1,5 +1,3 @@
-import type { PlayerTypes } from '@/enums/Players'
-
 export type ServerMessage =
   | { type: 'player_joined'; name: string; player_type: 'x' | 'o'; order: number }
   | { type: 'player_disconnected' }

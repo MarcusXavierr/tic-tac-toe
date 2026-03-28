@@ -151,7 +151,6 @@ describe('MultiplayerService.disconnect', () => {
     const onClose = vi.fn()
     const service = new MultiplayerService()
     service.joinRoom('room-1', 'Alice', vi.fn(), onClose)
-    const ws = MockWebSocket.instances[0]
     // Patch onclose to null before close (service should do this)
     service.disconnect()
     // onClose should NOT fire on intentional disconnect
