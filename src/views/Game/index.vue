@@ -54,7 +54,10 @@ export default {
       'playAgainSent',
       'playAgainReceived'
     ]),
-    ...mapGetters(['getPlayer'])
+    ...mapGetters(['getPlayer']),
+    bothPlayersReadyForNextRound() {
+      return this.playAgainSent && this.playAgainReceived
+    }
   },
   watch: {
     playHistory() {
@@ -100,10 +103,10 @@ export default {
       },
       immediate: true
     },
-    playAgainReceived() {
-      if (this.playAgainReceived && this.playAgainSent) {
+    bothPlayersReadyForNextRound(value: boolean) {
+      if (value) {
         this._isResettingRound = true
-        this.nextRound()
+        this.resetRound()
         this.showModal = false
       }
     }
@@ -112,6 +115,7 @@ export default {
     ...mapMutations([
       'quitGame',
       'nextRound',
+      'resetRound',
       'addPlayToHistory',
       'finishWaiting',
       'makePlayersWait',

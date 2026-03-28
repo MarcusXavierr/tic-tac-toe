@@ -59,6 +59,7 @@ function makeStore(overrides: Record<string, any> = {}) {
         state.isGameActive = false
       },
       nextRound: vi.fn(),
+      resetRound: vi.fn(),
       sendPlayAgain: vi.fn(),
       setMultiplayerState(state: any, p: any) {
         Object.assign(state, p)
@@ -199,7 +200,7 @@ describe('GamePage — multiplayer Next Round', () => {
     expect(mockService.sendPlayAgain).not.toHaveBeenCalled()
   })
 
-  it('calls nextRound when playAgainReceived becomes true and playAgainSent is already true', async () => {
+  it('calls resetRound when both playAgainSent and playAgainReceived become true', async () => {
     const store = makeStore({
       isMultiplayer: true,
       playAgainSent: true,
@@ -212,7 +213,7 @@ describe('GamePage — multiplayer Next Round', () => {
     store.state.playAgainReceived = true
     await wrapper.vm.$nextTick()
 
-    expect(commitSpy).toHaveBeenCalledWith('nextRound')
+    expect(commitSpy).toHaveBeenCalledWith('resetRound')
   })
 
   it('passes waiting=true to modal when playAgainSent is true and playAgainReceived is false', () => {

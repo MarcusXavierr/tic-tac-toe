@@ -111,15 +111,9 @@ export const store = createStore<State>({
     sendPlayAgain(state) {
       if (state.playAgainSent) return // double-click guard
       state.playAgainSent = true
-      if (state.playAgainSent && state.playAgainReceived) {
-        store.commit('resetRound')
-      }
     },
     receivePlayAgain(state) {
       state.playAgainReceived = true
-      if (state.playAgainSent && state.playAgainReceived) {
-        store.commit('resetRound')
-      }
     },
     resetRound(state) {
       const winner = determineWinner(state.playHistory)
