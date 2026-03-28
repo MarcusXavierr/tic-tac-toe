@@ -3,7 +3,7 @@ import { store } from "@/store";
 import { v4 as uuidv4 } from 'uuid';
 import { WebsocketService } from "./Websocket.service";
 
-export class MultiplayerGameService {
+export class OnlineGameService {
   public readonly userId: string;
   private readonly ws: WebsocketService;
   private _roomId: string = '123123123';

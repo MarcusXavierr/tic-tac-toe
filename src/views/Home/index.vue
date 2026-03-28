@@ -31,7 +31,7 @@ import { BtnColor } from '@/enums/ButtonTypes'
 import { Players, PlayerTypes } from '@/enums/Players'
 import { mapMutations, mapState } from 'vuex'
 import OnlineRoomModal from '@/components/OnlineRoomModal.vue'
-import { MultiplayerGameService } from '@/services/MultiplayerGame.service'
+import { OnlineGameService } from '@/services/OnlineGame.service'
 import WaitingRoomModal from '@/components/WaitingRoomModal.vue'
 
 export default {
@@ -48,7 +48,7 @@ export default {
       xTypeSelected: true,
       oTypeSelected: false,
       showMultiplayerGameModal: false,
-      service: new MultiplayerGameService()
+      service: new OnlineGameService()
     }
   },
   methods: {
