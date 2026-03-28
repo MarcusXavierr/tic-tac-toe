@@ -4,6 +4,7 @@ export type ServerMessage =
   | { type: 'move'; cell: number }
   | { type: 'play_again' }
   | { type: 'hover'; cell: number }
+  | { type: 'error'; reason: string }
 
 function toWsUrl(httpBase: string): string {
   return httpBase.replace(/^http:\/\//, 'ws://').replace(/^https:\/\//, 'wss://')
@@ -14,9 +15,16 @@ export class MultiplayerService {
 
   async createRoom(roomId: string): Promise<void> {
     const base = import.meta.env.VITE_API_BASE
-    const response = await fetch(`${base}/room/${roomId}`, { method: 'POST' })
+    let response: Response
+    try {
+      response = await fetch(`${base}/room/${roomId}`, { method: 'POST' })
+    } catch {
+      throw new Error('Room already exists')
+    }
     if (!response.ok) {
-      throw new Error(`Failed to create room: ${response.status}`)
+      if (response.status === 409) throw new Error('Room already exists')
+      const body = await response.text()
+      throw new Error(body)
     }
   }
 
@@ -35,7 +43,20 @@ export class MultiplayerService {
     this.ws = new WebSocket(url)
 
     this.ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data) as ServerMessage
+      let msg: ServerMessage
+      try {
+        msg = JSON.parse(event.data) as ServerMessage
+      } catch {
+        // Server sends space-separated JSON fragments for some messages:
+        // e.g. {"type": "error"} "reason": "room_not_found"
+        // Merge by replacing `} "` with `, "` and appending the missing `}`
+        try {
+          const merged = event.data.replace(/\}\s*"/, ', "') + '}'
+          msg = JSON.parse(merged) as ServerMessage
+        } catch {
+          return
+        }
+      }
       onMessage(msg)
     }
 

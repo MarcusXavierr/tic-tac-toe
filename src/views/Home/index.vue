@@ -15,9 +15,11 @@
     </div>
     <MultiplayerModal
       :show="showMultiplayerModal"
+      :error-message="errorMessage"
       @create="handleCreate"
       @join="handleJoin"
       @cancel="handleCancel"
+      @error-clear="handleErrorClear"
     />
   </div>
 </template>
@@ -51,6 +53,7 @@ export default {
       _pendingPlayerName: '' as string,
       _pendingRoomName: '' as string,
       _hoverTimeout: null as ReturnType<typeof setTimeout> | null,
+      errorMessage: '' as string,
     }
   },
   methods: {
@@ -63,7 +66,14 @@ export default {
     async handleCreate(roomName: string, playerName: string, playerType: PlayerTypes) {
       this._pendingRoomName = roomName
       this._pendingPlayerName = playerName
-      await multiplayerService.createRoom(roomName)
+      ;(this as any).errorMessage = ''
+      try {
+        await multiplayerService.createRoom(roomName)
+      } catch (err: any) {
+        const raw: string = err?.message ?? 'Failed to create room'
+        ;(this as any).errorMessage = raw.charAt(0).toUpperCase() + raw.slice(1)
+        return
+      }
       ;(this as any).$store.commit('setMultiplayerState', {
         myPlayerType: playerType,
         opponentName: '',
@@ -106,6 +116,15 @@ export default {
     },
 
     _handleServerMessage(msg: ServerMessage) {
+      if (msg.type === 'error') {
+        const messages: Record<string, string> = {
+          room_not_found: 'Room not found',
+          room_full: 'Room is full'
+        }
+        ;(this as any).errorMessage = messages[msg.reason] ?? 'Connection error'
+        return
+      }
+
       if (msg.type === 'move') {
         const myPiece = getIconTypeFromPlayerTurn((this as any).$store.state.myPlayerType)
         const opponentPiece = swapIconType(myPiece)
@@ -193,6 +212,10 @@ export default {
         isConnected: false,
         opponentDisconnected: true
       })
+    },
+
+    handleErrorClear() {
+      ;(this as any).errorMessage = ''
     },
 
     startGame() {
