@@ -13,14 +13,11 @@
         NEW GAME (VS PLAYER)
       </BaseButton>
     </div>
-
     <MultiplayerModal
       :show="showMultiplayerModal"
-      :error-message="multiplayerError"
-      @create="handleMultiplayerCreate"
-      @join="handleMultiplayerJoin"
-      @cancel="closeMultiplayerModal"
-      @error-clear="multiplayerError = ''"
+      @create="handleCreate"
+      @join="handleJoin"
+      @cancel="handleCancel"
     />
   </div>
 </template>
@@ -30,9 +27,10 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import PlayerSelector from './PlayerSelector.vue'
 import MultiplayerModal from '@/components/MultiplayerModal.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
-import { Players } from '@/enums/Players'
-import { PlayerTypes } from '@/enums/Players'
+import { Players, PlayerTypes } from '@/enums/Players'
 import { mapMutations } from 'vuex'
+import { multiplayerService } from '@/services/multiplayerServiceInstance'
+import type { ServerMessage } from '@/services/MultiplayerService'
 
 export default {
   name: 'HomePage',
@@ -47,27 +45,114 @@ export default {
       xTypeSelected: true,
       oTypeSelected: false,
       showMultiplayerModal: false,
-      multiplayerError: ''
+      // playerName set during create/join, used to infer myPlayerType on player_joined
+      _pendingPlayerName: '' as string,
+      _pendingRoomName: '' as string,
     }
   },
   methods: {
-    ...mapMutations(['activateGame']),
-    startIAGame() {
-      this.activateGame({ ...this.players, oponentIsAI: true })
-    },
+    ...mapMutations(['activateGame', 'setMultiplayerState', 'clearMultiplayerState']),
+
     openMultiplayerModal() {
       this.showMultiplayerModal = true
     },
-    closeMultiplayerModal() {
+
+    async handleCreate(roomName: string, playerName: string, playerType: PlayerTypes) {
+      this._pendingRoomName = roomName
+      this._pendingPlayerName = playerName
+      await multiplayerService.createRoom(roomName)
+      this.$store.commit('setMultiplayerState', {
+        myPlayerType: playerType,
+        opponentName: '',
+        roomName,
+        isWaitingForOpponent: true,
+        isConnected: true
+      })
+      multiplayerService.joinRoom(
+        roomName,
+        playerName,
+        (msg) => this._handleServerMessage(msg),
+        () => this._handleConnectionClose()
+      )
+    },
+
+    handleJoin(roomName: string, playerName: string) {
+      this._pendingRoomName = roomName
+      this._pendingPlayerName = playerName
+      this.$store.commit('setMultiplayerState', {
+        myPlayerType: null,
+        opponentName: '',
+        roomName,
+        isWaitingForOpponent: true,
+        isConnected: true
+      })
+      multiplayerService.joinRoom(
+        roomName,
+        playerName,
+        (msg) => this._handleServerMessage(msg),
+        () => this._handleConnectionClose()
+      )
+    },
+
+    handleCancel() {
+      multiplayerService.disconnect()
+      this.$store.commit('clearMultiplayerState')
       this.showMultiplayerModal = false
     },
-    handleMultiplayerCreate(roomName: string, playerName: string, playerType: PlayerTypes) {
-      // Phase 2: call MultiplayerService.createRoom(roomName) then joinRoom(roomName, playerName)
-      console.log('create', { roomName, playerName, playerType })
+
+    _handleServerMessage(msg: ServerMessage) {
+      if (msg.type === 'player_joined') {
+        // The server tells us the *opponent's* player_type.
+        // We are the opposite.
+        const opponentType = msg.player_type === 'x' ? PlayerTypes.XPlayer : PlayerTypes.OPlayer
+        const myType = opponentType === PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
+
+        this.$store.commit('setMultiplayerState', {
+          myPlayerType: myType,
+          opponentName: msg.name,
+          roomName: this._pendingRoomName,
+          isWaitingForOpponent: false,
+          isConnected: true
+        })
+
+        // X always goes first; if I'm O I wait for the first move
+        const isWaitingToPlay = myType === PlayerTypes.OPlayer
+
+        this.$store.commit('activateGame', {
+          XPlayer: Players.playerOne,
+          OPlayer: Players.playerTwo,
+          oponentIsAI: false,
+          isMultiplayer: true
+        })
+
+        // Override isWaitingToPlay set by activateGame based on turn assignment
+        if (isWaitingToPlay) {
+          this.$store.commit('makePlayersWait')
+        } else {
+          this.$store.commit('finishWaiting')
+        }
+
+        this.showMultiplayerModal = false
+      }
     },
-    handleMultiplayerJoin(roomName: string, playerName: string) {
-      // Phase 2: call MultiplayerService.joinRoom(roomName, playerName)
-      console.log('join', { roomName, playerName })
+
+    _handleConnectionClose() {
+      // Only fires on unexpected close (disconnect() nulls onclose first)
+      this.$store.commit('setMultiplayerState', {
+        myPlayerType: this.$store.state.myPlayerType,
+        opponentName: this.$store.state.opponentName,
+        roomName: this.$store.state.roomName,
+        isWaitingForOpponent: false,
+        isConnected: false,
+        opponentDisconnected: true
+      })
+    },
+
+    startGame() {
+      this.activateGame({ ...this.players, oponentIsAI: false })
+    },
+    startIAGame() {
+      this.activateGame({ ...this.players, oponentIsAI: true })
     }
   },
   computed: {
@@ -101,5 +186,11 @@ export default {
   flex-direction: column;
   gap: 1rem;
   width: 100%;
+}
+
+.player-type {
+  img {
+    color: blue;
+  }
 }
 </style>
