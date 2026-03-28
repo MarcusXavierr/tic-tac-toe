@@ -1,6 +1,7 @@
 import type { PlayerTypes } from "@/enums/Players";
 import { store } from "@/store";
 import { v4 as uuidv4 } from 'uuid';
+import type { Client } from "webstomp-client";
 import { WebsocketService } from "./Websocket.service";
 
 export class MultiplayerGameService {
@@ -15,8 +16,7 @@ export class MultiplayerGameService {
 
   async createRoom(playerPiece: PlayerTypes) {
     store.commit('setRoomWaitingState', true);
-    // TODO: Refactor this to get the connection strings from a helper file
-    this.ws.detachFromOlderConnections(this.ws)
+    this.detachFromOlderConnections()
     try {
       const room = await this.generateRoom(playerPiece)
       store.commit('setRoom', room);
@@ -29,7 +29,7 @@ export class MultiplayerGameService {
   }
 
   async joinRoom(roomId: string) {
-    this.ws.detachFromOlderConnections(this.ws)
+    this.detachFromOlderConnections()
     try {
       const room = await this.getRoom(roomId)
       store.commit('setRoom', room);
@@ -40,7 +40,21 @@ export class MultiplayerGameService {
     }
   }
 
-  // TODO: Trigger this function when the user leave the gameboard
+  private detachFromOlderConnections() {
+    // unsubscribe from the room's websocket
+    const client = store.state.websocketClient as Client | undefined;
+    const room = store.state.room as Room | undefined;
+    if (client && room) {
+      client.unsubscribe(`${this.ws.gameRoomPath}/${room.roomId}`);
+
+      if (room.creatorId === this.userId) {
+        client.unsubscribe(`${this.ws.roomWaitingPath}/${room.roomId}`);
+      }
+    }
+
+    // Delete the room from the server
+    fetch(`${this.httpRoomsEndpoint}/${room?.roomId}`, {method: 'DELETE'}).catch(console.error)
+  }
 
   private async generateRoom(playerPiece: PlayerTypes) {
     const room: Room = {
@@ -81,4 +95,3 @@ export type Room = {
   creatorId: string;
   creatorPiece: PlayerTypes;
 }
-
