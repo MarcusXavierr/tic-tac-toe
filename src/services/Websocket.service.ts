@@ -54,7 +54,7 @@ export class WebsocketService {
   public getCreateRoomCallback(room: Room): (frame?: any) => any {
     const _this = this
     return () => {
-      _this.roomSubscription = _this.subscribeToRoomGame(_this, room)
+      _this.roomSubscription = _this.function()
       _this.eventsRoomSubscription = _this.subscribeToEventsRoom(_this, room)
     }
   }
@@ -62,7 +62,13 @@ export class WebsocketService {
   public getJoinRoomCallback(room: Room): (frame?: any) => any {
     const _this = this
     return () => {
-      _this.roomSubscription = _this.subscribeToRoomGame(_this, room)
+      _this.roomSubscription = _this.client.subscribe(`${_this.gameRoomPath}/${room.roomId}`, (message) => {
+        const body = parseMovementMessage(message);
+        if (body.userId !== _this.userId) {
+          store.commit('addPlayToHistory', body);
+        }
+      })
+
       _this.eventsRoomSubscription = _this.subscribeToEventsRoom(_this, room)
 
       // TODO: Refactor this piece of shit
@@ -74,15 +80,7 @@ export class WebsocketService {
         store.commit('makePlayersWait')
       }
     }
-  }
 
-  private subscribeToRoomGame(_this: WebsocketService, room: Room): Subscription {
-    return _this.client.subscribe(`${_this.gameRoomPath}/${room.roomId}`, (message) => {
-        const body = parseMovementMessage(message);
-        if (body.userId !== _this.userId) {
-          store.commit('addPlayToHistory', body);
-        }
-      })
   }
 
   private subscribeToEventsRoom(_this: WebsocketService, room: Room): Subscription {
