@@ -162,10 +162,11 @@ export default {
       if (this.isMultiplayer) {
         this.sendPlayAgain()
         multiplayerService.sendPlayAgain()
+        // Don't close modal - let the watcher close it when opponent responds
       } else {
         this.nextRound()
+        this.showModal = false
       }
-      this.showModal = false
     }
   }
 }

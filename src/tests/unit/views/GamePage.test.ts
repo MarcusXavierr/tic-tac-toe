@@ -283,6 +283,18 @@ describe('GamePage — multiplayer Next Round', () => {
 
     expect(wrapper.find('[data-waiting="false"]').exists()).toBe(true)
   })
+
+  it('does not close modal when next() is called in multiplayer', () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: false,
+      playAgainReceived: false
+    })
+    const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
+    wrapper.vm.showModal = true
+    wrapper.vm.next()
+    expect(wrapper.vm.showModal).toBe(true) // Should stay open for waiting state
+  })
 })
 
 export {}
