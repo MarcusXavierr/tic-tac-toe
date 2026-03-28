@@ -39,7 +39,8 @@ export default {
     return {
       showModal: false,
       winner: -1,
-      player: -1
+      player: -1,
+      _isResettingRound: false
     }
   },
   computed: {
@@ -57,6 +58,12 @@ export default {
   },
   watch: {
     playHistory() {
+      // Don't show modal if we just reset a round (play-again handshake)
+      if (this._isResettingRound) {
+        this._isResettingRound = false
+        return
+      }
+
       const winner = determineWinner(this.playHistory)
       if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory)) {
         return
@@ -95,6 +102,7 @@ export default {
     },
     playAgainReceived() {
       if (this.playAgainReceived && this.playAgainSent) {
+        this._isResettingRound = true
         this.nextRound()
         this.showModal = false
       }
