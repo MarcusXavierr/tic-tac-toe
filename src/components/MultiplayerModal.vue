@@ -203,6 +203,9 @@ export default {
     },
     joinRoomName() {
       this.clearError()
+    },
+    activeTab() {
+      this.clearError()
     }
   },
   methods: {

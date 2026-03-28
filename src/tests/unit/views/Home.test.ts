@@ -68,8 +68,8 @@ const stubs = {
   },
   MultiplayerModal: {
     template: '<div data-testid="multiplayer-modal" />',
-    props: ['show'],
-    emits: ['create', 'join', 'cancel']
+    props: ['show', 'errorMessage'],
+    emits: ['create', 'join', 'cancel', 'error-clear']
   }
 }
 
@@ -340,6 +340,56 @@ describe('Home — hover message handling', () => {
     expect(clearCalls).toHaveLength(1) // only one clear fires, not two
   })
 
+})
+
+describe('Home — error handling on create failure', () => {
+  it('sets errorMessage when createRoom rejects', async () => {
+    mockService.createRoom.mockRejectedValueOnce(new Error('room already exists'))
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    await wrapper.vm.handleCreate('taken', 'Alice', PlayerTypes.XPlayer)
+    expect(wrapper.vm.errorMessage).toBe('Room already exists')
+  })
+
+  it('clears errorMessage before each attempt so the watcher fires on retry', async () => {
+    mockService.createRoom.mockRejectedValue(new Error('Room already exists'))
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    await wrapper.vm.handleCreate('taken', 'Alice', PlayerTypes.XPlayer)
+    expect(wrapper.vm.errorMessage).toBe('Room already exists')
+    // Simulate second attempt — errorMessage must go through '' so vue watcher fires
+    await wrapper.vm.handleCreate('taken', 'Alice', PlayerTypes.XPlayer)
+    expect(wrapper.vm.errorMessage).toBe('Room already exists')
+  })
+
+  it('resets errorMessage when error-clear is emitted', async () => {
+    mockService.createRoom.mockRejectedValueOnce(new Error('room already exists'))
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    await wrapper.vm.handleCreate('taken', 'Alice', PlayerTypes.XPlayer)
+    wrapper.vm.handleErrorClear()
+    expect(wrapper.vm.errorMessage).toBe('')
+  })
+})
+
+describe('Home — error handling on WS error message', () => {
+  it('sets errorMessage when WS sends { type: "error", reason: "room_not_found" }', () => {
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-404', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'error', reason: 'room_not_found' })
+    expect(wrapper.vm.errorMessage).toBe('Room not found')
+  })
+
+  it('sets errorMessage when WS sends { type: "error", reason: "room_full" }', () => {
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-full', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'error', reason: 'room_full' })
+    expect(wrapper.vm.errorMessage).toBe('Room is full')
+  })
 })
 
 export {}

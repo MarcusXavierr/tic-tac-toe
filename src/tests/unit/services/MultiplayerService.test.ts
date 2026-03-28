@@ -25,9 +25,14 @@ class MockWebSocket {
     this.onclose?.()
   }
 
-  // Test helper: simulate server pushing a message
+  // Test helper: simulate server pushing a well-formed message
   simulateMessage(data: object) {
     this.onmessage?.({ data: JSON.stringify(data) })
+  }
+
+  // Test helper: simulate server pushing a raw string (for malformed JSON tests)
+  simulateRawMessage(raw: string) {
+    this.onmessage?.({ data: raw })
   }
 }
 
@@ -66,13 +71,42 @@ describe('MultiplayerService.createRoom', () => {
     expect(calledUrl).toContain('/room/my-room')
   })
 
-  it('throws when the server returns a non-ok response', async () => {
+  it('throws "Room already exists" on 409', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(() => Promise.resolve({ ok: false, status: 409 } as Response))
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 409
+        } as unknown as Response)
+      )
     )
     const service = new MultiplayerService()
-    await expect(service.createRoom('taken-room')).rejects.toThrow()
+    await expect(service.createRoom('taken-room')).rejects.toThrow('Room already exists')
+  })
+
+  it('throws "Room already exists" when fetch rejects (CORS-blocked 409)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.reject(new TypeError('Failed to fetch')))
+    )
+    const service = new MultiplayerService()
+    await expect(service.createRoom('blocked-room')).rejects.toThrow('Room already exists')
+  })
+
+  it('throws with the server body text on 400', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 400,
+          text: () => Promise.resolve('invalid room name')
+        } as unknown as Response)
+      )
+    )
+    const service = new MultiplayerService()
+    await expect(service.createRoom('!!bad!!')).rejects.toThrow('invalid room name')
   })
 })
 
@@ -129,6 +163,33 @@ describe('MultiplayerService.joinRoom', () => {
     const ws = MockWebSocket.instances[0]
     ws.simulateMessage({ type: 'play_again' })
     expect(onMessage).toHaveBeenCalledWith({ type: 'play_again' })
+  })
+
+  it('parses server-fragmented error message: {"type":"error"} "reason":"room_not_found"', () => {
+    const onMessage = vi.fn()
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', onMessage, vi.fn())
+    const ws = MockWebSocket.instances[0]
+    ws.simulateRawMessage('{"type": "error"} "reason": "room_not_found"')
+    expect(onMessage).toHaveBeenCalledWith({ type: 'error', reason: 'room_not_found' })
+  })
+
+  it('parses server-fragmented error message with room_full reason', () => {
+    const onMessage = vi.fn()
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', onMessage, vi.fn())
+    const ws = MockWebSocket.instances[0]
+    ws.simulateRawMessage('{"type": "error"} "reason": "room_full"')
+    expect(onMessage).toHaveBeenCalledWith({ type: 'error', reason: 'room_full' })
+  })
+
+  it('silently ignores completely unparseable messages', () => {
+    const onMessage = vi.fn()
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', onMessage, vi.fn())
+    const ws = MockWebSocket.instances[0]
+    ws.simulateRawMessage('not json at all')
+    expect(onMessage).not.toHaveBeenCalled()
   })
 
   it('calls onClose callback when WebSocket closes', () => {
