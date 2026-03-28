@@ -1,6 +1,6 @@
 import { IconType } from '../../../enums/IconTypes'
 import { PlayerTypes } from '../../../enums/Players'
-import { determineWinner, findWinnerPath, markWinnerPath } from '../../../services/GameService'
+import { determineWinner, findWinnerPath, mapWinner, markWinnerPath } from '../../../services/GameService'
 import { describe, it, expect } from 'vitest'
 
 describe('Find out the winner on horizontal', () => {
@@ -203,4 +203,54 @@ describe('map winner path to history', () => {
     expect(result).toStrictEqual(want)
   })
 })
+describe('determineWinner — draw / edge cases', () => {
+  it('returns null for full board with no winner (draw)', () => {
+    // X: 1,3,5,6,8 / O: 2,4,7,9 — no winner
+    const history: MoveRecord[] = [
+      { piece: IconType.X, position: 1 },
+      { piece: IconType.O, position: 2 },
+      { piece: IconType.X, position: 3 },
+      { piece: IconType.O, position: 4 },
+      { piece: IconType.X, position: 5 },
+      { piece: IconType.X, position: 6 },
+      { piece: IconType.O, position: 7 },
+      { piece: IconType.X, position: 8 },
+      { piece: IconType.O, position: 9 },
+    ]
+    expect(determineWinner(history)).toBeNull()
+  })
+
+  it('returns null when only 2 of 3 positions in a line are filled', () => {
+    const history: MoveRecord[] = [
+      { piece: IconType.X, position: 1 },
+      { piece: IconType.X, position: 2 },
+    ]
+    expect(determineWinner(history)).toBeNull()
+  })
+})
+
+describe('mapWinner', () => {
+  it('returns history with winner path marked', () => {
+    const history: MoveRecord[] = [
+      { piece: IconType.X, position: 1 },
+      { piece: IconType.X, position: 2 },
+      { piece: IconType.X, position: 3 },
+      { piece: IconType.O, position: 4 },
+      { piece: IconType.O, position: 5 },
+    ]
+    const result = mapWinner(IconType.X, history)
+    const winners = result.filter(r => r.belongsToWinnerPath === true)
+    expect(winners.map(r => r.position)).toStrictEqual([1, 2, 3])
+  })
+
+  it('returns empty path when piece has no winning line', () => {
+    const history: MoveRecord[] = [
+      { piece: IconType.X, position: 1 },
+      { piece: IconType.X, position: 2 },
+    ]
+    const result = mapWinner(IconType.X, history)
+    expect(result.every(r => r.belongsToWinnerPath === false)).toBe(true)
+  })
+})
+
 export {}
