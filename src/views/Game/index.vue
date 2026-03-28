@@ -9,6 +9,10 @@
       @quit="quit()"
       @next="next()"
     />
+    <OpponentDisconnectedModal
+      :show="opponentDisconnected"
+      @close="handleDisconnectClose()"
+    />
   </div>
 </template>
 
@@ -19,15 +23,19 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { determineWinner, mapWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
+import OpponentDisconnectedModal from '@/components/OpponentDisconnectedModal.vue'
 import { createBestMovement } from '@/services/BoardService'
 import { getIconTypeFromPlayerTurn } from '@/services/IconService'
+import { swapIconType } from '@/services/utils/player'
+import { multiplayerService } from '@/services/multiplayerServiceInstance'
 
 export default {
   name: 'GamePage',
   components: {
     NavBar,
     GameBoard,
-    GameOverModal
+    GameOverModal,
+    OpponentDisconnectedModal
   },
   data() {
     return {
@@ -37,13 +45,20 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory', 'isWaitingToPlay', 'currentPlayerType']),
+    ...mapState([
+      'playHistory',
+      'isWaitingToPlay',
+      'currentPlayerType',
+      'isMultiplayer',
+      'myPlayerType',
+      'opponentDisconnected'
+    ]),
     ...mapGetters(['getPlayer'])
   },
   watch: {
     playHistory() {
       const winner = determineWinner(this.playHistory)
-      if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory) ) {
+      if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory)) {
         return
       }
 
@@ -60,6 +75,8 @@ export default {
     },
     isWaitingToPlay: {
       handler() {
+        if (this.isMultiplayer) return // AI logic does not apply in multiplayer
+
         const winner = determineWinner(this.playHistory)
         const gameIsOver = winner != null || this.playHistory.length == 9
         const shouldMakeAIMove = this.isWaitingToPlay && !gameIsOver
@@ -84,12 +101,27 @@ export default {
       'addPlayToHistory',
       'finishWaiting',
       'makePlayersWait',
-      'addWinnerPathToHistory'
+      'addWinnerPathToHistory',
+      'clearMultiplayerState'
     ]),
+
+    handleOpponentMove(cell: number) {
+      // Opponent's piece is the opposite of my piece
+      const myPiece = getIconTypeFromPlayerTurn(this.myPlayerType)
+      const opponentPiece = swapIconType(myPiece)
+      this.addPlayToHistory({ position: cell, piece: opponentPiece })
+    },
+
+    handleDisconnectClose() {
+      multiplayerService.disconnect()
+      this.quitGame()
+      this.clearMultiplayerState()
+    },
+
     show(winner: number, delay: number) {
       this.makePlayersWait()
       if (winner != -1) {
-          this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
+        this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
       }
 
       setTimeout(() => {
@@ -113,6 +145,10 @@ export default {
     },
     quit() {
       this.showModal = false
+      if (this.isMultiplayer) {
+        multiplayerService.disconnect()
+        this.clearMultiplayerState()
+      }
       this.quitGame()
     },
     next() {
