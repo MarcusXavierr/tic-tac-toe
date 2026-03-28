@@ -220,6 +220,22 @@ describe('clearMultiplayerState', () => {
     expect(store.state.isConnected).toBe(false)
     expect(store.state.opponentDisconnected).toBe(false)
   })
+
+  it('resets playAgainSent to false', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('sendPlayAgain')
+    expect(store.state.playAgainSent).toBe(true)
+    store.commit('clearMultiplayerState')
+    expect(store.state.playAgainSent).toBe(false)
+  })
+
+  it('resets playAgainReceived to false', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('receivePlayAgain')
+    expect(store.state.playAgainReceived).toBe(true)
+    store.commit('clearMultiplayerState')
+    expect(store.state.playAgainReceived).toBe(false)
+  })
 })
 
 describe('opponentDisconnected flag', () => {
