@@ -16,9 +16,11 @@
 
     <MultiplayerModal
       :show="showMultiplayerModal"
+      :error-message="multiplayerError"
       @create="handleMultiplayerCreate"
       @join="handleMultiplayerJoin"
       @cancel="closeMultiplayerModal"
+      @error-clear="multiplayerError = ''"
     />
   </div>
 </template>
@@ -44,7 +46,8 @@ export default {
       btnColors: BtnColor,
       xTypeSelected: true,
       oTypeSelected: false,
-      showMultiplayerModal: false
+      showMultiplayerModal: false,
+      multiplayerError: ''
     }
   },
   methods: {

@@ -54,9 +54,12 @@
           v-model:o-type-selected="oTypeSelected"
         />
 
+        <p v-if="errorMessage" class="error-message" data-testid="error-message-create">{{ errorMessage }}</p>
+
         <BaseButton
           :button-color="btnColors.blue"
           :is-large="true"
+          :disabled="!isCreateValid"
           data-testid="btn-create"
           @click="handleCreate"
         >
@@ -87,9 +90,12 @@
           data-testid="input-room-name-join"
         />
 
+        <p v-if="errorMessage" class="error-message" data-testid="error-message-join">{{ errorMessage }}</p>
+
         <BaseButton
           :button-color="btnColors.yellow"
           :is-large="true"
+          :disabled="!isJoinValid"
           data-testid="btn-join"
           @click="handleJoin"
         >
@@ -98,7 +104,11 @@
       </div>
 
       <!-- WAITING STATE -->
-      <div v-if="isWaiting" data-testid="waiting-state" class="waiting">
+      <div
+        v-if="isWaiting"
+        :class="['waiting', oTypeSelected && 'waiting--o']"
+        data-testid="waiting-state"
+      >
 
         <!-- RADAR RING -->
         <div class="radar" aria-hidden="true">
@@ -146,9 +156,13 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    errorMessage: {
+      type: String,
+      default: ''
     }
   },
-  emits: ['create', 'join', 'cancel'],
+  emits: ['create', 'join', 'cancel', 'error-clear'],
   data() {
     return {
       btnColors: BtnColor,
@@ -162,6 +176,23 @@ export default {
       joinRoomName: '',
       activeRoomName: ''
     }
+  },
+  computed: {
+    isCreateValid(): boolean {
+      return this.createPlayerName.trim().length > 0 && this.createRoomName.trim().length > 0
+    },
+    isJoinValid(): boolean {
+      return this.joinPlayerName.trim().length > 0 && this.joinRoomName.trim().length > 0
+    }
+  },
+  watch: {
+    errorMessage(val: string) {
+      if (val) this.isWaiting = false
+    },
+    createPlayerName() { this.clearError() },
+    createRoomName() { this.clearError() },
+    joinPlayerName() { this.clearError() },
+    joinRoomName() { this.clearError() }
   },
   methods: {
     handleCreate() {
@@ -178,6 +209,9 @@ export default {
     handleCancel() {
       this.isWaiting = false
       this.$emit('cancel')
+    },
+    clearError() {
+      if (this.errorMessage) this.$emit('error-clear')
     }
   }
 }
@@ -224,6 +258,7 @@ export default {
   > *:nth-child(2) { animation-delay: 0.16s; }
   > *:nth-child(3) { animation-delay: 0.22s; }
   > *:nth-child(4) { animation-delay: 0.28s; }
+  > *:nth-child(5) { animation-delay: 0.34s; }
 }
 
 @keyframes fade-up {
@@ -271,9 +306,31 @@ export default {
   }
 }
 
+// ─── ERROR MESSAGE ────────────────────────────────────────────────────────────
+
+.error-message {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #E36262;
+  text-align: center;
+  animation: fade-up 0.2s ease both;
+}
+
 // ─── WAITING STATE ────────────────────────────────────────────────────────────
 
 .waiting {
+  --w-color: var(--blue);
+  --w-shadow: var(--blue-shadow);
+  --w-glow: rgba(49, 195, 189, 0.35);
+
+  &--o {
+    --w-color: var(--yellow);
+    --w-shadow: var(--yellow-shadow);
+    --w-glow: rgba(242, 177, 55, 0.35);
+  }
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -297,7 +354,7 @@ export default {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 2px solid var(--blue);
+  border: 2px solid var(--w-color);
   opacity: 0.45;
 
   &::after {
@@ -308,8 +365,8 @@ export default {
     background: conic-gradient(
       from 0deg,
       transparent 75%,
-      var(--blue-shadow) 88%,
-      var(--blue) 100%
+      var(--w-shadow) 88%,
+      var(--w-color) 100%
     );
     animation: radar-spin 2s linear infinite;
   }
@@ -319,8 +376,8 @@ export default {
   width: 1.75rem;
   height: 1.75rem;
   border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 12px 4px rgba(49, 195, 189, 0.35);
+  background: var(--w-color);
+  box-shadow: 0 0 12px 4px var(--w-glow);
   animation: radar-pulse 1.8s ease-in-out infinite;
   position: relative;
   z-index: 1;
@@ -339,13 +396,13 @@ export default {
 
 .room-pill {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 0.625rem;
   background: var(--semi-dark-navy);
-  border: 1px solid var(--blue);
+  border: 1px solid var(--w-color);
   border-radius: 0.5rem;
   padding: 0.375rem 0.875rem;
-  box-shadow: inset 0 -2px 0 #10212a, 0 0 8px rgba(49, 195, 189, 0.15);
+  box-shadow: inset 0 -2px 0 #10212a, 0 0 8px var(--w-glow);
 }
 
 .room-pill__label {
@@ -362,7 +419,7 @@ export default {
   font-family: 'Share Tech Mono', monospace;
   font-size: 1rem;
   letter-spacing: 3px;
-  color: var(--blue);
+  color: var(--w-color);
   text-transform: uppercase;
 }
 
