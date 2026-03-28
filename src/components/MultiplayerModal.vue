@@ -2,9 +2,6 @@
   <BaseModal :show="show" @close="handleCancel">
     <div class="multiplayer-modal">
 
-      <!-- SCANLINE ENTRY — purely decorative, ARIA-hidden -->
-      <div class="scanline" aria-hidden="true" />
-
       <!-- TAB TOGGLE (hidden during waiting) -->
       <div v-if="!isWaiting" class="tab-toggle">
         <div class="tab-track" role="tablist">
@@ -49,7 +46,6 @@
           label="Room Code"
           placeholder="Enter code"
           :maxlength="20"
-          :mono="true"
           data-testid="input-room-name-create"
         />
 
@@ -88,7 +84,6 @@
           label="Room Code"
           placeholder="Enter code"
           :maxlength="20"
-          :mono="true"
           data-testid="input-room-name-join"
         />
 
@@ -207,34 +202,6 @@ export default {
   flex-direction: column;
   gap: 1.5rem;
   overflow: hidden;
-}
-
-// ─── SCANLINE ENTRY ───────────────────────────────────────────────────────────
-
-.scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--blue-shadow) 40%,
-    var(--blue) 50%,
-    var(--blue-shadow) 60%,
-    transparent
-  );
-  opacity: 0;
-  pointer-events: none;
-  z-index: 10;
-  animation: scan-open 0.5s ease-in 0.05s forwards;
-}
-
-@keyframes scan-open {
-  0%   { transform: translateY(0);    opacity: 0.5; }
-  80%  { transform: translateY(calc(100vh - 3px)); opacity: 0.3; }
-  100% { transform: translateY(calc(100vh - 3px)); opacity: 0; }
 }
 
 // ─── STAGGERED CONTENT FADE-IN ────────────────────────────────────────────────

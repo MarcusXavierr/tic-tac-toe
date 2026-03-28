@@ -29,7 +29,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(6px);
   display: flex;
   transition: opacity 0.3s ease;

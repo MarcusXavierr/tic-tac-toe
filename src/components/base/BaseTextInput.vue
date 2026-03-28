@@ -5,7 +5,6 @@
       v-bind="$attrs"
       :id="inputId"
       class="text-input__field"
-      :class="{ 'text-input__field--mono': mono }"
       :value="modelValue"
       :placeholder="placeholder"
       :maxlength="maxlength"
@@ -35,10 +34,6 @@ export default {
     maxlength: {
       type: Number,
       default: 50
-    },
-    mono: {
-      type: Boolean,
-      default: false
     }
   },
   emits: ['update:modelValue'],
@@ -51,8 +46,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
 .text-input {
   background: var(--semi-dark-navy);
   border-radius: 1rem;
@@ -97,17 +90,6 @@ export default {
 
   &:focus {
     color: var(--silver-hover);
-  }
-
-  &--mono {
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 3px;
-    font-size: 0.9375rem;
-    text-transform: uppercase;
-
-    &:focus {
-      color: var(--blue);
-    }
   }
 }
 </style>
