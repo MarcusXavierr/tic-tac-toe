@@ -1,5 +1,4 @@
 import { determineWinner } from '@/services/GameService'
-import type { Room } from '@/services/MultiplayerGame.service'
 import { createStore } from 'vuex'
 import type { Client } from 'webstomp-client'
 import { Players, PlayerTypes } from '../enums/Players'
@@ -94,10 +93,6 @@ export const store = createStore<State>({
 
     setRoomWaitingState(state, isWaiting: boolean) {
       state.isWaitingForOponentJoin = isWaiting
-    },
-
-    setRoom(state, room: Room) {
-      state.room = room
     }
   },
   getters: {

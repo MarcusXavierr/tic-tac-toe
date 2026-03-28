@@ -20,7 +20,7 @@
       @create="createRoom"
       @join="joinRoom"
     />
-    <WaitingRoomModal :show="isWaitingForOponentJoin && !showMultiplayerGameModal" :room-id="room?.roomId" />
+    <WaitingRoomModal :show="isWaitingForOponentJoin && !showMultiplayerGameModal" :room-id="service.roomId" />
   </div>
 </template>
 
@@ -70,7 +70,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isWaitingForOponentJoin', 'room']),
+    ...mapState(['isWaitingForOponentJoin']),
     players() {
       if (this.oTypeSelected) {
         return {
