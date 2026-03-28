@@ -91,8 +91,8 @@ const stubs = {
   }
 }
 
-beforeEach(() => vi.clearAllMocks())
-afterEach(() => vi.clearAllMocks())
+beforeEach(() => { vi.clearAllMocks() })
+afterEach(() => { vi.clearAllMocks() })
 
 describe('GamePage — opponent move handling', () => {
   it('exposes a handleOpponentMove method that adds the opponent piece to history', () => {

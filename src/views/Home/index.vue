@@ -64,7 +64,7 @@ export default {
       this._pendingRoomName = roomName
       this._pendingPlayerName = playerName
       await multiplayerService.createRoom(roomName)
-      this.$store.commit('setMultiplayerState', {
+      ;(this as any).$store.commit('setMultiplayerState', {
         myPlayerType: playerType,
         opponentName: '',
         roomName,
@@ -84,7 +84,7 @@ export default {
     handleJoin(roomName: string, playerName: string) {
       this._pendingRoomName = roomName
       this._pendingPlayerName = playerName
-      this.$store.commit('setMultiplayerState', {
+      ;(this as any).$store.commit('setMultiplayerState', {
         myPlayerType: null,
         opponentName: '',
         roomName,
@@ -101,20 +101,20 @@ export default {
 
     handleCancel() {
       multiplayerService.disconnect()
-      this.$store.commit('clearMultiplayerState')
+      ;(this as any).$store.commit('clearMultiplayerState')
       this.showMultiplayerModal = false
     },
 
     _handleServerMessage(msg: ServerMessage) {
       if (msg.type === 'move') {
-        const myPiece = getIconTypeFromPlayerTurn(this.$store.state.myPlayerType)
+        const myPiece = getIconTypeFromPlayerTurn((this as any).$store.state.myPlayerType)
         const opponentPiece = swapIconType(myPiece)
-        this.$store.commit('addPlayToHistory', { position: msg.cell, piece: opponentPiece })
+        ;(this as any).$store.commit('addPlayToHistory', { position: msg.cell, piece: opponentPiece })
         return
       }
 
       if (msg.type === 'play_again') {
-        this.$store.commit('receivePlayAgain')
+        ;(this as any).$store.commit('receivePlayAgain')
         return
       }
 
@@ -124,10 +124,10 @@ export default {
       }
 
       if (msg.type === 'player_disconnected') {
-        this.$store.commit('setMultiplayerState', {
-          myPlayerType: this.$store.state.myPlayerType,
-          opponentName: this.$store.state.opponentName,
-          roomName: this.$store.state.roomName,
+        ;(this as any).$store.commit('setMultiplayerState', {
+          myPlayerType: (this as any).$store.state.myPlayerType,
+          opponentName: (this as any).$store.state.opponentName,
+          roomName: (this as any).$store.state.roomName,
           isWaitingForOpponent: false,
           isConnected: false,
           opponentDisconnected: true
@@ -142,7 +142,7 @@ export default {
         const myType =
           opponentType === PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
 
-        this.$store.commit('setMultiplayerState', {
+        ;(this as any).$store.commit('setMultiplayerState', {
           myPlayerType: myType,
           opponentName: msg.name,
           roomName: this._pendingRoomName,
@@ -153,7 +153,7 @@ export default {
         // X always goes first; if I'm O I wait for the first move
         const isWaitingToPlay = myType === PlayerTypes.OPlayer
 
-        this.$store.commit('activateGame', {
+        ;(this as any).$store.commit('activateGame', {
           XPlayer: Players.playerOne,
           OPlayer: Players.playerTwo,
           oponentIsAI: false,
@@ -162,9 +162,9 @@ export default {
 
         // Override isWaitingToPlay set by activateGame based on turn assignment
         if (isWaitingToPlay) {
-          this.$store.commit('makePlayersWait')
+          ;(this as any).$store.commit('makePlayersWait')
         } else {
-          this.$store.commit('finishWaiting')
+          ;(this as any).$store.commit('finishWaiting')
         }
 
         this.showMultiplayerModal = false
@@ -174,21 +174,21 @@ export default {
     _handleOpponentHover(cell: number) {
       if (this._hoverTimeout) clearTimeout(this._hoverTimeout)
 
-      this.$store.commit('setRemoteHover', cell)
+      ;(this as any).$store.commit('setRemoteHover', cell)
 
       const duration = Number(import.meta.env.VITE_REMOTE_HOVER_DURATION ?? 800)
 
       this._hoverTimeout = setTimeout(() => {
-        this.$store.commit('clearRemoteHover')
+        ;(this as any).$store.commit('clearRemoteHover')
       }, duration)
     },
 
     _handleConnectionClose() {
       // Only fires on unexpected close (disconnect() nulls onclose first)
-      this.$store.commit('setMultiplayerState', {
-        myPlayerType: this.$store.state.myPlayerType,
-        opponentName: this.$store.state.opponentName,
-        roomName: this.$store.state.roomName,
+      ;(this as any).$store.commit('setMultiplayerState', {
+        myPlayerType: (this as any).$store.state.myPlayerType,
+        opponentName: (this as any).$store.state.opponentName,
+        roomName: (this as any).$store.state.roomName,
         isWaitingForOpponent: false,
         isConnected: false,
         opponentDisconnected: true
@@ -196,15 +196,15 @@ export default {
     },
 
     startGame() {
-      this.activateGame({ ...this.players, oponentIsAI: false })
+      this.activateGame({ ...(this as any).players, oponentIsAI: false })
     },
     startIAGame() {
-      this.activateGame({ ...this.players, oponentIsAI: true })
+      this.activateGame({ ...(this as any).players, oponentIsAI: true })
     }
   },
   computed: {
     players() {
-      if (this.oTypeSelected) {
+      if ((this as any).oTypeSelected) {
         return {
           OPlayer: Players.playerOne,
           XPlayer: Players.playerTwo
