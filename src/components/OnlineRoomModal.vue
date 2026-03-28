@@ -15,7 +15,7 @@
         </div>
         <!-- Create room -->
         <h3>Or</h3>
-        <BaseButton :button-color="colors.yellow" @click="$emit('create')" class="create-room">CREATE ROOM AS {{ seletedPlayer }} PLAYER</BaseButton>
+        <BaseButton :button-color="colors.yellow" @click="$emit('create')" class="create-room">CREATE ROOM AS {{selected}} PLAYER</BaseButton>
         <div class="btn-group">
           <BaseButton :button-color="colors.gray" @click="$emit('close')" is-small>CLOSE</BaseButton>
         </div>
@@ -59,9 +59,6 @@ export default {
     },
     icons() {
       return IconType
-    },
-    seletedPlayer() {
-      return this.selected === PlayerTypes.XPlayer ? 'X' : 'O'
     }
   }
 }
