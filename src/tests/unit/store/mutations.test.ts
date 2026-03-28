@@ -5,6 +5,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 // Reset store before each test by quitting any active game
 beforeEach(() => {
   store.commit('quitGame')
+  store.commit('clearMultiplayerState')
 })
 
 function activateHumanVsHuman() {
@@ -237,6 +238,123 @@ describe('opponentDisconnected flag', () => {
   it('clearMultiplayerState resets opponentDisconnected to false', () => {
     store.commit('clearMultiplayerState')
     expect(store.state.opponentDisconnected).toBe(false)
+  })
+})
+
+// ── helpers ───────────────────────────────────────────────────────────────────
+function activateMultiplayer(myPlayerType: PlayerTypes) {
+  store.commit('activateGame', {
+    XPlayer: Players.playerOne,
+    OPlayer: Players.playerTwo,
+    oponentIsAI: false,
+    isMultiplayer: true
+  })
+  store.commit('setMultiplayerState', {
+    myPlayerType,
+    opponentName: 'Opponent',
+    roomName: 'test-room',
+    isWaitingForOpponent: false,
+    isConnected: true
+  })
+}
+
+describe('sendPlayAgain', () => {
+  it('sets playAgainSent to true', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('sendPlayAgain')
+    expect(store.state.playAgainSent).toBe(true)
+  })
+
+  it('is idempotent: second call is a no-op', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain') // set received too
+    // manually reset to re-test
+    store.commit('quitGame')
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('sendPlayAgain')
+    // calling again should not change anything unexpected
+    store.commit('sendPlayAgain')
+    expect(store.state.playAgainSent).toBe(true)
+  })
+
+  it('triggers resetRound when receivePlayAgain was already true', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('addPlayToHistory', { position: 1, piece: 0 })
+    // Simulate opponent already sent play_again
+    store.commit('receivePlayAgain')
+    expect(store.state.playHistory).toHaveLength(1) // not reset yet
+    store.commit('sendPlayAgain')
+    // Both flags are true — resetRound should have fired
+    expect(store.state.playHistory).toHaveLength(0)
+    expect(store.state.playAgainSent).toBe(false)
+    expect(store.state.playAgainReceived).toBe(false)
+  })
+})
+
+describe('receivePlayAgain', () => {
+  it('sets playAgainReceived to true', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('receivePlayAgain')
+    expect(store.state.playAgainReceived).toBe(true)
+  })
+
+  it('triggers resetRound when sendPlayAgain was already true', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('addPlayToHistory', { position: 1, piece: 0 })
+    store.commit('sendPlayAgain')
+    expect(store.state.playHistory).toHaveLength(1)
+    store.commit('receivePlayAgain')
+    expect(store.state.playHistory).toHaveLength(0)
+    expect(store.state.playAgainSent).toBe(false)
+    expect(store.state.playAgainReceived).toBe(false)
+  })
+})
+
+describe('resetRound (simultaneous clicks scenario)', () => {
+  it('records winner in gameResults', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    // X wins top row
+    store.commit('addPlayToHistory', { position: 1, piece: 1 })
+    store.commit('addPlayToHistory', { position: 2, piece: 1 })
+    store.commit('addPlayToHistory', { position: 3, piece: 1 })
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain')
+    expect(store.state.gameResults).toHaveLength(1)
+  })
+
+  it('sets currentPlayerType back to XPlayer', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('addPlayToHistory', { position: 5, piece: 0 })
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain')
+    expect(store.state.currentPlayerType).toBe(PlayerTypes.XPlayer)
+  })
+
+  it('sets isWaitingToPlay to false when I am X', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain')
+    expect(store.state.isWaitingToPlay).toBe(false)
+  })
+
+  it('sets isWaitingToPlay to true when I am O', () => {
+    activateMultiplayer(PlayerTypes.OPlayer)
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain')
+    expect(store.state.isWaitingToPlay).toBe(true)
+  })
+
+  it('clears both flags after reset so a second call is idempotent', () => {
+    activateMultiplayer(PlayerTypes.XPlayer)
+    store.commit('addPlayToHistory', { position: 1, piece: 0 })
+    store.commit('sendPlayAgain')
+    store.commit('receivePlayAgain')
+    // flags are cleared — both sending and receiving again should start fresh
+    expect(store.state.playAgainSent).toBe(false)
+    expect(store.state.playAgainReceived).toBe(false)
+    // board should still be empty (no double reset)
+    expect(store.state.playHistory).toHaveLength(0)
   })
 })
 
