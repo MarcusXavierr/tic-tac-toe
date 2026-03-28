@@ -71,7 +71,6 @@ export const store = createStore<State>({
 
       store.commit('restartGame')
     },
-    // BUG: On multiplayer, when the player two goest to next round, they can play, even if it's not their turn
     nextRound(state) {
       const winner = determineWinner(state.playHistory)
       state.gameResults = state.gameResults.concat({winner})
