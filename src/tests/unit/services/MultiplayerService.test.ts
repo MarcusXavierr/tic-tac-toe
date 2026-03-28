@@ -34,6 +34,7 @@ class MockWebSocket {
 // ── Setup / teardown ─────────────────────────────────────────────────────────
 beforeEach(() => {
   MockWebSocket.instances = []
+  vi.stubEnv('VITE_API_BASE', 'http://localhost:8888')
   vi.stubGlobal('WebSocket', MockWebSocket)
   vi.stubGlobal(
     'fetch',
@@ -42,6 +43,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.unstubAllEnvs()
   vi.unstubAllGlobals()
 })
 
