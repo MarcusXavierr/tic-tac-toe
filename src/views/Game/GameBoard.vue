@@ -6,7 +6,10 @@
       ref="cell"
       :selected-icon="cell.piece"
       :belongs-to-winner-path="cell.belongsToWinnerPath"
+      :is-remote-hovered="cell.id === remoteHoverCell"
+      :is-remote-hover-fading="remoteHoverFading"
       @click="checkCell(cell.id)"
+      @mouseenter="handleCellHover(cell)"
     />
   </div>
   <GameHistory />
@@ -28,6 +31,10 @@ export default {
   },
   methods: {
     ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory', 'makePlayersWait']),
+    handleCellHover(cell: move) {
+      if (!this.isMultiplayer || cell.piece != null) return
+      multiplayerService.sendHover(cell.id)
+    },
     checkCell(cellId: number) {
       if (this.isWaitingToPlay) {
         return
@@ -60,7 +67,9 @@ export default {
       'currentPlayerType',
       'oponentIsAI',
       'isWaitingToPlay',
-      'isMultiplayer'
+      'isMultiplayer',
+      'remoteHoverCell',
+      'remoteHoverFading'
     ]),
     cells(): move[] {
       return generateBoard(this.playHistory)

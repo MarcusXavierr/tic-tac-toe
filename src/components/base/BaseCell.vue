@@ -3,6 +3,12 @@
     <KeepAlive>
       <BaseIcon v-if="selectedIcon != null" :icon-type="icon" />
       <BaseIcon v-else-if="hover && !isWaitingToPlay" :icon-type="hoverIcon" />
+      <BaseIcon
+        v-else-if="isRemoteHovered"
+        :icon-type="remoteHoverIcon"
+        class="remote-hover-icon"
+        :class="{ fading: isRemoteHoverFading }"
+      />
     </KeepAlive>
   </div>
 </template>
@@ -32,10 +38,26 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    }
+    },
+    isRemoteHovered: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    isRemoteHoverFading: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   computed: {
-    ...mapState(['currentPlayerType', 'isWaitingToPlay']),
+    ...mapState(['currentPlayerType', 'isWaitingToPlay', 'myPlayerType']),
+    remoteHoverIcon() {
+      if (this.myPlayerType == PlayerTypes.XPlayer) {
+        return IconType.O_outline
+      }
+      return IconType.X_outline
+    },
     hoverIcon() {
       if (this.currentPlayerType == PlayerTypes.OPlayer) {
         return IconType.O_outline
@@ -103,6 +125,13 @@ export default {
 @media (min-width: 767px) {
   .cell {
     border-radius: 1rem;
+  }
+}
+
+.remote-hover-icon {
+  transition: opacity 0.3s ease;
+  &.fading {
+    opacity: 0;
   }
 }
 </style>

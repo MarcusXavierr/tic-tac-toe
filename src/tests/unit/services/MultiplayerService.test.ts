@@ -200,4 +200,21 @@ describe('MultiplayerService.sendPlayAgain', () => {
   })
 })
 
+// ── sendHover ─────────────────────────────────────────────────────────────────
+describe('MultiplayerService.sendHover', () => {
+  it('sends a JSON hover message through the open WebSocket', () => {
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', vi.fn(), vi.fn())
+    service.sendHover(4)
+    const ws = MockWebSocket.instances[0]
+    expect(ws.sentMessages).toHaveLength(1)
+    expect(JSON.parse(ws.sentMessages[0])).toEqual({ type: 'hover', cell: 4 })
+  })
+
+  it('does nothing when no WebSocket is open', () => {
+    const service = new MultiplayerService()
+    expect(() => service.sendHover(0)).not.toThrow()
+  })
+})
+
 export {}

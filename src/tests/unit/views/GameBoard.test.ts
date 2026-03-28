@@ -7,6 +7,7 @@ import { IconType } from '@/enums/IconTypes'
 // ── Mock singleton service ────────────────────────────────────────────────────
 const mockService = {
   sendMove: vi.fn(),
+  sendHover: vi.fn(),
   createRoom: vi.fn(),
   joinRoom: vi.fn(),
   disconnect: vi.fn()
@@ -27,6 +28,8 @@ function makeStore(overrides = {}) {
         oponentIsAI: false,
         isWaitingToPlay: false,
         isMultiplayer: false,
+        remoteHoverCell: null,
+        remoteHoverFading: false,
         ...overrides
       }
     },
@@ -47,8 +50,10 @@ function makeStore(overrides = {}) {
 
 const stubs = {
   BaseCell: {
-    template: '<div @click="$emit(\'click\')" />',
-    emits: ['click']
+    name: 'BaseCell',
+    template: '<div @click="$emit(\'click\')" @mouseenter="$emit(\'mouseenter\')" />',
+    props: ['selectedIcon', 'belongsToWinnerPath', 'isRemoteHovered', 'isRemoteHoverFading'],
+    emits: ['click', 'mouseenter']
   },
   GameHistory: { template: '<div />' }
 }
@@ -100,6 +105,58 @@ describe('GameBoard — multiplayer move', () => {
     const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
     wrapper.vm.checkCell(3)
     expect(mockService.sendMove).not.toHaveBeenCalled()
+  })
+})
+
+describe('GameBoard — sendHover on mouseenter', () => {
+  it('calls sendHover with cell id on mouseenter of empty cell in multiplayer', () => {
+    const store = makeStore({ isMultiplayer: true })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    wrapper.vm.handleCellHover({ id: 3, piece: null })
+    expect(mockService.sendHover).toHaveBeenCalledWith(3)
+  })
+
+  it('does not call sendHover on mouseenter of occupied cell', () => {
+    const store = makeStore({ isMultiplayer: true })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    wrapper.vm.handleCellHover({ id: 3, piece: IconType.X })
+    expect(mockService.sendHover).not.toHaveBeenCalled()
+  })
+
+  it('does not call sendHover when not in multiplayer', () => {
+    const store = makeStore({ isMultiplayer: false })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    wrapper.vm.handleCellHover({ id: 3, piece: null })
+    expect(mockService.sendHover).not.toHaveBeenCalled()
+  })
+})
+
+describe('GameBoard — isRemoteHovered prop passing', () => {
+  it('passes isRemoteHovered=true to the cell matching remoteHoverCell', async () => {
+    const store = makeStore({ remoteHoverCell: 2 })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    await wrapper.vm.$nextTick()
+    const cells = wrapper.findAllComponents({ name: 'BaseCell' })
+    const hoveredCell = cells.find((c) => c.props('isRemoteHovered') === true)
+    expect(hoveredCell).toBeDefined()
+  })
+
+  it('passes isRemoteHovered=false to cells not matching remoteHoverCell', async () => {
+    const store = makeStore({ remoteHoverCell: 2 })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    await wrapper.vm.$nextTick()
+    const cells = wrapper.findAllComponents({ name: 'BaseCell' })
+    const nonHovered = cells.filter((c) => c.props('isRemoteHovered') === false)
+    expect(nonHovered).toHaveLength(8) // 9 cells, 1 is hovered
+  })
+
+  it('passes isRemoteHoverFading from store to all cells', async () => {
+    const store = makeStore({ remoteHoverCell: 1, remoteHoverFading: true })
+    const wrapper = mount(GameBoard, { global: { plugins: [store], stubs } })
+    await wrapper.vm.$nextTick()
+    const cells = wrapper.findAllComponents({ name: 'BaseCell' })
+    const fadingCells = cells.filter((c) => c.props('isRemoteHoverFading') === true)
+    expect(fadingCells).toHaveLength(9)
   })
 })
 
