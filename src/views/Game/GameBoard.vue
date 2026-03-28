@@ -6,7 +6,10 @@
       ref="cell"
       :selected-icon="cell.piece"
       :belongs-to-winner-path="cell.belongsToWinnerPath"
+      :is-remote-hovered="cell.id === remoteHoverCell"
       @click="checkCell(cell.id)"
+      @mouseenter="handleCellHover(cell)"
+      @mouseleave="handleCellLeave"
     />
   </div>
   <GameHistory />
@@ -26,8 +29,33 @@ export default {
     BaseCell,
     GameHistory
   },
+  data() {
+    return {
+      hoverReSendTimer: null as ReturnType<typeof setInterval> | null
+    }
+  },
+  beforeUnmount() {
+    this.handleCellLeave()
+  },
   methods: {
     ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory', 'makePlayersWait']),
+    handleCellHover(cell: move) {
+      if (!this.isMultiplayer || cell.piece != null || this.isWaitingToPlay) return
+      if (this.hoverReSendTimer !== null) {
+        clearInterval(this.hoverReSendTimer)
+      }
+      multiplayerService.sendHover(cell.id)
+      const duration = Number(import.meta.env.VITE_REMOTE_HOVER_DURATION ?? 800)
+      this.hoverReSendTimer = setInterval(() => {
+        multiplayerService.sendHover(cell.id)
+      }, duration)
+    },
+    handleCellLeave() {
+      if (this.hoverReSendTimer !== null) {
+        clearInterval(this.hoverReSendTimer)
+        this.hoverReSendTimer = null
+      }
+    },
     checkCell(cellId: number) {
       if (this.isWaitingToPlay) {
         return
@@ -60,7 +88,8 @@ export default {
       'currentPlayerType',
       'oponentIsAI',
       'isWaitingToPlay',
-      'isMultiplayer'
+      'isMultiplayer',
+      'remoteHoverCell'
     ]),
     cells(): move[] {
       return generateBoard(this.playHistory)

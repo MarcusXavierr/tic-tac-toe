@@ -37,7 +37,8 @@ export const store = createStore<State>({
       isConnected: false,
       opponentDisconnected: false,
       playAgainSent: false,
-      playAgainReceived: false
+      playAgainReceived: false,
+      remoteHoverCell: null
     }
   },
   mutations: {
@@ -107,6 +108,13 @@ export const store = createStore<State>({
       state.opponentDisconnected = false
       state.playAgainSent = false
       state.playAgainReceived = false
+      state.remoteHoverCell = null
+    },
+    setRemoteHover(state, cell: number) {
+      state.remoteHoverCell = cell
+    },
+    clearRemoteHover(state) {
+      state.remoteHoverCell = null
     },
     sendPlayAgain(state) {
       if (state.playAgainSent) return // double-click guard

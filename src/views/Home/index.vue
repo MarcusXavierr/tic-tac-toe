@@ -49,7 +49,8 @@ export default {
       showMultiplayerModal: false,
       // playerName set during create/join, used to infer myPlayerType on player_joined
       _pendingPlayerName: '' as string,
-      _pendingRoomName: '' as string
+      _pendingRoomName: '' as string,
+      _hoverTimeout: null as ReturnType<typeof setTimeout> | null,
     }
   },
   methods: {
@@ -117,6 +118,11 @@ export default {
         return
       }
 
+      if (msg.type === 'hover') {
+        this._handleOpponentHover(msg.cell)
+        return
+      }
+
       if (msg.type === 'player_disconnected') {
         this.$store.commit('setMultiplayerState', {
           myPlayerType: this.$store.state.myPlayerType,
@@ -163,6 +169,18 @@ export default {
 
         this.showMultiplayerModal = false
       }
+    },
+
+    _handleOpponentHover(cell: number) {
+      if (this._hoverTimeout) clearTimeout(this._hoverTimeout)
+
+      this.$store.commit('setRemoteHover', cell)
+
+      const duration = Number(import.meta.env.VITE_REMOTE_HOVER_DURATION ?? 800)
+
+      this._hoverTimeout = setTimeout(() => {
+        this.$store.commit('clearRemoteHover')
+      }, duration)
     },
 
     _handleConnectionClose() {

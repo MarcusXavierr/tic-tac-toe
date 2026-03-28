@@ -48,7 +48,10 @@ function makeStore(overrides = {}) {
       addPlayToHistory: vi.fn(),
       makePlayersWait: vi.fn(),
       finishWaiting: vi.fn(),
-      receivePlayAgain: vi.fn()
+      receivePlayAgain: vi.fn(),
+      setRemoteHover: vi.fn(),
+      startRemoteHoverFade: vi.fn(),
+      clearRemoteHover: vi.fn(),
     }
   })
 }
@@ -290,6 +293,53 @@ describe('Home — play_again message handling', () => {
     onMessage({ type: 'play_again' })
     expect(commitSpy).toHaveBeenCalledWith('receivePlayAgain')
   })
+})
+
+describe('Home — hover message handling', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllEnvs()
+  })
+
+  it('commits setRemoteHover with cell number when hover message received', () => {
+    const store = makeStore()
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'hover', cell: 4 })
+    expect(commitSpy).toHaveBeenCalledWith('setRemoteHover', 4)
+  })
+
+  it('commits clearRemoteHover after VITE_REMOTE_HOVER_DURATION ms', () => {
+    vi.stubEnv('VITE_REMOTE_HOVER_DURATION', '800')
+    const store = makeStore()
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'hover', cell: 2 })
+    vi.advanceTimersByTime(800)
+    expect(commitSpy).toHaveBeenCalledWith('clearRemoteHover')
+  })
+
+  it('cancels previous timeout when a new hover arrives', () => {
+    vi.stubEnv('VITE_REMOTE_HOVER_DURATION', '800')
+    const store = makeStore()
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'hover', cell: 1 })
+    onMessage({ type: 'hover', cell: 5 })
+    vi.advanceTimersByTime(800)
+    const clearCalls = (commitSpy.mock.calls as any[]).filter((c) => c[0] === 'clearRemoteHover')
+    expect(clearCalls).toHaveLength(1) // only one clear fires, not two
+  })
+
 })
 
 export {}

@@ -236,6 +236,13 @@ describe('clearMultiplayerState', () => {
     store.commit('clearMultiplayerState')
     expect(store.state.playAgainReceived).toBe(false)
   })
+
+  it('resets remoteHoverCell to null', () => {
+    store.commit('setRemoteHover', 3)
+    store.commit('clearMultiplayerState')
+    expect(store.state.remoteHoverCell).toBeNull()
+  })
+
 })
 
 describe('opponentDisconnected flag', () => {
@@ -358,6 +365,22 @@ describe('resetRound', () => {
     store.commit('resetRound')
     expect(store.state.playAgainSent).toBe(false)
     expect(store.state.playAgainReceived).toBe(false)
+  })
+})
+
+describe('setRemoteHover', () => {
+  it('sets remoteHoverCell to the given cell number', () => {
+    store.commit('setRemoteHover', 4)
+    expect(store.state.remoteHoverCell).toBe(4)
+  })
+
+})
+
+describe('clearRemoteHover', () => {
+  it('sets remoteHoverCell to null', () => {
+    store.commit('setRemoteHover', 7)
+    store.commit('clearRemoteHover')
+    expect(store.state.remoteHoverCell).toBeNull()
   })
 })
 
