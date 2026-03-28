@@ -1,29 +1,31 @@
 <template>
-  <BaseModal :show="show">
+  <BaseModal :show="show" @close="handleCancel">
     <div class="multiplayer-modal">
 
       <!-- SCANLINE ENTRY — purely decorative, ARIA-hidden -->
       <div class="scanline" aria-hidden="true" />
 
       <!-- TAB TOGGLE (hidden during waiting) -->
-      <div v-if="!isWaiting" class="tab-toggle" role="tablist">
-        <div
-          :class="['tab', activeTab === 'create' && 'tab--active']"
-          data-testid="tab-create"
-          role="tab"
-          :aria-selected="activeTab === 'create'"
-          @click="activeTab = 'create'"
-        >
-          CREATE
-        </div>
-        <div
-          :class="['tab', activeTab === 'join' && 'tab--active']"
-          data-testid="tab-join"
-          role="tab"
-          :aria-selected="activeTab === 'join'"
-          @click="activeTab = 'join'"
-        >
-          JOIN
+      <div v-if="!isWaiting" class="tab-toggle">
+        <div class="tab-track" role="tablist">
+          <div
+            :class="['tab', activeTab === 'create' && 'tab--active']"
+            data-testid="tab-create"
+            role="tab"
+            :aria-selected="activeTab === 'create'"
+            @click="activeTab = 'create'"
+          >
+            CREATE
+          </div>
+          <div
+            :class="['tab', activeTab === 'join' && 'tab--active']"
+            data-testid="tab-join"
+            role="tab"
+            :aria-selected="activeTab === 'join'"
+            @click="activeTab = 'join'"
+          >
+            JOIN
+          </div>
         </div>
       </div>
 
@@ -34,32 +36,22 @@
         class="view"
         role="tabpanel"
       >
-        <div class="form-card">
-          <div class="field">
-            <label class="field-label" for="create-player-name">YOUR NAME</label>
-            <input
-              id="create-player-name"
-              v-model="createPlayerName"
-              data-testid="input-player-name-create"
-              class="field-input"
-              placeholder="ENTER NAME"
-              maxlength="20"
-              autocomplete="off"
-            />
-          </div>
-          <div class="field">
-            <label class="field-label" for="create-room-name">ROOM CODE</label>
-            <input
-              id="create-room-name"
-              v-model="createRoomName"
-              data-testid="input-room-name-create"
-              class="field-input field-input--mono"
-              placeholder="ENTER CODE"
-              maxlength="20"
-              autocomplete="off"
-            />
-          </div>
-        </div>
+        <BaseTextInput
+          v-model="createPlayerName"
+          label="Your Name"
+          placeholder="Enter name"
+          :maxlength="20"
+          data-testid="input-player-name-create"
+        />
+
+        <BaseTextInput
+          v-model="createRoomName"
+          label="Room Code"
+          placeholder="Enter code"
+          :maxlength="20"
+          :mono="true"
+          data-testid="input-room-name-create"
+        />
 
         <PlayerSelector
           v-model:x-type-selected="xTypeSelected"
@@ -83,35 +75,25 @@
         class="view"
         role="tabpanel"
       >
-        <div class="form-card">
-          <div class="field">
-            <label class="field-label" for="join-player-name">YOUR NAME</label>
-            <input
-              id="join-player-name"
-              v-model="joinPlayerName"
-              data-testid="input-player-name-join"
-              class="field-input"
-              placeholder="ENTER NAME"
-              maxlength="20"
-              autocomplete="off"
-            />
-          </div>
-          <div class="field">
-            <label class="field-label" for="join-room-name">ROOM CODE</label>
-            <input
-              id="join-room-name"
-              v-model="joinRoomName"
-              data-testid="input-room-name-join"
-              class="field-input field-input--mono"
-              placeholder="ENTER CODE"
-              maxlength="20"
-              autocomplete="off"
-            />
-          </div>
-        </div>
+        <BaseTextInput
+          v-model="joinPlayerName"
+          label="Your Name"
+          placeholder="Enter name"
+          :maxlength="20"
+          data-testid="input-player-name-join"
+        />
+
+        <BaseTextInput
+          v-model="joinRoomName"
+          label="Room Code"
+          placeholder="Enter code"
+          :maxlength="20"
+          :mono="true"
+          data-testid="input-room-name-join"
+        />
 
         <BaseButton
-          :button-color="btnColors.blue"
+          :button-color="btnColors.yellow"
           :is-large="true"
           data-testid="btn-join"
           @click="handleJoin"
@@ -157,13 +139,14 @@
 <script lang="ts">
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseTextInput from '@/components/base/BaseTextInput.vue'
 import PlayerSelector from '@/views/Home/PlayerSelector.vue'
 import { BtnColor } from '@/enums/ButtonTypes'
 import { PlayerTypes } from '@/enums/Players'
 
 export default {
   name: 'MultiplayerModal',
-  components: { BaseModal, BaseButton, PlayerSelector },
+  components: { BaseModal, BaseButton, BaseTextInput, PlayerSelector },
   props: {
     show: {
       type: Boolean,
@@ -206,10 +189,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// ─── GOOGLE FONT IMPORT ───────────────────────────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
 // ─── LAYOUT ──────────────────────────────────────────────────────────────────
+
+:deep(.modal-container) {
+  max-width: 30rem;
+  width: calc(100% - 2rem);
+  border-radius: 1rem;
+  margin: auto;
+  background: var(--dark-navy);
+}
 
 .multiplayer-modal {
   position: relative;
@@ -253,29 +241,22 @@ export default {
 
 .tab-toggle {
   animation: fade-up 0.25s ease both;
-  animation-delay: 0.08s;
+  animation-delay: 0.05s;
 }
 
 .view {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 
-  > .form-card {
+  > * {
     animation: fade-up 0.25s ease both;
-    animation-delay: 0.16s;
   }
 
-  > :deep(.selector) {
-    animation: fade-up 0.25s ease both;
-    animation-delay: 0.22s;
-  }
-
-  > button,
-  > :last-child {
-    animation: fade-up 0.25s ease both;
-    animation-delay: 0.28s;
-  }
+  > *:nth-child(1) { animation-delay: 0.10s; }
+  > *:nth-child(2) { animation-delay: 0.16s; }
+  > *:nth-child(3) { animation-delay: 0.22s; }
+  > *:nth-child(4) { animation-delay: 0.28s; }
 }
 
 @keyframes fade-up {
@@ -286,8 +267,14 @@ export default {
 // ─── TAB TOGGLE ───────────────────────────────────────────────────────────────
 
 .tab-toggle {
+  background: var(--semi-dark-navy);
+  border-radius: 1rem;
+  box-shadow: inset 0 -0.5rem 0 #10212a;
+  padding: 1.25rem 1.5rem 1.75rem;
+}
+
+.tab-track {
   display: flex;
-  justify-content: center;
   background: var(--dark-navy);
   padding: 0.5rem;
   border-radius: 0.75rem;
@@ -314,73 +301,6 @@ export default {
 
   &:not(&--active):hover {
     color: var(--silver-hover);
-  }
-}
-
-// ─── FORM CARD ────────────────────────────────────────────────────────────────
-
-.form-card {
-  background: var(--semi-dark-navy);
-  border-radius: 1rem;
-  box-shadow: inset 0 -0.5rem 0 #10212a;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.field-label {
-  display: block;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--silver);
-  opacity: 0.55;
-  text-transform: uppercase;
-}
-
-.field-input {
-  width: 100%;
-  background: var(--dark-navy);
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: var(--silver);
-  font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  outline: none;
-  transition: border-color 0.15s ease, color 0.15s ease;
-
-  &::placeholder {
-    font-family: 'Outfit', sans-serif;
-    opacity: 0.25;
-    font-weight: 400;
-    letter-spacing: 1px;
-  }
-
-  &:focus {
-    border-bottom-color: var(--blue);
-    color: var(--silver-hover);
-  }
-
-  &--mono {
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 2px;
-    font-size: 0.9375rem;
-
-    &:focus {
-      color: var(--blue-hover);
-    }
   }
 }
 
