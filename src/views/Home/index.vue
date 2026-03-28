@@ -31,6 +31,8 @@ import { Players, PlayerTypes } from '@/enums/Players'
 import { mapMutations } from 'vuex'
 import { multiplayerService } from '@/services/multiplayerServiceInstance'
 import type { ServerMessage } from '@/services/MultiplayerService'
+import { getIconTypeFromPlayerTurn } from '@/services/IconService'
+import { swapIconType } from '@/services/utils/player'
 
 export default {
   name: 'HomePage',
@@ -68,11 +70,13 @@ export default {
         isWaitingForOpponent: true,
         isConnected: true
       })
+      const typeParam: 'x' | 'o' = playerType === PlayerTypes.XPlayer ? 'x' : 'o'
       multiplayerService.joinRoom(
         roomName,
         playerName,
         (msg) => this._handleServerMessage(msg),
-        () => this._handleConnectionClose()
+        () => this._handleConnectionClose(),
+        typeParam
       )
     },
 
@@ -101,6 +105,25 @@ export default {
     },
 
     _handleServerMessage(msg: ServerMessage) {
+      if (msg.type === 'move') {
+        const myPiece = getIconTypeFromPlayerTurn(this.$store.state.myPlayerType)
+        const opponentPiece = swapIconType(myPiece)
+        this.$store.commit('addPlayToHistory', { position: msg.cell, piece: opponentPiece })
+        return
+      }
+
+      if (msg.type === 'player_disconnected') {
+        this.$store.commit('setMultiplayerState', {
+          myPlayerType: this.$store.state.myPlayerType,
+          opponentName: this.$store.state.opponentName,
+          roomName: this.$store.state.roomName,
+          isWaitingForOpponent: false,
+          isConnected: false,
+          opponentDisconnected: true
+        })
+        return
+      }
+
       if (msg.type === 'player_joined') {
         // The server tells us the *opponent's* player_type.
         // We are the opposite.

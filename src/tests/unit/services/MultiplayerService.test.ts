@@ -90,6 +90,20 @@ describe('MultiplayerService.joinRoom', () => {
     expect(ws.url).toMatch(/^ws/)
   })
 
+  it('includes player_type in the URL when provided', () => {
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', vi.fn(), vi.fn(), 'x')
+    const ws = MockWebSocket.instances[0]
+    expect(ws.url).toContain('player_type=x')
+  })
+
+  it('omits player_type from URL when not provided', () => {
+    const service = new MultiplayerService()
+    service.joinRoom('room-1', 'Alice', vi.fn(), vi.fn())
+    const ws = MockWebSocket.instances[0]
+    expect(ws.url).not.toContain('player_type')
+  })
+
   it('calls onMessage callback with parsed ServerMessage on incoming data', () => {
     const onMessage = vi.fn()
     const service = new MultiplayerService()

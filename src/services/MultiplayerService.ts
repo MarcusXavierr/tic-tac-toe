@@ -22,10 +22,14 @@ export class MultiplayerService {
     roomId: string,
     playerName: string,
     onMessage: (msg: ServerMessage) => void,
-    onClose: () => void
+    onClose: () => void,
+    playerType?: 'x' | 'o'
   ): void {
     const base = toWsUrl(import.meta.env.VITE_API_BASE)
-    const url = `${base}/room/${roomId}/join?name=${encodeURIComponent(playerName)}`
+    let url = `${base}/room/${roomId}/join?name=${encodeURIComponent(playerName)}`
+    if (playerType) {
+      url += `&player_type=${playerType}`
+    }
     this.ws = new WebSocket(url)
 
     this.ws.onmessage = (event) => {

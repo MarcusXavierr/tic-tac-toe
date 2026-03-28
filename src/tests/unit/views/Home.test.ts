@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { Players, PlayerTypes } from '@/enums/Players'
+import { IconType } from '@/enums/IconTypes'
 
 // ── Mock the singleton service ────────────────────────────────────────────────
 const mockService = {
@@ -43,7 +44,10 @@ function makeStore(overrides = {}) {
     mutations: {
       activateGame: vi.fn(),
       setMultiplayerState: vi.fn(),
-      clearMultiplayerState: vi.fn()
+      clearMultiplayerState: vi.fn(),
+      addPlayToHistory: vi.fn(),
+      makePlayersWait: vi.fn(),
+      finishWaiting: vi.fn()
     }
   })
 }
@@ -95,17 +99,30 @@ describe('Home — VS PLAYER button', () => {
 })
 
 describe('Home — @create event', () => {
-  it('calls service.createRoom then service.joinRoom', async () => {
+  it('calls service.createRoom then service.joinRoom with player_type', async () => {
     const store = makeStore()
     const wrapper = mountHome(store)
-    // Trigger the create event on the modal stub
     await wrapper.vm.handleCreate('room-1', 'Alice', PlayerTypes.XPlayer)
     expect(mockService.createRoom).toHaveBeenCalledWith('room-1')
     expect(mockService.joinRoom).toHaveBeenCalledWith(
       'room-1',
       'Alice',
       expect.any(Function),
-      expect.any(Function)
+      expect.any(Function),
+      'x'
+    )
+  })
+
+  it('passes player_type "o" to joinRoom when creating as OPlayer', async () => {
+    const store = makeStore()
+    const wrapper = mountHome(store)
+    await wrapper.vm.handleCreate('room-1', 'Alice', PlayerTypes.OPlayer)
+    expect(mockService.joinRoom).toHaveBeenCalledWith(
+      'room-1',
+      'Alice',
+      expect.any(Function),
+      expect.any(Function),
+      'o'
     )
   })
 
@@ -212,6 +229,53 @@ describe('Home — player_joined message handling', () => {
     const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
     onMessage({ type: 'player_joined', name: 'Bob', player_type: 'o', order: 2 })
     expect(wrapper.vm.showMultiplayerModal).toBe(false)
+  })
+})
+
+describe('Home — move message handling', () => {
+  it('commits addPlayToHistory with opponent O piece when myPlayerType is X', () => {
+    const store = makeStore({ myPlayerType: PlayerTypes.XPlayer })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'move', cell: 4 })
+    expect(commitSpy).toHaveBeenCalledWith('addPlayToHistory', {
+      position: 4,
+      piece: IconType.O
+    })
+  })
+
+  it('commits addPlayToHistory with opponent X piece when myPlayerType is O', () => {
+    const store = makeStore({ myPlayerType: PlayerTypes.OPlayer })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'move', cell: 2 })
+    expect(commitSpy).toHaveBeenCalledWith('addPlayToHistory', {
+      position: 2,
+      piece: IconType.X
+    })
+  })
+})
+
+describe('Home — player_disconnected message handling', () => {
+  it('commits setMultiplayerState with opponentDisconnected: true', () => {
+    const store = makeStore({
+      myPlayerType: PlayerTypes.XPlayer,
+      opponentName: 'Bob',
+      roomName: 'room-1'
+    })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'player_disconnected' })
+    expect(commitSpy).toHaveBeenCalledWith(
+      'setMultiplayerState',
+      expect.objectContaining({ opponentDisconnected: true, isConnected: false })
+    )
   })
 })
 
