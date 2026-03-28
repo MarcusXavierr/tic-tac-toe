@@ -29,10 +29,12 @@ interface State {
   // play-again handshake
   playAgainSent: boolean,
   playAgainReceived: boolean,
+  remoteHoverCell: number | null,
 }
 
 interface ImportMetaEnv {
   readonly VITE_API_BASE: string
+  readonly VITE_REMOTE_HOVER_DURATION?: string
 }
 
 interface ImportMeta {

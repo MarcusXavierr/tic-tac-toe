@@ -219,10 +219,10 @@ export default {
     },
     handleCancel() {
       this.isWaiting = false
-      this.$emit('cancel')
+      ;(this as any).$emit('cancel')
     },
     clearError() {
-      if (this.errorMessage) this.$emit('error-clear')
+      if ((this as any).errorMessage) (this as any).$emit('error-clear')
     }
   }
 }

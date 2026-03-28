@@ -55,8 +55,8 @@ export default {
       'playAgainReceived'
     ]),
     ...mapGetters(['getPlayer']),
-    bothPlayersReadyForNextRound() {
-      return this.playAgainSent && this.playAgainReceived
+    bothPlayersReadyForNextRound(): boolean {
+      return (this as any).playAgainSent && (this as any).playAgainReceived
     }
   },
   watch: {

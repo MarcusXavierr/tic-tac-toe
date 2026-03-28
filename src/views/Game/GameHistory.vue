@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="card blue">
-      <p>X (P{{ playerX }})</p>
+      <p>{{ labelX }}</p>
       <h4>{{ history.x }}</h4>
     </div>
     <div class="card silver">
@@ -9,7 +9,7 @@
       <h4>{{ history.tie }}</h4>
     </div>
     <div class="card yellow">
-      <p>O (P{{ playerO }})</p>
+      <p>{{ labelO }}</p>
       <h4>{{ history.o }}</h4>
     </div>
   </div>
@@ -20,29 +20,25 @@ import { PlayerTypes } from '@/enums/Players'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'GameHistory',
-  methods: {},
   computed: {
-    ...mapState(['gameResults']),
+    ...mapState(['gameResults', 'isMultiplayer', 'myPlayerType']),
     ...mapGetters(['getPlayer']),
 
-    playerX() {
-      return this.getPlayer(PlayerTypes.XPlayer)
+    labelX(): string {
+      const self = this as any
+      if (!self.isMultiplayer) return `X (P${self.getPlayer(PlayerTypes.XPlayer)})`
+      return self.myPlayerType === PlayerTypes.XPlayer ? 'X (You)' : 'X'
     },
-    playerO() {
-      return this.getPlayer(PlayerTypes.OPlayer)
+    labelO(): string {
+      const self = this as any
+      if (!self.isMultiplayer) return `O (P${self.getPlayer(PlayerTypes.OPlayer)})`
+      return self.myPlayerType === PlayerTypes.OPlayer ? 'O (You)' : 'O'
     },
     history() {
       const initialState = { x: 0, o: 0, tie: 0 }
-
-      return this.gameResults.reduce((acc: any, item: any) => {
-        if (item.winner == PlayerTypes.XPlayer) {
-          return { ...acc, x: acc.x + 1 }
-        }
-
-        if (item.winner == PlayerTypes.OPlayer) {
-          return { ...acc, o: acc.o + 1 }
-        }
-
+      return (this as any).gameResults.reduce((acc: any, item: any) => {
+        if (item.winner == PlayerTypes.XPlayer) return { ...acc, x: acc.x + 1 }
+        if (item.winner == PlayerTypes.OPlayer) return { ...acc, o: acc.o + 1 }
         return { ...acc, tie: acc.tie + 1 }
       }, initialState)
     }
