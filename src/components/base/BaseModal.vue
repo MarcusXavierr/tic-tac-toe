@@ -1,6 +1,6 @@
 <template>
   <Transition name="modal">
-    <div v-if="show" class="modal-mask">
+    <div v-if="show" class="modal-mask" @click="$emit('close')">
       <div class="modal-container" @click.stop>
         <slot> Modal Not implemented </slot>
       </div>
@@ -16,7 +16,8 @@ export default {
       type: Boolean,
       required: true
     }
-  }
+  },
+  emits: ['close']
 }
 </script>
 
@@ -28,7 +29,8 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(6px);
   display: flex;
   transition: opacity 0.3s ease;
 }

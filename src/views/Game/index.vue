@@ -6,9 +6,11 @@
       :show="showModal"
       :winner="winner"
       :player-winner="player"
+      :waiting="playAgainSent && !playAgainReceived"
       @quit="quit()"
       @next="next()"
     />
+    <OpponentDisconnectedModal :show="opponentDisconnected" @close="handleDisconnectClose()" />
   </div>
 </template>
 
@@ -19,31 +21,54 @@ import { mapGetters, mapMutations, mapState } from 'vuex'
 import { determineWinner, mapWinner } from '@/services/GameService'
 import { PlayerTypes } from '@/enums/Players'
 import GameOverModal from '@/components/GameOverModal.vue'
+import OpponentDisconnectedModal from '@/components/OpponentDisconnectedModal.vue'
 import { createBestMovement } from '@/services/BoardService'
 import { getIconTypeFromPlayerTurn } from '@/services/IconService'
+import { swapIconType } from '@/services/utils/player'
+import { multiplayerService } from '@/services/multiplayerServiceInstance'
 
 export default {
   name: 'GamePage',
   components: {
     NavBar,
     GameBoard,
-    GameOverModal
+    GameOverModal,
+    OpponentDisconnectedModal
   },
   data() {
     return {
       showModal: false,
       winner: -1,
-      player: -1
+      player: -1,
+      _isResettingRound: false
     }
   },
   computed: {
-    ...mapState(['playHistory', 'isWaitingToPlay', 'currentPlayerType']),
-    ...mapGetters(['getPlayer'])
+    ...mapState([
+      'playHistory',
+      'isWaitingToPlay',
+      'currentPlayerType',
+      'isMultiplayer',
+      'myPlayerType',
+      'opponentDisconnected',
+      'playAgainSent',
+      'playAgainReceived'
+    ]),
+    ...mapGetters(['getPlayer']),
+    bothPlayersReadyForNextRound() {
+      return this.playAgainSent && this.playAgainReceived
+    }
   },
   watch: {
     playHistory() {
+      // Don't show modal if we just reset a round (play-again handshake)
+      if (this._isResettingRound) {
+        this._isResettingRound = false
+        return
+      }
+
       const winner = determineWinner(this.playHistory)
-      if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory) ) {
+      if ((winner == null && this.playHistory.length < 9) || this.hasWinnerPath(this.playHistory)) {
         return
       }
 
@@ -60,6 +85,8 @@ export default {
     },
     isWaitingToPlay: {
       handler() {
+        if (this.isMultiplayer) return // AI logic does not apply in multiplayer
+
         const winner = determineWinner(this.playHistory)
         const gameIsOver = winner != null || this.playHistory.length == 9
         const shouldMakeAIMove = this.isWaitingToPlay && !gameIsOver
@@ -75,21 +102,45 @@ export default {
         }
       },
       immediate: true
+    },
+    bothPlayersReadyForNextRound(value: boolean) {
+      if (value) {
+        this._isResettingRound = true
+        this.resetRound()
+        this.showModal = false
+      }
     }
   },
   methods: {
     ...mapMutations([
       'quitGame',
       'nextRound',
+      'resetRound',
       'addPlayToHistory',
       'finishWaiting',
       'makePlayersWait',
-      'addWinnerPathToHistory'
+      'addWinnerPathToHistory',
+      'clearMultiplayerState',
+      'sendPlayAgain'
     ]),
+
+    handleOpponentMove(cell: number) {
+      // Opponent's piece is the opposite of my piece
+      const myPiece = getIconTypeFromPlayerTurn(this.myPlayerType)
+      const opponentPiece = swapIconType(myPiece)
+      this.addPlayToHistory({ position: cell, piece: opponentPiece })
+    },
+
+    handleDisconnectClose() {
+      multiplayerService.disconnect()
+      this.quitGame()
+      this.clearMultiplayerState()
+    },
+
     show(winner: number, delay: number) {
       this.makePlayersWait()
       if (winner != -1) {
-          this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
+        this.addWinnerPathToHistory(mapWinner(getIconTypeFromPlayerTurn(winner), this.playHistory))
       }
 
       setTimeout(() => {
@@ -113,11 +164,21 @@ export default {
     },
     quit() {
       this.showModal = false
+      if (this.isMultiplayer) {
+        multiplayerService.disconnect()
+        this.clearMultiplayerState()
+      }
       this.quitGame()
     },
     next() {
-      this.nextRound()
-      this.showModal = false
+      if (this.isMultiplayer) {
+        this.sendPlayAgain()
+        multiplayerService.sendPlayAgain()
+        // Don't close modal - let the watcher close it when opponent responds
+      } else {
+        this.nextRound()
+        this.showModal = false
+      }
     }
   }
 }

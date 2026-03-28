@@ -18,6 +18,7 @@ import GameHistory from './GameHistory.vue'
 import { mapState, mapMutations } from 'vuex'
 import { getIconTypeFromPlayerTurn } from '../../services/IconService'
 import { generateBoard, type move } from '@/services/BoardService'
+import { multiplayerService } from '@/services/multiplayerServiceInstance'
 
 export default {
   name: 'GameBoard',
@@ -26,7 +27,7 @@ export default {
     GameHistory
   },
   methods: {
-    ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory']),
+    ...mapMutations(['addPlayToHistory', 'addAsyncPlayToHistory', 'makePlayersWait']),
     checkCell(cellId: number) {
       if (this.isWaitingToPlay) {
         return
@@ -37,6 +38,14 @@ export default {
       }
 
       const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType) }
+
+      if (this.isMultiplayer) {
+        this.addPlayToHistory(data)
+        multiplayerService.sendMove(cellId)
+        this.makePlayersWait()
+        return
+      }
+
       if (this.oponentIsAI) {
         this.addAsyncPlayToHistory(data)
         return
@@ -46,10 +55,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI', 'isWaitingToPlay']),
+    ...mapState([
+      'playHistory',
+      'currentPlayerType',
+      'oponentIsAI',
+      'isWaitingToPlay',
+      'isMultiplayer'
+    ]),
     cells(): move[] {
       return generateBoard(this.playHistory)
-    },
+    }
   }
 }
 </script>

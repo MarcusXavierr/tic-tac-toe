@@ -29,3 +29,17 @@ coverage
 
 # Local Netlify folder
 .netlify
+
+# Claude Code / AI
+.agent/
+.claude_
+CLAUDE.md
+skills-lock.json
+
+# Docs & project files
+docs
+TODO.md
+*.png
+
+# Env
+.env

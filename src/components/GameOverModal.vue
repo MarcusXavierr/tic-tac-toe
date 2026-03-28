@@ -20,10 +20,13 @@
             <span class="blue">TAKES THE ROUND</span>
           </h3>
         </div>
+        <p v-if="waiting" class="waiting-text">WAITING FOR OPPONENT...</p>
       </div>
       <div class="btn-group">
         <BaseButton :button-color="colors.gray" @click="$emit('quit')">QUIT</BaseButton>
-        <BaseButton :button-color="colors.yellow" @click="$emit('next')">NEXT ROUND</BaseButton>
+        <BaseButton v-if="!waiting" :button-color="colors.yellow" @click="$emit('next')"
+          >NEXT ROUND</BaseButton
+        >
       </div>
     </div>
   </BaseModal>
@@ -55,6 +58,10 @@ export default {
       type: Number,
       required: false,
       default: undefined
+    },
+    waiting: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -116,5 +123,11 @@ export default {
   .blue {
     color: var(--blue);
   }
+}
+
+.waiting-text {
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: 0.5rem;
 }
 </style>

@@ -54,7 +54,7 @@ export function generateBoard(playHistory: MoveRecord[]): board {
       return cell
     }
 
-    return { ...cell, piece: item.piece, belongsToWinnerPath: item.belongsToWinnerPath}
+    return { ...cell, piece: item.piece, belongsToWinnerPath: item.belongsToWinnerPath }
   })
 }
 

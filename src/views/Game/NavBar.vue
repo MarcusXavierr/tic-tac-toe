@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar">
-    <img src="@/assets/logo.svg" alt="" @click="quitGame()" />
+    <img src="@/assets/logo.svg" alt="" @click="quitGameWithCleanup()" />
     <div class="turn">
       <img :src="iconPath" alt="icon representing actual turn" width="16" />
       TURN
@@ -28,6 +28,7 @@ import { IconType } from '@/enums/IconTypes'
 import { mapMutations, mapState } from 'vuex'
 import { PlayerTypes } from '@/enums/Players'
 import RetryGameModal from '@/components/RetryGameModal.vue'
+import { multiplayerService } from '@/services/multiplayerServiceInstance'
 
 export default {
   name: 'NavBar',
@@ -42,7 +43,14 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['quitGame', 'restartGame']),
+    ...mapMutations(['quitGame', 'restartGame', 'clearMultiplayerState']),
+    quitGameWithCleanup() {
+      if (this.isMultiplayer) {
+        multiplayerService.disconnect()
+        this.clearMultiplayerState()
+      }
+      this.quitGame()
+    },
     restart() {
       const boardRef = this.$parent!.$refs.board as any
 
@@ -59,7 +67,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['currentPlayerType']),
+    ...mapState(['currentPlayerType', 'isMultiplayer']),
     buttonOptions() {
       return BtnColor
     },
