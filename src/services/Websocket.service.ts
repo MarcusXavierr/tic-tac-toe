@@ -8,22 +8,18 @@ export class WebsocketService {
   private client: Client;
   // TODO: Colocar variaveis de ambiente no .env
   private readonly brokerUrl = 'ws://localhost:8080/ws/join';
-  private readonly messageBrokerBase = '/message-broker';
+  private readonly messageBrokerBase = '/topic';
   private readonly messageListenerBase = '/app'
   private _connected: boolean = false;
   private _waitingUserToJoin: boolean = false;
-  private readonly userId: string;
 
-  constructor(userId: string) {
+  constructor() {
     this.socket = new WebSocket(this.brokerUrl);
     this.client = over(this.socket);
     store.state.websocketClient = this.client;
-    store.state.userId = userId;
-    this.userId = userId;
   }
 
   public roomCreatorConnect(room: Room, players: players) {
-    store.state.room = room;
     this.client.connect({}, this.getCreateRoomCallback(room, players), (error) => {
       this._waitingUserToJoin = false;
       console.error(error);
@@ -31,7 +27,6 @@ export class WebsocketService {
   }
 
   public joinerConnect(room: Room) {
-    store.state.room = room;
     this.client.connect({}, this.getJoinRoomCallback(room), (error) => {
       this._waitingUserToJoin = false;
       console.error(error);
@@ -54,12 +49,11 @@ export class WebsocketService {
       // Subscribe to the room
       // TODO: refactor to put this rooms in a constant too
       _this.client.subscribe(`${_this.messageBrokerBase}/rooms/${room.roomId}`, (message) => {
-        // If the current player is the creator of the room, skip the message handling because was the one who sent it
-        const body = JSON.parse(message.body) as MoveRecord & { userId: string };
-        if (body.userId === _this.userId) {
+        if (store.state.isWaitingToPlay) {
           return
         }
 
+        const body = JSON.parse(message.body) as MoveRecord;
         console.log('recebi a jogada: e vou aplicar ela', body);
         store.commit('addPlayToHistory', body);
       })
@@ -90,12 +84,11 @@ export class WebsocketService {
       _this._connected = true;
       // TODO: refactor to put this rooms in a constant too
       _this.client.subscribe(`${_this.messageBrokerBase}/rooms/${room.roomId}`, (message) => {
-        // If the current player is the creator of the room, skip the message handling because was the one who sent it
-        const body = JSON.parse(message.body) as MoveRecord & { userId: string };
-        if (body.userId === _this.userId) {
+        if (store.state.isWaitingToPlay) {
           return
         }
 
+        const body = JSON.parse(message.body) as MoveRecord;
         console.log('recebi a jogada: e vou aplicar ela', body);
         store.commit('addPlayToHistory', body);
       })
@@ -128,5 +121,3 @@ type players = {
     OPlayer: Players;
     XPlayer: Players;
 }
-
-type MoveWithUserId = MoveRecord & { userId: string };
