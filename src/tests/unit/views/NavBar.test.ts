@@ -46,8 +46,8 @@ const stubs = {
   }
 }
 
-beforeEach(() => vi.clearAllMocks())
-afterEach(() => vi.clearAllMocks())
+beforeEach(() => { vi.clearAllMocks() })
+afterEach(() => { vi.clearAllMocks() })
 
 describe('NavBar — logo click quits game', () => {
   it('calls quitGame on logo click', async () => {
