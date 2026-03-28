@@ -1,16 +1,16 @@
 :root {
-  --dark-navy: #1A2A33;
-  --semi-dark-navy: #1F3641;
-  --silver: #A8BFC9;
-  --silver-hover: #DBE8ED;
-  --blue: #31C3BD;
-  --blue-hover: #65E9E4;
-  --yellow: #F2B137;
-  --yellow-hover: #FFC860;
+  --dark-navy: #1a2a33;
+  --semi-dark-navy: #1f3641;
+  --silver: #a8bfc9;
+  --silver-hover: #dbe8ed;
+  --blue: #31c3bd;
+  --blue-hover: #65e9e4;
+  --yellow: #f2b137;
+  --yellow-hover: #ffc860;
 
-  --yellow-shadow: #CC8B13;
-  --blue-shadow: #118C87;
-  --silver-shadow: #6B8997;
+  --yellow-shadow: #cc8b13;
+  --blue-shadow: #118c87;
+  --silver-shadow: #6b8997;
 }
 
 * {
@@ -20,7 +20,7 @@
 }
 
 body {
-  font-family: "Outfit", sans-serif;
+  font-family: 'Outfit', sans-serif;
   background-color: var(--dark-navy);
   color: var(--silver);
   letter-spacing: 1px;

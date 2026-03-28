@@ -9,10 +9,7 @@
       @quit="quit()"
       @next="next()"
     />
-    <OpponentDisconnectedModal
-      :show="opponentDisconnected"
-      @close="handleDisconnectClose()"
-    />
+    <OpponentDisconnectedModal :show="opponentDisconnected" @close="handleDisconnectClose()" />
   </div>
 </template>
 

@@ -4,7 +4,9 @@
       <h3>RESTART GAME?</h3>
       <div class="btn-group">
         <BaseButton :button-color="colors.gray" @click="$emit('close')">NO, CANCEL</BaseButton>
-        <BaseButton :button-color="colors.yellow" @click="$emit('restart')">YES, RESTART</BaseButton>
+        <BaseButton :button-color="colors.yellow" @click="$emit('restart')"
+          >YES, RESTART</BaseButton
+        >
       </div>
     </div>
   </BaseModal>
@@ -21,8 +23,7 @@ export default {
     BaseModal,
     BaseButton
   },
-  methods: {
-  },
+  methods: {},
   computed: {
     colors() {
       return BtnColor

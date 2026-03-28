@@ -55,10 +55,16 @@ export default {
     }
   },
   computed: {
-    ...mapState(['playHistory', 'currentPlayerType', 'oponentIsAI', 'isWaitingToPlay', 'isMultiplayer']),
+    ...mapState([
+      'playHistory',
+      'currentPlayerType',
+      'oponentIsAI',
+      'isWaitingToPlay',
+      'isMultiplayer'
+    ]),
     cells(): move[] {
       return generateBoard(this.playHistory)
-    },
+    }
   }
 }
 </script>

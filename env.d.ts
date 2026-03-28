@@ -26,6 +26,9 @@ interface State {
   isWaitingForOpponent: boolean,
   isConnected: boolean,
   opponentDisconnected: boolean,
+  // play-again handshake
+  playAgainSent: boolean,
+  playAgainReceived: boolean,
 }
 
 interface ImportMetaEnv {

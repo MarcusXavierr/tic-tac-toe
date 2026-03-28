@@ -53,8 +53,12 @@ const stubs = {
   GameHistory: { template: '<div />' }
 }
 
-beforeEach(() => { vi.clearAllMocks() })
-afterEach(() => { vi.clearAllMocks() })
+beforeEach(() => {
+  vi.clearAllMocks()
+})
+afterEach(() => {
+  vi.clearAllMocks()
+})
 
 describe('GameBoard — normal (non-multiplayer) move', () => {
   it('does NOT call service.sendMove when isMultiplayer is false', () => {

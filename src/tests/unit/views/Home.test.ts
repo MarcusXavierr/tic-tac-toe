@@ -47,7 +47,8 @@ function makeStore(overrides = {}) {
       clearMultiplayerState: vi.fn(),
       addPlayToHistory: vi.fn(),
       makePlayersWait: vi.fn(),
-      finishWaiting: vi.fn()
+      finishWaiting: vi.fn(),
+      receivePlayAgain: vi.fn()
     }
   })
 }
@@ -89,7 +90,7 @@ describe('Home — VS PLAYER button', () => {
     const wrapper = mountHome(store)
     // Find the VS PLAYER button (second BaseButton stub)
     const buttons = wrapper.findAll('button')
-    const vsPlayerBtn = buttons.find(b => b.text().includes('VS PLAYER'))
+    const vsPlayerBtn = buttons.find((b) => b.text().includes('VS PLAYER'))
     expect(vsPlayerBtn).toBeDefined()
     await vsPlayerBtn!.trigger('click')
     const modal = wrapper.find('[data-testid="multiplayer-modal"]')
@@ -276,6 +277,18 @@ describe('Home — player_disconnected message handling', () => {
       'setMultiplayerState',
       expect.objectContaining({ opponentDisconnected: true, isConnected: false })
     )
+  })
+})
+
+describe('Home — play_again message handling', () => {
+  it('commits receivePlayAgain when play_again message received', () => {
+    const store = makeStore()
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mountHome(store)
+    wrapper.vm.handleJoin('room-1', 'Alice')
+    const onMessage = (mockService.joinRoom as ReturnType<typeof vi.fn>).mock.calls[0][2]
+    onMessage({ type: 'play_again' })
+    expect(commitSpy).toHaveBeenCalledWith('receivePlayAgain')
   })
 })
 

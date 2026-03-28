@@ -23,7 +23,7 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    },
+    }
   },
   computed: {
     color() {
@@ -46,9 +46,8 @@ export default {
       }
 
       return 'normal'
-    },
-
-  },
+    }
+  }
 }
 </script>
 
@@ -71,11 +70,11 @@ button {
   justify-content: center;
   cursor: pointer;
 
-  &:hover:not(&:disabled){
+  &:hover:not(&:disabled) {
     background: var(--btn-color-hover);
   }
 
-  &:active:not(&:disabled){
+  &:active:not(&:disabled) {
     --offset: var(--shadow-y-offset, -0.25rem);
     --shadow-y-offset: calc(var(--offset) / 2);
     transform: translateY(calc(0.25rem / 4));
@@ -87,7 +86,6 @@ button {
     --btn-color-shadow: var(--silver-shadow);
     cursor: not-allowed;
   }
-
 }
 
 .small {

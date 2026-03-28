@@ -38,12 +38,12 @@ export function findWinnerPath(piece: IconType, playHistory: MoveRecord[]): numb
 }
 
 export function markWinnerPath(playHistory: MoveRecord[], path: number[]): MoveRecord[] {
-  return playHistory.map(item => {
-    return { ...item, belongsToWinnerPath:  path.some(x => x == item.position)}
+  return playHistory.map((item) => {
+    return { ...item, belongsToWinnerPath: path.some((x) => x == item.position) }
   })
 }
 
-export function mapWinner(piece:IconType, playHistory: MoveRecord[]): MoveRecord[] {
+export function mapWinner(piece: IconType, playHistory: MoveRecord[]): MoveRecord[] {
   return markWinnerPath(playHistory, findWinnerPath(piece, playHistory))
 }
 

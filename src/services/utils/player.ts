@@ -1,4 +1,4 @@
-import { IconType } from "@/enums/IconTypes";
+import { IconType } from '@/enums/IconTypes'
 
 export function swapIconType(icon: IconType) {
   if (icon == IconType.O) {

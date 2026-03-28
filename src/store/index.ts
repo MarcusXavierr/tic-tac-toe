@@ -3,18 +3,18 @@ import { createStore } from 'vuex'
 import { Players, PlayerTypes } from '../enums/Players'
 
 interface activateData {
-  XPlayer: Players,
-  OPlayer: Players,
-  oponentIsAI: boolean,
+  XPlayer: Players
+  OPlayer: Players
+  oponentIsAI: boolean
   isMultiplayer?: boolean
 }
 
 interface MultiplayerPayload {
-  myPlayerType: PlayerTypes | null,
-  opponentName: string,
-  roomName: string,
-  isWaitingForOpponent: boolean,
-  isConnected: boolean,
+  myPlayerType: PlayerTypes | null
+  opponentName: string
+  roomName: string
+  isWaitingForOpponent: boolean
+  isConnected: boolean
   opponentDisconnected?: boolean
 }
 
@@ -36,6 +36,8 @@ export const store = createStore<State>({
       isWaitingForOpponent: false,
       isConnected: false,
       opponentDisconnected: false,
+      playAgainSent: false,
+      playAgainReceived: false
     }
   },
   mutations: {
@@ -103,7 +105,31 @@ export const store = createStore<State>({
       state.isWaitingForOpponent = false
       state.isConnected = false
       state.opponentDisconnected = false
+      state.playAgainSent = false
+      state.playAgainReceived = false
     },
+    sendPlayAgain(state) {
+      if (state.playAgainSent) return // double-click guard
+      state.playAgainSent = true
+      if (state.playAgainSent && state.playAgainReceived) {
+        store.commit('resetRound')
+      }
+    },
+    receivePlayAgain(state) {
+      state.playAgainReceived = true
+      if (state.playAgainSent && state.playAgainReceived) {
+        store.commit('resetRound')
+      }
+    },
+    resetRound(state) {
+      const winner = determineWinner(state.playHistory)
+      state.gameResults = state.gameResults.concat({ winner })
+      state.playHistory = []
+      state.currentPlayerType = PlayerTypes.XPlayer
+      state.isWaitingToPlay = state.myPlayerType === PlayerTypes.OPlayer
+      state.playAgainSent = false
+      state.playAgainReceived = false
+    }
   },
   getters: {
     getPlayer: (state) => (player: PlayerTypes) => {

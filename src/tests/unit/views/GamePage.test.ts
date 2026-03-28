@@ -43,12 +43,22 @@ function makeStore(overrides: Record<string, any> = {}) {
         state.playHistory = state.playHistory.concat(data)
         state.isWaitingToPlay = false
       },
-      makePlayersWait(state: any) { state.isWaitingToPlay = true },
-      finishWaiting(state: any) { state.isWaitingToPlay = false },
-      addWinnerPathToHistory(state: any, h: any) { state.playHistory = h },
-      quitGame(state: any) { state.isGameActive = false },
+      makePlayersWait(state: any) {
+        state.isWaitingToPlay = true
+      },
+      finishWaiting(state: any) {
+        state.isWaitingToPlay = false
+      },
+      addWinnerPathToHistory(state: any, h: any) {
+        state.playHistory = h
+      },
+      quitGame(state: any) {
+        state.isGameActive = false
+      },
       nextRound: vi.fn(),
-      setMultiplayerState(state: any, p: any) { Object.assign(state, p) },
+      setMultiplayerState(state: any, p: any) {
+        Object.assign(state, p)
+      },
       clearMultiplayerState(state: any) {
         state.isMultiplayer = false
         state.opponentDisconnected = false
@@ -81,7 +91,11 @@ afterEach(() => vi.clearAllMocks())
 
 describe('GamePage — opponent move handling', () => {
   it('exposes a handleOpponentMove method that adds the opponent piece to history', () => {
-    const store = makeStore({ isMultiplayer: true, myPlayerType: PlayerTypes.XPlayer, isWaitingToPlay: true })
+    const store = makeStore({
+      isMultiplayer: true,
+      myPlayerType: PlayerTypes.XPlayer,
+      isWaitingToPlay: true
+    })
     const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
     // O is the opponent when I am X
     wrapper.vm.handleOpponentMove(5)
@@ -91,14 +105,22 @@ describe('GamePage — opponent move handling', () => {
   })
 
   it('sets isWaitingToPlay to false after opponent move', () => {
-    const store = makeStore({ isMultiplayer: true, myPlayerType: PlayerTypes.XPlayer, isWaitingToPlay: true })
+    const store = makeStore({
+      isMultiplayer: true,
+      myPlayerType: PlayerTypes.XPlayer,
+      isWaitingToPlay: true
+    })
     const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
     wrapper.vm.handleOpponentMove(3)
     expect(store.state.isWaitingToPlay).toBe(false)
   })
 
   it('uses X piece for opponent when myPlayerType is OPlayer', () => {
-    const store = makeStore({ isMultiplayer: true, myPlayerType: PlayerTypes.OPlayer, isWaitingToPlay: true })
+    const store = makeStore({
+      isMultiplayer: true,
+      myPlayerType: PlayerTypes.OPlayer,
+      isWaitingToPlay: true
+    })
     const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
     wrapper.vm.handleOpponentMove(1)
     expect(store.state.playHistory[0].piece).toBe(IconType.X)

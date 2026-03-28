@@ -1,5 +1,5 @@
-import { IconType } from "@/enums/IconTypes"
-import { PlayerTypes } from "@/enums/Players"
+import { IconType } from '@/enums/IconTypes'
+import { PlayerTypes } from '@/enums/Players'
 
 const getIconTypeFromPlayerTurn = (playerTurn: PlayerTypes): IconType => {
   if (playerTurn == PlayerTypes.XPlayer) {
@@ -9,6 +9,4 @@ const getIconTypeFromPlayerTurn = (playerTurn: PlayerTypes): IconType => {
   return IconType.O
 }
 
-export {
-  getIconTypeFromPlayerTurn
-}
+export { getIconTypeFromPlayerTurn }

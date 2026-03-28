@@ -11,10 +11,10 @@ describe('cleanHistory', () => {
     const history: MoveRecord[] = [
       { position: 1, piece: IconType.X },
       { position: 2, piece: IconType.O },
-      { position: 3, piece: IconType.X },
+      { position: 3, piece: IconType.X }
     ]
     const result = cleanHistory(IconType.X, history)
-    expect(result.every(r => r.piece === IconType.X)).toBe(true)
+    expect(result.every((r) => r.piece === IconType.X)).toBe(true)
     expect(result).toHaveLength(2)
   })
 
@@ -22,16 +22,16 @@ describe('cleanHistory', () => {
     const history: MoveRecord[] = [
       { position: 7, piece: IconType.O },
       { position: 2, piece: IconType.O },
-      { position: 5, piece: IconType.O },
+      { position: 5, piece: IconType.O }
     ]
     const result = cleanHistory(IconType.O, history)
-    expect(result.map(r => r.position)).toStrictEqual([2, 5, 7])
+    expect(result.map((r) => r.position)).toStrictEqual([2, 5, 7])
   })
 
   it('returns empty array when piece has no moves in history', () => {
     const history: MoveRecord[] = [
       { position: 1, piece: IconType.O },
-      { position: 2, piece: IconType.O },
+      { position: 2, piece: IconType.O }
     ]
     expect(cleanHistory(IconType.X, history)).toStrictEqual([])
   })

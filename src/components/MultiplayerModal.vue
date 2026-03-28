@@ -1,7 +1,6 @@
 <template>
   <BaseModal :show="show" @close="handleCancel">
     <div class="multiplayer-modal">
-
       <!-- TAB TOGGLE (hidden during waiting) -->
       <div v-if="!isWaiting" class="tab-toggle">
         <div class="tab-track" role="tablist">
@@ -54,7 +53,9 @@
           v-model:o-type-selected="oTypeSelected"
         />
 
-        <p v-if="errorMessage" class="error-message" data-testid="error-message-create">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="error-message" data-testid="error-message-create">
+          {{ errorMessage }}
+        </p>
 
         <BaseButton
           :button-color="btnColors.blue"
@@ -90,7 +91,9 @@
           data-testid="input-room-name-join"
         />
 
-        <p v-if="errorMessage" class="error-message" data-testid="error-message-join">{{ errorMessage }}</p>
+        <p v-if="errorMessage" class="error-message" data-testid="error-message-join">
+          {{ errorMessage }}
+        </p>
 
         <BaseButton
           :button-color="btnColors.yellow"
@@ -109,7 +112,6 @@
         :class="['waiting', oTypeSelected && 'waiting--o']"
         data-testid="waiting-state"
       >
-
         <!-- RADAR RING -->
         <div class="radar" aria-hidden="true">
           <div class="radar__sweep" />
@@ -124,7 +126,9 @@
 
         <!-- STATUS TEXT -->
         <p class="waiting-text">
-          WAITING FOR OPPONENT<span class="ellipsis"><span>.</span><span>.</span><span>.</span></span>
+          WAITING FOR OPPONENT<span class="ellipsis"
+            ><span>.</span><span>.</span><span>.</span></span
+          >
         </p>
 
         <BaseButton
@@ -136,7 +140,6 @@
           CANCEL
         </BaseButton>
       </div>
-
     </div>
   </BaseModal>
 </template>
@@ -189,10 +192,18 @@ export default {
     errorMessage(val: string) {
       if (val) this.isWaiting = false
     },
-    createPlayerName() { this.clearError() },
-    createRoomName() { this.clearError() },
-    joinPlayerName() { this.clearError() },
-    joinRoomName() { this.clearError() }
+    createPlayerName() {
+      this.clearError()
+    },
+    createRoomName() {
+      this.clearError()
+    },
+    joinPlayerName() {
+      this.clearError()
+    },
+    joinRoomName() {
+      this.clearError()
+    }
   },
   methods: {
     handleCreate() {
@@ -254,16 +265,32 @@ export default {
     animation: fade-up 0.25s ease both;
   }
 
-  > *:nth-child(1) { animation-delay: 0.10s; }
-  > *:nth-child(2) { animation-delay: 0.16s; }
-  > *:nth-child(3) { animation-delay: 0.22s; }
-  > *:nth-child(4) { animation-delay: 0.28s; }
-  > *:nth-child(5) { animation-delay: 0.34s; }
+  > *:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  > *:nth-child(2) {
+    animation-delay: 0.16s;
+  }
+  > *:nth-child(3) {
+    animation-delay: 0.22s;
+  }
+  > *:nth-child(4) {
+    animation-delay: 0.28s;
+  }
+  > *:nth-child(5) {
+    animation-delay: 0.34s;
+  }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0);   }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ─── TAB TOGGLE ───────────────────────────────────────────────────────────────
@@ -313,7 +340,7 @@ export default {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #E36262;
+  color: #e36262;
   text-align: center;
   animation: fade-up 0.2s ease both;
 }
@@ -384,12 +411,21 @@ export default {
 }
 
 @keyframes radar-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes radar-pulse {
-  0%, 100% { transform: scale(1);    opacity: 1; }
-  50%       { transform: scale(0.82); opacity: 0.7; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.82);
+    opacity: 0.7;
+  }
 }
 
 // ROOM CODE PILL
@@ -444,14 +480,26 @@ export default {
     opacity: 0;
     animation: dot-blink 1.4s ease-in-out infinite both;
 
-    &:nth-child(1) { animation-delay: 0s;   }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.4s; }
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
   }
 }
 
 @keyframes dot-blink {
-  0%, 60%, 100% { opacity: 0; }
-  30%            { opacity: 1; }
+  0%,
+  60%,
+  100% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
 }
 </style>

@@ -49,7 +49,7 @@ export default {
       showMultiplayerModal: false,
       // playerName set during create/join, used to infer myPlayerType on player_joined
       _pendingPlayerName: '' as string,
-      _pendingRoomName: '' as string,
+      _pendingRoomName: '' as string
     }
   },
   methods: {
@@ -112,6 +112,11 @@ export default {
         return
       }
 
+      if (msg.type === 'play_again') {
+        this.$store.commit('receivePlayAgain')
+        return
+      }
+
       if (msg.type === 'player_disconnected') {
         this.$store.commit('setMultiplayerState', {
           myPlayerType: this.$store.state.myPlayerType,
@@ -128,7 +133,8 @@ export default {
         // The server tells us the *opponent's* player_type.
         // We are the opposite.
         const opponentType = msg.player_type === 'x' ? PlayerTypes.XPlayer : PlayerTypes.OPlayer
-        const myType = opponentType === PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
+        const myType =
+          opponentType === PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
 
         this.$store.commit('setMultiplayerState', {
           myPlayerType: myType,

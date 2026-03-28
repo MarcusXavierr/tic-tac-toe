@@ -10,7 +10,7 @@ describe('minimax', () => {
       { position: 2, piece: IconType.X },
       { position: 3, piece: IconType.X },
       { position: 4, piece: IconType.O },
-      { position: 5, piece: IconType.O },
+      { position: 5, piece: IconType.O }
     ]
     // isMaximizing=true, piece=X: iconEqualsPiece=true → true===true → 1
     const score = minimax(board, 0, true, IconType.X, -Infinity, Infinity)
@@ -23,7 +23,7 @@ describe('minimax', () => {
       { position: 8, piece: IconType.O },
       { position: 9, piece: IconType.O },
       { position: 1, piece: IconType.X },
-      { position: 2, piece: IconType.X },
+      { position: 2, piece: IconType.X }
     ]
     const score = minimax(board, 0, true, IconType.X, -Infinity, Infinity)
     expect(score).toBe(-1)
@@ -40,7 +40,7 @@ describe('minimax', () => {
       { position: 6, piece: IconType.X },
       { position: 7, piece: IconType.O },
       { position: 8, piece: IconType.X },
-      { position: 9, piece: IconType.O },
+      { position: 9, piece: IconType.O }
     ]
     const score = minimax(board, 0, true, IconType.X, -Infinity, Infinity)
     expect(score).toBe(0)
@@ -52,7 +52,7 @@ describe('minimax', () => {
       { position: 1, piece: IconType.X },
       { position: 2, piece: IconType.X },
       { position: 4, piece: IconType.O },
-      { position: 5, piece: IconType.O },
+      { position: 5, piece: IconType.O }
     ]
     const score = minimax(board, 0, true, IconType.X, -Infinity, Infinity)
     expect(score).toBe(1)
@@ -64,7 +64,7 @@ describe('minimax', () => {
       { position: 7, piece: IconType.O },
       { position: 8, piece: IconType.O },
       { position: 1, piece: IconType.X },
-      { position: 2, piece: IconType.X },
+      { position: 2, piece: IconType.X }
     ]
     const score = minimax(board, 0, false, IconType.X, -Infinity, Infinity)
     expect(score).toBe(-1)

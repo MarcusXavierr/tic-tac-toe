@@ -35,9 +35,10 @@ class MockWebSocket {
 beforeEach(() => {
   MockWebSocket.instances = []
   vi.stubGlobal('WebSocket', MockWebSocket)
-  vi.stubGlobal('fetch', vi.fn(() =>
-    Promise.resolve({ ok: true } as Response)
-  ))
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(() => Promise.resolve({ ok: true } as Response))
+  )
 })
 
 afterEach(() => {
@@ -64,9 +65,10 @@ describe('MultiplayerService.createRoom', () => {
   })
 
   it('throws when the server returns a non-ok response', async () => {
-    vi.stubGlobal('fetch', vi.fn(() =>
-      Promise.resolve({ ok: false, status: 409 } as Response)
-    ))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve({ ok: false, status: 409 } as Response))
+    )
     const service = new MultiplayerService()
     await expect(service.createRoom('taken-room')).rejects.toThrow()
   })
