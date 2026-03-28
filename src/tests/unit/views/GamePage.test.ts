@@ -8,7 +8,8 @@ const mockService = {
   sendMove: vi.fn(),
   createRoom: vi.fn(),
   joinRoom: vi.fn(),
-  disconnect: vi.fn()
+  disconnect: vi.fn(),
+  sendPlayAgain: vi.fn()
 }
 vi.mock('@/services/multiplayerServiceInstance', () => ({
   multiplayerService: mockService
@@ -35,6 +36,8 @@ function makeStore(overrides: Record<string, any> = {}) {
         XPlayer: 1,
         OPlayer: 2,
         gameResults: [],
+        playAgainSent: false,
+        playAgainReceived: false,
         ...overrides
       }
     },
@@ -56,6 +59,7 @@ function makeStore(overrides: Record<string, any> = {}) {
         state.isGameActive = false
       },
       nextRound: vi.fn(),
+      sendPlayAgain: vi.fn(),
       setMultiplayerState(state: any, p: any) {
         Object.assign(state, p)
       },
@@ -76,7 +80,7 @@ const stubs = {
   GameBoard: { template: '<div />', ref: 'board' },
   GameOverModal: {
     template: '<div />',
-    props: ['show', 'winner', 'playerWinner'],
+    props: ['show', 'winner', 'playerWinner', 'waiting'],
     emits: ['quit', 'next']
   },
   OpponentDisconnectedModal: {
@@ -160,6 +164,124 @@ describe('GamePage — handleDisconnectClose', () => {
     wrapper.vm.handleDisconnectClose()
     expect(commitSpy).toHaveBeenCalledWith('quitGame')
     expect(commitSpy).toHaveBeenCalledWith('clearMultiplayerState')
+  })
+})
+
+describe('GamePage — multiplayer Next Round', () => {
+  it('commits sendPlayAgain and calls service.sendPlayAgain when next() in multiplayer', () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: false,
+      playAgainReceived: false
+    })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
+
+    wrapper.vm.next()
+
+    expect(commitSpy).toHaveBeenCalledWith('sendPlayAgain')
+    expect(mockService.sendPlayAgain).toHaveBeenCalled()
+  })
+
+  it('calls nextRound directly when next() in single-player', () => {
+    const store = makeStore({
+      isMultiplayer: false,
+      playAgainSent: false,
+      playAgainReceived: false
+    })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
+
+    wrapper.vm.next()
+
+    expect(commitSpy).toHaveBeenCalledWith('nextRound')
+    expect(commitSpy).not.toHaveBeenCalledWith('sendPlayAgain')
+    expect(mockService.sendPlayAgain).not.toHaveBeenCalled()
+  })
+
+  it('calls nextRound when playAgainReceived becomes true and playAgainSent is already true', async () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: true,
+      playAgainReceived: false
+    })
+    const commitSpy = vi.spyOn(store, 'commit')
+    const wrapper = mount(GamePage, { global: { plugins: [store], stubs } })
+
+    // Simulate opponent responding with play_again
+    store.state.playAgainReceived = true
+    await wrapper.vm.$nextTick()
+
+    expect(commitSpy).toHaveBeenCalledWith('nextRound')
+  })
+
+  it('passes waiting=true to modal when playAgainSent is true and playAgainReceived is false', () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: true,
+      playAgainReceived: false
+    })
+    const wrapper = mount(GamePage, {
+      global: {
+        plugins: [store],
+        stubs: {
+          ...stubs,
+          GameOverModal: {
+            template: '<div :data-waiting="waiting" />',
+            props: ['show', 'winner', 'playerWinner', 'waiting'],
+            emits: ['quit', 'next']
+          }
+        }
+      }
+    })
+
+    expect(wrapper.find('[data-waiting="true"]').exists()).toBe(true)
+  })
+
+  it('passes waiting=false to modal when playAgainSent is false', () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: false,
+      playAgainReceived: false
+    })
+    const wrapper = mount(GamePage, {
+      global: {
+        plugins: [store],
+        stubs: {
+          ...stubs,
+          GameOverModal: {
+            template: '<div :data-waiting="waiting" />',
+            props: ['show', 'winner', 'playerWinner', 'waiting'],
+            emits: ['quit', 'next']
+          }
+        }
+      }
+    })
+
+    expect(wrapper.find('[data-waiting="false"]').exists()).toBe(true)
+  })
+
+  it('passes waiting=false to modal when both playAgainSent and playAgainReceived are true', () => {
+    const store = makeStore({
+      isMultiplayer: true,
+      playAgainSent: true,
+      playAgainReceived: true
+    })
+    const wrapper = mount(GamePage, {
+      global: {
+        plugins: [store],
+        stubs: {
+          ...stubs,
+          GameOverModal: {
+            template: '<div :data-waiting="waiting" />',
+            props: ['show', 'winner', 'playerWinner', 'waiting'],
+            emits: ['quit', 'next']
+          }
+        }
+      }
+    })
+
+    expect(wrapper.find('[data-waiting="false"]').exists()).toBe(true)
   })
 })
 

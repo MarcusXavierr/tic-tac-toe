@@ -6,6 +6,7 @@
       :show="showModal"
       :winner="winner"
       :player-winner="player"
+      :waiting="playAgainSent && !playAgainReceived"
       @quit="quit()"
       @next="next()"
     />
@@ -48,7 +49,9 @@ export default {
       'currentPlayerType',
       'isMultiplayer',
       'myPlayerType',
-      'opponentDisconnected'
+      'opponentDisconnected',
+      'playAgainSent',
+      'playAgainReceived'
     ]),
     ...mapGetters(['getPlayer'])
   },
@@ -89,6 +92,12 @@ export default {
         }
       },
       immediate: true
+    },
+    playAgainReceived() {
+      if (this.playAgainReceived && this.playAgainSent) {
+        this.nextRound()
+        this.showModal = false
+      }
     }
   },
   methods: {
@@ -99,7 +108,8 @@ export default {
       'finishWaiting',
       'makePlayersWait',
       'addWinnerPathToHistory',
-      'clearMultiplayerState'
+      'clearMultiplayerState',
+      'sendPlayAgain'
     ]),
 
     handleOpponentMove(cell: number) {
@@ -149,7 +159,12 @@ export default {
       this.quitGame()
     },
     next() {
-      this.nextRound()
+      if (this.isMultiplayer) {
+        this.sendPlayAgain()
+        multiplayerService.sendPlayAgain()
+      } else {
+        this.nextRound()
+      }
       this.showModal = false
     }
   }
