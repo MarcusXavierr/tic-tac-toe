@@ -18,6 +18,22 @@ interface MultiplayerPayload {
   opponentDisconnected?: boolean
 }
 
+function detectInitialLocale(): string {
+  // Check localStorage first for saved preference
+  const saved = localStorage.getItem('app-locale')
+  if (saved === 'en' || saved === 'pt') return saved
+
+  // Fall back to browser detection
+  const lang = (navigator.language || navigator.languages?.[0] || 'en').toLowerCase()
+  let fallback = 'en'
+  if (lang.startsWith('pt')) {
+    fallback = 'pt'
+  }
+  localStorage.setItem('app-locale', fallback)
+
+  return fallback
+}
+
 export const store = createStore<State>({
   state() {
     return {
@@ -38,7 +54,9 @@ export const store = createStore<State>({
       opponentDisconnected: false,
       playAgainSent: false,
       playAgainReceived: false,
-      remoteHoverCell: null
+      remoteHoverCell: null,
+      // i18n locale
+      locale: detectInitialLocale()
     }
   },
   mutations: {
@@ -131,6 +149,10 @@ export const store = createStore<State>({
       state.isWaitingToPlay = state.myPlayerType === PlayerTypes.OPlayer
       state.playAgainSent = false
       state.playAgainReceived = false
+    },
+    setLocale(state, locale: string) {
+      state.locale = locale
+      localStorage.setItem('app-locale', locale)
     }
   },
   getters: {

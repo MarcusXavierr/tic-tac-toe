@@ -1,0 +1,61 @@
+{
+  "home": {
+    "newGameVsCpu": "NOVO JOGO (VS CPU)",
+    "newGameVsPlayer": "NOVO JOGO (VS JOGADOR)",
+    "errors": {
+      "roomNotFound": "Sala não encontrada",
+      "roomIsFull": "Sala está cheia",
+      "roomAlreadyExists": "Sala já existe",
+      "connectionError": "Erro de conexão"
+    }
+  },
+  "playerSelector": {
+    "title": "ESCOLHA O SÍMBOLO DO JOGADOR 1",
+    "reminder": "LEMBRE-SE: X COMEÇA PRIMEIRO"
+  },
+  "gameHistory": {
+    "ties": "EMPATES",
+    "xPlayer": "X (J{n})",
+    "oPlayer": "O (J{n})",
+    "xYou": "X (Você)",
+    "oYou": "O (Você)",
+    "x": "X",
+    "o": "O"
+  },
+  "navbar": {
+    "turn": "JOGANDO"
+  },
+  "gameOverModal": {
+    "roundTied": "RODADA EMPATADA",
+    "playerWins": "JOGADOR {n} VENCEU!",
+    "youWin": "VOCÊ VENCEU!",
+    "opponentWins": "{name} VENCEU!",
+    "takesTheRound": "VENCE A RODADA",
+    "waitingForOpponent": "AGUARDANDO OPONENTE...",
+    "quit": "SAIR",
+    "nextRound": "PRÓXIMA RODADA"
+  },
+  "multiplayerModal": {
+    "create": "CRIAR SALA",
+    "join": "ENTRAR",
+    "yourName": "Seu Nome",
+    "enterName": "Digite o nome",
+    "roomCode": "Código da Sala",
+    "enterCode": "Digite o código",
+    "createRoom": "CRIAR SALA",
+    "joinRoom": "ENTRAR NA SALA",
+    "room": "SALA",
+    "waitingForOpponent": "AGUARDANDO OPONENTE",
+    "cancel": "CANCELAR"
+  },
+  "opponentDisconnectedModal": {
+    "title": "OPONENTE DESCONECTADO",
+    "message": "Seu oponente saiu do jogo.",
+    "backToHome": "VOLTAR AO INÍCIO"
+  },
+  "retryGameModal": {
+    "title": "REINICIAR JOGO?",
+    "noCancel": "NÃO, CANCELAR",
+    "yesRestart": "SIM, REINICIAR"
+  }
+}

@@ -5,7 +5,7 @@
     </BaseButton>
     <div class="turn">
       <img :src="iconPath" alt="icon representing actual turn" width="16" />
-      TURN
+      {{ $t('navbar.turn') }}
     </div>
     <div v-if="isMultiplayer" class="opponent-badge" :class="opponentBadgeColor">
       <img :src="opponentIconPath" alt="opponent icon" width="16" />
@@ -90,9 +90,7 @@ export default {
     },
     opponentPlayerType(): PlayerTypes {
       const myPlayerType = (this as any).myPlayerType
-      return myPlayerType === PlayerTypes.XPlayer
-        ? PlayerTypes.OPlayer
-        : PlayerTypes.XPlayer
+      return myPlayerType === PlayerTypes.XPlayer ? PlayerTypes.OPlayer : PlayerTypes.XPlayer
     },
     opponentBadgeColor(): string {
       return (this as any).opponentPlayerType === PlayerTypes.XPlayer ? 'blue' : 'yellow'

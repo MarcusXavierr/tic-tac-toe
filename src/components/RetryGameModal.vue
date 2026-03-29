@@ -1,12 +1,14 @@
 <template>
   <BaseModal :show="show" @click="$emit('close')">
     <div class="container">
-      <h3>RESTART GAME?</h3>
+      <h3>{{ $t('retryGameModal.title') }}</h3>
       <div class="btn-group">
-        <BaseButton :button-color="colors.gray" @click="$emit('close')">NO, CANCEL</BaseButton>
-        <BaseButton :button-color="colors.yellow" @click="$emit('restart')"
-          >YES, RESTART</BaseButton
-        >
+        <BaseButton :button-color="colors.gray" @click="$emit('close')">{{
+          $t('retryGameModal.noCancel')
+        }}</BaseButton>
+        <BaseButton :button-color="colors.yellow" @click="$emit('restart')">{{
+          $t('retryGameModal.yesRestart')
+        }}</BaseButton>
       </div>
     </div>
   </BaseModal>

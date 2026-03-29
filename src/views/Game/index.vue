@@ -6,6 +6,7 @@
       :show="showModal"
       :winner="winner"
       :player-winner="player"
+      :winner-name="winnerName"
       :waiting="playAgainSent && !playAgainReceived"
       @quit="quit()"
       @next="next()"
@@ -50,6 +51,7 @@ export default {
       'currentPlayerType',
       'isMultiplayer',
       'myPlayerType',
+      'opponentName',
       'opponentDisconnected',
       'playAgainSent',
       'playAgainReceived'
@@ -57,6 +59,12 @@ export default {
     ...mapGetters(['getPlayer']),
     bothPlayersReadyForNextRound(): boolean {
       return (this as any).playAgainSent && (this as any).playAgainReceived
+    },
+    winnerName(): string | null {
+      const self = this as any
+      if (!self.isMultiplayer || self.winner === -1) return null
+      if (self.winner === self.myPlayerType) return self.$t('gameOverModal.youWin') as string
+      return self.$t('gameOverModal.opponentWins', { name: self.opponentName }) as string
     }
   },
   watch: {
