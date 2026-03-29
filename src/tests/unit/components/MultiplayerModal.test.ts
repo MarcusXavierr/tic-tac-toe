@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import MultiplayerModal from '@/components/MultiplayerModal.vue'
+import { createTestI18n } from '../helpers/i18n'
 
 // Stub child components to isolate unit under test
 const stubs = {
@@ -22,7 +23,7 @@ const stubs = {
 function mountModal(props = {}) {
   return mount(MultiplayerModal, {
     props: { show: true, ...props },
-    global: { stubs }
+    global: { plugins: [createTestI18n()], stubs }
   })
 }
 

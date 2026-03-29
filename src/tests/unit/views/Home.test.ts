@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import { Players, PlayerTypes } from '@/enums/Players'
 import { IconType } from '@/enums/IconTypes'
+import { createTestI18n } from '../helpers/i18n'
 
 // ── Mock the singleton service ────────────────────────────────────────────────
 const mockService = {
@@ -51,7 +52,7 @@ function makeStore(overrides = {}) {
       receivePlayAgain: vi.fn(),
       setRemoteHover: vi.fn(),
       startRemoteHoverFade: vi.fn(),
-      clearRemoteHover: vi.fn(),
+      clearRemoteHover: vi.fn()
     }
   })
 }
@@ -75,7 +76,7 @@ const stubs = {
 
 function mountHome(store: ReturnType<typeof makeStore>) {
   return mount(HomePage, {
-    global: { plugins: [store], stubs }
+    global: { plugins: [store, createTestI18n()], stubs }
   })
 }
 
@@ -339,7 +340,6 @@ describe('Home — hover message handling', () => {
     const clearCalls = (commitSpy.mock.calls as any[]).filter((c) => c[0] === 'clearRemoteHover')
     expect(clearCalls).toHaveLength(1) // only one clear fires, not two
   })
-
 })
 
 describe('Home — error handling on create failure', () => {

@@ -11,7 +11,7 @@
             :aria-selected="activeTab === 'create'"
             @click="activeTab = 'create'"
           >
-            CREATE
+            {{ $t('multiplayerModal.create') }}
           </div>
           <div
             :class="['tab', activeTab === 'join' && 'tab--active']"
@@ -20,7 +20,7 @@
             :aria-selected="activeTab === 'join'"
             @click="activeTab = 'join'"
           >
-            JOIN
+            {{ $t('multiplayerModal.join') }}
           </div>
         </div>
       </div>
@@ -34,16 +34,16 @@
       >
         <BaseTextInput
           v-model="createPlayerName"
-          label="Your Name"
-          placeholder="Enter name"
+          :label="$t('multiplayerModal.yourName')"
+          :placeholder="$t('multiplayerModal.enterName')"
           :maxlength="20"
           data-testid="input-player-name-create"
         />
 
         <BaseTextInput
           v-model="createRoomName"
-          label="Room Code"
-          placeholder="Enter code"
+          :label="$t('multiplayerModal.roomCode')"
+          :placeholder="$t('multiplayerModal.enterCode')"
           :maxlength="20"
           data-testid="input-room-name-create"
         />
@@ -64,7 +64,7 @@
           data-testid="btn-create"
           @click="handleCreate"
         >
-          CREATE ROOM
+          {{ $t('multiplayerModal.createRoom') }}
         </BaseButton>
       </div>
 
@@ -77,16 +77,16 @@
       >
         <BaseTextInput
           v-model="joinPlayerName"
-          label="Your Name"
-          placeholder="Enter name"
+          :label="$t('multiplayerModal.yourName')"
+          :placeholder="$t('multiplayerModal.enterName')"
           :maxlength="20"
           data-testid="input-player-name-join"
         />
 
         <BaseTextInput
           v-model="joinRoomName"
-          label="Room Code"
-          placeholder="Enter code"
+          :label="$t('multiplayerModal.roomCode')"
+          :placeholder="$t('multiplayerModal.enterCode')"
           :maxlength="20"
           data-testid="input-room-name-join"
         />
@@ -102,7 +102,7 @@
           data-testid="btn-join"
           @click="handleJoin"
         >
-          JOIN ROOM
+          {{ $t('multiplayerModal.joinRoom') }}
         </BaseButton>
       </div>
 
@@ -120,15 +120,14 @@
 
         <!-- ROOM CODE PILL -->
         <div class="room-pill">
-          <span class="room-pill__label">ROOM</span>
+          <span class="room-pill__label">{{ $t('multiplayerModal.room') }}</span>
           <span class="room-pill__code">{{ activeRoomName }}</span>
         </div>
 
         <!-- STATUS TEXT -->
         <p class="waiting-text">
-          WAITING FOR OPPONENT<span class="ellipsis"
-            ><span>.</span><span>.</span><span>.</span></span
-          >
+          {{ $t('multiplayerModal.waitingForOpponent')
+          }}<span class="ellipsis"><span>.</span><span>.</span><span>.</span></span>
         </p>
 
         <BaseButton
@@ -137,7 +136,7 @@
           data-testid="btn-cancel"
           @click="handleCancel"
         >
-          CANCEL
+          {{ $t('multiplayerModal.cancel') }}
         </BaseButton>
       </div>
     </div>

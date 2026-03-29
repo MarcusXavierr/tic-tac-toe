@@ -51,7 +51,8 @@ function makeStore(overrides = {}) {
 const stubs = {
   BaseCell: {
     name: 'BaseCell',
-    template: '<div @click="$emit(\'click\')" @mouseenter="$emit(\'mouseenter\')" @mouseleave="$emit(\'mouseleave\')" />',
+    template:
+      '<div @click="$emit(\'click\')" @mouseenter="$emit(\'mouseenter\')" @mouseleave="$emit(\'mouseleave\')" />',
     props: ['selectedIcon', 'belongsToWinnerPath', 'isRemoteHovered', 'isRemoteHoverFading'],
     emits: ['click', 'mouseenter', 'mouseleave']
   },
@@ -209,7 +210,6 @@ describe('GameBoard — isRemoteHovered prop passing', () => {
     const nonHovered = cells.filter((c) => c.props('isRemoteHovered') === false)
     expect(nonHovered).toHaveLength(8) // 9 cells, 1 is hovered
   })
-
 })
 
 export {}

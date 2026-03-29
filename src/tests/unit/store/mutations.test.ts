@@ -242,7 +242,6 @@ describe('clearMultiplayerState', () => {
     store.commit('clearMultiplayerState')
     expect(store.state.remoteHoverCell).toBeNull()
   })
-
 })
 
 describe('opponentDisconnected flag', () => {
@@ -373,7 +372,6 @@ describe('setRemoteHover', () => {
     store.commit('setRemoteHover', 4)
     expect(store.state.remoteHoverCell).toBe(4)
   })
-
 })
 
 describe('clearRemoteHover', () => {

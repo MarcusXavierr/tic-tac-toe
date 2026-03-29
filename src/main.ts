@@ -6,5 +6,9 @@ import '@fontsource/outfit/700.css'
 
 import './assets/main.css'
 import { store } from './store/index'
+import { i18n, syncLocaleWithStore } from './i18n'
 
-createApp(App).use(store).mount('#app')
+// Sync i18n locale with store state
+syncLocaleWithStore(store)
+
+createApp(App).use(store).use(i18n).mount('#app')

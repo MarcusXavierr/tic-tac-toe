@@ -3,30 +3,32 @@
     <div class="container">
       <div class="messages">
         <!-- TIE -->
-        <h3 v-if="winner == -1">ROUND TIED</h3>
+        <h3 v-if="winner == -1">{{ $t('gameOverModal.roundTied') }}</h3>
         <!-- O player -->
         <div class="player" v-else-if="winner == playerTypes.OPlayer">
-          <p>PLAYER {{ playerWinner }} WINS!</p>
+          <p>{{ winnerName ?? $t('gameOverModal.playerWins', { n: playerWinner }) }}</p>
           <h3 class="flex-header">
             <BaseIcon :icon-type="icons.O" class="icon" />
-            <span class="yellow">TAKES THE ROUND</span>
+            <span class="yellow">{{ $t('gameOverModal.takesTheRound') }}</span>
           </h3>
         </div>
         <!-- X player -->
         <div class="player" v-else-if="winner == playerTypes.XPlayer">
-          <p>PLAYER {{ playerWinner }} WINS!</p>
+          <p>{{ winnerName ?? $t('gameOverModal.playerWins', { n: playerWinner }) }}</p>
           <h3 class="flex-header">
             <BaseIcon :icon-type="icons.X" class="icon" />
-            <span class="blue">TAKES THE ROUND</span>
+            <span class="blue">{{ $t('gameOverModal.takesTheRound') }}</span>
           </h3>
         </div>
-        <p v-if="waiting" class="waiting-text">WAITING FOR OPPONENT...</p>
+        <p v-if="waiting" class="waiting-text">{{ $t('gameOverModal.waitingForOpponent') }}</p>
       </div>
       <div class="btn-group">
-        <BaseButton :button-color="colors.gray" @click="$emit('quit')">QUIT</BaseButton>
-        <BaseButton v-if="!waiting" :button-color="colors.yellow" @click="$emit('next')"
-          >NEXT ROUND</BaseButton
-        >
+        <BaseButton :button-color="colors.gray" @click="$emit('quit')">{{
+          $t('gameOverModal.quit')
+        }}</BaseButton>
+        <BaseButton v-if="!waiting" :button-color="colors.yellow" @click="$emit('next')">{{
+          $t('gameOverModal.nextRound')
+        }}</BaseButton>
       </div>
     </div>
   </BaseModal>
@@ -62,6 +64,10 @@ export default {
     waiting: {
       type: Boolean,
       default: false
+    },
+    winnerName: {
+      type: String,
+      default: null
     }
   },
   computed: {

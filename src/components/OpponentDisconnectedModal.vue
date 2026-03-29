@@ -1,9 +1,11 @@
 <template>
   <BaseModal :show="show">
     <div class="container">
-      <h3>OPPONENT DISCONNECTED</h3>
-      <p>Your opponent has left the game.</p>
-      <BaseButton :button-color="colors.gray" @click="$emit('close')">BACK TO HOME</BaseButton>
+      <h3>{{ $t('opponentDisconnectedModal.title') }}</h3>
+      <p>{{ $t('opponentDisconnectedModal.message') }}</p>
+      <BaseButton :button-color="colors.gray" @click="$emit('close')">{{
+        $t('opponentDisconnectedModal.backToHome')
+      }}</BaseButton>
     </div>
   </BaseModal>
 </template>

@@ -42,7 +42,7 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    },
+    }
   },
   computed: {
     ...mapState(['currentPlayerType', 'isWaitingToPlay', 'myPlayerType']),
@@ -121,5 +121,4 @@ export default {
     border-radius: 1rem;
   }
 }
-
 </style>

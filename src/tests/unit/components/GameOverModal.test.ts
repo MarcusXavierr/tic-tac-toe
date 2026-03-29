@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import GameOverModal from '@/components/GameOverModal.vue'
+import { createTestI18n } from '../helpers/i18n'
 
 // Stub child components to isolate unit under test
 const stubs = {
@@ -20,7 +21,7 @@ const stubs = {
 function mountModal(props = {}) {
   return mount(GameOverModal, {
     props: { show: true, winner: -1, ...props },
-    global: { stubs }
+    global: { plugins: [createTestI18n()], stubs }
   })
 }
 
@@ -64,6 +65,25 @@ describe('GameOverModal — winner display', () => {
   it('shows player winner text for O player', () => {
     const wrapper = mountModal({ winner: 1, playerWinner: 2 })
     expect(wrapper.text()).toContain('PLAYER 2 WINS!')
+  })
+})
+
+describe('GameOverModal — winnerName prop', () => {
+  it('shows winnerName instead of playerWins when winnerName is provided (X player)', () => {
+    const wrapper = mountModal({ winner: 0, playerWinner: 1, winnerName: 'YOU WIN!' })
+    expect(wrapper.text()).toContain('YOU WIN!')
+    expect(wrapper.text()).not.toContain('PLAYER 1 WINS!')
+  })
+
+  it('shows winnerName instead of playerWins when winnerName is provided (O player)', () => {
+    const wrapper = mountModal({ winner: 1, playerWinner: 2, winnerName: 'Alice WINS!' })
+    expect(wrapper.text()).toContain('Alice WINS!')
+    expect(wrapper.text()).not.toContain('PLAYER 2 WINS!')
+  })
+
+  it('falls back to playerWins translation when winnerName is null', () => {
+    const wrapper = mountModal({ winner: 0, playerWinner: 1, winnerName: null })
+    expect(wrapper.text()).toContain('PLAYER 1 WINS!')
   })
 })
 

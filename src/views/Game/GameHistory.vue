@@ -5,7 +5,7 @@
       <h4>{{ history.x }}</h4>
     </div>
     <div class="card silver">
-      <p>TIES</p>
+      <p>{{ $t('gameHistory.ties') }}</p>
       <h4>{{ history.tie }}</h4>
     </div>
     <div class="card yellow">
@@ -26,13 +26,19 @@ export default {
 
     labelX(): string {
       const self = this as any
-      if (!self.isMultiplayer) return `X (P${self.getPlayer(PlayerTypes.XPlayer)})`
-      return self.myPlayerType === PlayerTypes.XPlayer ? 'X (You)' : 'X'
+      if (!self.isMultiplayer)
+        return self.$t('gameHistory.xPlayer', { n: self.getPlayer(PlayerTypes.XPlayer) })
+      return self.myPlayerType === PlayerTypes.XPlayer
+        ? self.$t('gameHistory.xYou')
+        : self.$t('gameHistory.x')
     },
     labelO(): string {
       const self = this as any
-      if (!self.isMultiplayer) return `O (P${self.getPlayer(PlayerTypes.OPlayer)})`
-      return self.myPlayerType === PlayerTypes.OPlayer ? 'O (You)' : 'O'
+      if (!self.isMultiplayer)
+        return self.$t('gameHistory.oPlayer', { n: self.getPlayer(PlayerTypes.OPlayer) })
+      return self.myPlayerType === PlayerTypes.OPlayer
+        ? self.$t('gameHistory.oYou')
+        : self.$t('gameHistory.o')
     },
     history() {
       const initialState = { x: 0, o: 0, tie: 0 }

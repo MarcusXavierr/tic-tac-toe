@@ -49,7 +49,10 @@ describe('BaseCell — remote hover rendering', () => {
   })
 
   it('local hover takes priority over remote hover', async () => {
-    const store = makeStore({ myPlayerType: PlayerTypes.XPlayer, currentPlayerType: PlayerTypes.XPlayer })
+    const store = makeStore({
+      myPlayerType: PlayerTypes.XPlayer,
+      currentPlayerType: PlayerTypes.XPlayer
+    })
     const { default: BaseCell } = await import('@/components/base/BaseCell.vue')
     const wrapper = mount(BaseCell, {
       props: { selectedIcon: null, isRemoteHovered: true, isRemoteHoverFading: false },
@@ -81,7 +84,6 @@ describe('BaseCell — remote hover rendering', () => {
     })
     expect(wrapper.find('[data-icon]').exists()).toBe(false)
   })
-
 })
 
 export {}
