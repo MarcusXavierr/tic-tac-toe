@@ -27,6 +27,7 @@ import { createBestMovement } from '@/services/BoardService'
 import { getIconTypeFromPlayerTurn } from '@/services/IconService'
 import { swapIconType } from '@/services/utils/player'
 import { multiplayerService } from '@/services/multiplayerServiceInstance'
+import posthog from 'posthog-js'
 
 export default {
   name: 'GamePage',
@@ -169,8 +170,27 @@ export default {
       this.winner = winner as PlayerTypes
       this.player = this.getPlayer(this.winner)
       this.showModal = true
+
+      const winnerLabel =
+        (winner as number) === -1 ? 'tie' : winner === PlayerTypes.XPlayer ? 'x' : 'o'
+      posthog.capture('game_completed', {
+        winner: winnerLabel,
+        game_mode: (this as any).isMultiplayer
+          ? 'multiplayer'
+          : (this as any).oponentIsAI
+          ? 'vs_cpu'
+          : 'vs_player',
+        total_moves: (this as any).playHistory.length
+      })
     },
     quit() {
+      posthog.capture('game_quit', {
+        game_mode: (this as any).isMultiplayer
+          ? 'multiplayer'
+          : (this as any).oponentIsAI
+          ? 'vs_cpu'
+          : 'vs_player'
+      })
       this.showModal = false
       if (this.isMultiplayer) {
         multiplayerService.disconnect()
@@ -179,6 +199,13 @@ export default {
       this.quitGame()
     },
     next() {
+      posthog.capture('game_next_round', {
+        game_mode: (this as any).isMultiplayer
+          ? 'multiplayer'
+          : (this as any).oponentIsAI
+          ? 'vs_cpu'
+          : 'vs_player'
+      })
       if (this.isMultiplayer) {
         this.sendPlayAgain()
         multiplayerService.sendPlayAgain()

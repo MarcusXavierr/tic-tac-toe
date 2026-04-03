@@ -22,6 +22,7 @@ import { mapState, mapMutations } from 'vuex'
 import { getIconTypeFromPlayerTurn } from '../../services/IconService'
 import { generateBoard, type move } from '@/services/BoardService'
 import { multiplayerService } from '@/services/multiplayerServiceInstance'
+import posthog from 'posthog-js'
 
 export default {
   name: 'GameBoard',
@@ -66,6 +67,11 @@ export default {
       }
 
       const data = { position: cellId, piece: getIconTypeFromPlayerTurn(this.currentPlayerType) }
+      posthog.capture('game_move_made', {
+        cell_id: cellId,
+        move_number: this.playHistory.length + 1,
+        game_mode: this.isMultiplayer ? 'multiplayer' : this.oponentIsAI ? 'vs_cpu' : 'vs_player'
+      })
 
       if (this.isMultiplayer) {
         this.addPlayToHistory(data)

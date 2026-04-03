@@ -35,6 +35,7 @@ import { multiplayerService } from '@/services/multiplayerServiceInstance'
 import type { ServerMessage } from '@/services/MultiplayerService'
 import { getIconTypeFromPlayerTurn } from '@/services/IconService'
 import { swapIconType } from '@/services/utils/player'
+import posthog from 'posthog-js'
 
 export default {
   name: 'HomePage',
@@ -76,8 +77,10 @@ export default {
         } else {
           ;(this as any).errorMessage = raw.charAt(0).toUpperCase() + raw.slice(1)
         }
+        posthog.capture('multiplayer_connection_error', { reason: raw, action: 'create' })
         return
       }
+      posthog.capture('multiplayer_room_created', { room_name: roomName })
       ;(this as any).$store.commit('setMultiplayerState', {
         myPlayerType: playerType,
         opponentName: '',
@@ -98,6 +101,7 @@ export default {
     handleJoin(roomName: string, playerName: string) {
       this._pendingRoomName = roomName
       this._pendingPlayerName = playerName
+      posthog.capture('multiplayer_room_joined', { room_name: roomName })
       ;(this as any).$store.commit('setMultiplayerState', {
         myPlayerType: null,
         opponentName: '',
@@ -127,6 +131,7 @@ export default {
         }
         ;(this as any).errorMessage =
           messages[msg.reason] ?? (this as any).$t('home.errors.connectionError')
+        posthog.capture('multiplayer_connection_error', { reason: msg.reason, action: 'join' })
         return
       }
 
@@ -151,6 +156,9 @@ export default {
       }
 
       if (msg.type === 'player_disconnected') {
+        posthog.capture('multiplayer_opponent_disconnected', {
+          room_name: (this as any).$store.state.roomName
+        })
         ;(this as any).$store.commit('setMultiplayerState', {
           myPlayerType: (this as any).$store.state.myPlayerType,
           opponentName: (this as any).$store.state.opponentName,
@@ -185,6 +193,11 @@ export default {
           OPlayer: Players.playerTwo,
           oponentIsAI: false,
           isMultiplayer: true
+        })
+
+        posthog.capture('multiplayer_game_started', {
+          room_name: this._pendingRoomName,
+          my_piece: myType === PlayerTypes.XPlayer ? 'x' : 'o'
         })
 
         // Override isWaitingToPlay set by activateGame based on turn assignment
@@ -229,6 +242,8 @@ export default {
       this.activateGame({ ...(this as any).players, oponentIsAI: false })
     },
     startIAGame() {
+      const playerPiece = (this as any).oTypeSelected ? 'o' : 'x'
+      posthog.capture('game_started', { game_mode: 'vs_cpu', player_piece: playerPiece })
       this.activateGame({ ...(this as any).players, oponentIsAI: true })
     }
   },
