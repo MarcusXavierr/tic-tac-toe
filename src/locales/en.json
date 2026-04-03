@@ -1,0 +1,61 @@
+{
+  "home": {
+    "newGameVsCpu": "NEW GAME (VS CPU)",
+    "newGameVsPlayer": "NEW GAME (VS PLAYER)",
+    "errors": {
+      "roomNotFound": "Room not found",
+      "roomIsFull": "Room is full",
+      "roomAlreadyExists": "Room already exists",
+      "connectionError": "Connection error"
+    }
+  },
+  "playerSelector": {
+    "title": "PICK PLAYER 1'S MARK",
+    "reminder": "REMEMBER: X GOES FIRST"
+  },
+  "gameHistory": {
+    "ties": "TIES",
+    "xPlayer": "X (P{n})",
+    "oPlayer": "O (P{n})",
+    "xYou": "X (You)",
+    "oYou": "O (You)",
+    "x": "X",
+    "o": "O"
+  },
+  "navbar": {
+    "turn": "TURN"
+  },
+  "gameOverModal": {
+    "roundTied": "ROUND TIED",
+    "playerWins": "PLAYER {n} WINS!",
+    "youWin": "YOU WIN!",
+    "opponentWins": "{name} WINS!",
+    "takesTheRound": "TAKES THE ROUND",
+    "waitingForOpponent": "WAITING FOR OPPONENT...",
+    "quit": "QUIT",
+    "nextRound": "NEXT ROUND"
+  },
+  "multiplayerModal": {
+    "create": "CREATE",
+    "join": "JOIN",
+    "yourName": "Your Name",
+    "enterName": "Enter name",
+    "roomCode": "Room Code",
+    "enterCode": "Enter code",
+    "createRoom": "CREATE ROOM",
+    "joinRoom": "JOIN ROOM",
+    "room": "ROOM",
+    "waitingForOpponent": "WAITING FOR OPPONENT",
+    "cancel": "CANCEL"
+  },
+  "opponentDisconnectedModal": {
+    "title": "OPPONENT DISCONNECTED",
+    "message": "Your opponent has left the game.",
+    "backToHome": "BACK TO HOME"
+  },
+  "retryGameModal": {
+    "title": "RESTART GAME?",
+    "noCancel": "NO, CANCEL",
+    "yesRestart": "YES, RESTART"
+  }
+}

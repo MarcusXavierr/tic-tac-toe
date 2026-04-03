@@ -13,6 +13,8 @@ vi.mock('@/services/multiplayerServiceInstance', () => ({
   multiplayerService: mockService
 }))
 
+import { createTestI18n } from '../helpers/i18n'
+
 import NavBar from '@/views/Game/NavBar.vue'
 
 function makeStore(overrides: Record<string, any> = {}) {
@@ -57,23 +59,22 @@ describe('NavBar — logo click quits game', () => {
   it('calls quitGame on back button click', async () => {
     const store = makeStore()
     const commitSpy = vi.spyOn(store, 'commit')
-    const wrapper = mount(NavBar, { global: { plugins: [store], stubs } })
+    const wrapper = mount(NavBar, { global: { plugins: [store, createTestI18n()], stubs } })
     await wrapper.find('button').trigger('click')
     expect(commitSpy).toHaveBeenCalledWith('quitGame')
   })
 
   it('calls service.disconnect on back button click when isMultiplayer', async () => {
     const store = makeStore({ isMultiplayer: true })
-    const wrapper = mount(NavBar, { global: { plugins: [store], stubs } })
+    const wrapper = mount(NavBar, { global: { plugins: [store, createTestI18n()], stubs } })
     await wrapper.find('button').trigger('click')
     expect(mockService.disconnect).toHaveBeenCalled()
   })
 
   it('does NOT call service.disconnect on back button click when not multiplayer', async () => {
     const store = makeStore({ isMultiplayer: false })
-    const wrapper = mount(NavBar, { global: { plugins: [store], stubs } })
+    const wrapper = mount(NavBar, { global: { plugins: [store, createTestI18n()], stubs } })
     await wrapper.find('button').trigger('click')
     expect(mockService.disconnect).not.toHaveBeenCalled()
   })
 })
-

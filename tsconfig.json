@@ -5,6 +5,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es6",
+    "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -7,10 +7,10 @@
     />
     <div class="buttons">
       <BaseButton :button-color="btnColors.yellow" :is-large="true" @click="startIAGame">
-        NEW GAME (VS CPU)
+        {{ $t('home.newGameVsCpu') }}
       </BaseButton>
       <BaseButton :button-color="btnColors.blue" :is-large="true" @click="openMultiplayerModal">
-        NEW GAME (VS PLAYER)
+        {{ $t('home.newGameVsPlayer') }}
       </BaseButton>
     </div>
     <MultiplayerModal
@@ -54,7 +54,7 @@ export default {
       _pendingPlayerName: '' as string,
       _pendingRoomName: '' as string,
       _hoverTimeout: null as ReturnType<typeof setTimeout> | null,
-      errorMessage: '' as string,
+      errorMessage: '' as string
     }
   },
   methods: {
@@ -126,8 +126,8 @@ export default {
     _handleServerMessage(msg: ServerMessage) {
       if (msg.type === 'error') {
         const messages: Record<string, string> = {
-          room_not_found: 'Room not found',
-          room_full: 'Room is full'
+          room_not_found: (this as any).$t('home.errors.roomNotFound'),
+          room_full: (this as any).$t('home.errors.roomIsFull')
         }
         ;(this as any).errorMessage =
           messages[msg.reason] ?? (this as any).$t('home.errors.connectionError')
@@ -138,7 +138,10 @@ export default {
       if (msg.type === 'move') {
         const myPiece = getIconTypeFromPlayerTurn((this as any).$store.state.myPlayerType)
         const opponentPiece = swapIconType(myPiece)
-        ;(this as any).$store.commit('addPlayToHistory', { position: msg.cell, piece: opponentPiece })
+        ;(this as any).$store.commit('addPlayToHistory', {
+          position: msg.cell,
+          piece: opponentPiece
+        })
         return
       }
 
@@ -210,7 +213,6 @@ export default {
 
     _handleOpponentHover(cell: number) {
       if (this._hoverTimeout) clearTimeout(this._hoverTimeout)
-
       ;(this as any).$store.commit('setRemoteHover', cell)
 
       const duration = Number(import.meta.env.VITE_REMOTE_HOVER_DURATION ?? 800)

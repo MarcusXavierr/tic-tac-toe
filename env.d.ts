@@ -30,6 +30,8 @@ interface State {
   playAgainSent: boolean,
   playAgainReceived: boolean,
   remoteHoverCell: number | null,
+  // i18n locale
+  locale: string,
 }
 
 interface ImportMetaEnv {

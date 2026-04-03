@@ -1,6 +1,6 @@
 <template>
   <div class="selector">
-    <p>PICK PLAYER 1'S MARK</p>
+    <p>{{ $t('playerSelector.title') }}</p>
     <div class="player-type">
       <div :class="xTypeSelected && 'selected'" @click="selectX">
         <img :src="xIcon" alt="" />
@@ -9,7 +9,7 @@
         <img :src="oIcon" alt="" />
       </div>
     </div>
-    <p class="disclaimer">REMEMBER: X GOES FIRST</p>
+    <p class="disclaimer">{{ $t('playerSelector.reminder') }}</p>
   </div>
 </template>
 
