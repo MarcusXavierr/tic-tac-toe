@@ -16,6 +16,7 @@
   "dependencies": {
     "@fontsource/outfit": "^4.5.11",
     "playwright": "^1.58.2",
+    "posthog-js": "^1.364.7",
     "vue": "^3.2.47",
     "vuex": "^4.0.2"
   },
